@@ -1,0 +1,425 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"config",
+				"devConfig"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"project",
+				"Project: Add Folder"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"projec",
+				"Project: Save As"
+			],
+			[
+				"instal ",
+				"Package Control: Install Package"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"ublinme linter",
+				"SublimeLinter: Toggle Highlights"
+			],
+			[
+				"sullime",
+				"SublimeLinter: Reload SublimeLinter and its Plugins"
+			],
+			[
+				"sublime",
+				"SublimeLinter: Open diagnostics panel"
+			],
+			[
+				"eslint",
+				"Preferences: SublimeLinter Settings"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"proje",
+				"Project: Add Folder"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 375.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/jacobchaffin/Developer/rainbow-glow",
+		"/Users/jacobchaffin/Developer/rainbow-glow/public",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/ui",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/library",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/asset",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/imager",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/imager/about",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/imager/home",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/images",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/root/images/email"
+	],
+	"file_history":
+	[
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/layout.tsx",
+		"/Users/jacobchaffin/Developer/rainbow-glow/AVA.sublime-project",
+		"/Users/jacobchaffin/Developer/avacosmetika1-cp-91bbf8308d77/library/page/PageBuilderFactory.php",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/page.tsx",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/ui/nav-links.tsx",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/globals.css",
+		"/Users/jacobchaffin/Developer/rainbow-glow/postcss.config.mjs",
+		"/Users/jacobchaffin/.offlineimaprc",
+		"/Users/jacobchaffin/Developer/rainbow-glow/src/app/error.tsx",
+		"/Users/jacobchaffin/.emacs.d/dotemacs.org",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/webpack.config.babel.js",
+		"/Users/jacobchaffin/Developer/ai/examples/next-openai/package.json",
+		"/Users/jacobchaffin/dotfiles/zsh/install.sh",
+		"/Users/jacobchaffin/dotfiles/zsh/prezto/runcoms/zprofile",
+		"/Applications/MAMP/htdocs/cp/library/utility/Logger.php",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/client/index.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/appConfig.json",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/app/index.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/devServer.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/client/components/App.jsx",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/postcssconfig.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/app/globals.css",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/tailwind.config.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/eslint.config.mjs",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/.gitignore",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/package.json",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/src/client.js",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/package.json",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/webpack.config.multientry.js",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/build/public/index-multientry.html",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/webpack.config.js",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/build/public/index.html",
+		"/Users/jacobchaffin/Developer/webpack-hot-middleware/example/server.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/.babelrc",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/client/components/App.js",
+		"/Users/jacobchaffin/dotfiles/macos/EmacsKeyBinding.dict",
+		"/Users/jacobchaffin/dotfiles/.gitignore",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/node_modules/istanbul-lib-report/node_modules/make-dir/index.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/server/index.js",
+		"/Users/jacobchaffin/.gnupg/gpg-agent.conf",
+		"/Users/jacobchaffin/dotfiles/zsh/extra/aliases/macos-aliases",
+		"/Users/jacobchaffin/Library/texmf/tex/latex/stoneipa/stoneipa.sty",
+		"/Users/jacobchaffin/.zprezto/runcoms/zshrc",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/index.ejs",
+		"/Users/jacobchaffin/Developer/wacvis/webpackLib.js",
+		"/Users/jacobchaffin/Developer/wacvis/server/index.js",
+		"/Users/jacobchaffin/Developer/wacvids",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/lib.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/eslint.config.js",
+		"/Users/jacobchaffin/.eslintrv",
+		"/Users/jacobchaffin/.eslintrc",
+		"/Users/jacobchaffin/eslint.config.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/resources/index.ejs",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/server.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/client/index.ejs",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/src/index.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/build/index.html",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/client/index.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/output",
+		"/Users/jacobchaffin/Developer/wac",
+		"/Users/jacobchaffin/Developer/wacvis/client/index.css",
+		"/Users/jacobchaffin/Developer/wacvis/webpack.config.babel.js",
+		"/Users/jacobchaffin/Developer/wacvis/devServer.js",
+		"/Users/jacobchaffin/Developer/jacobchaffin.com/webpackLib.js",
+		"/Users/jacobchaffin/Developer/wacvis/test.js",
+		"/Users/jacobchaffin/Developer/wacvis/package.json",
+		"/Users/jacobchaffin/Developer/wacvis/node_modules/webpack/bin/webpack.js",
+		"/Users/jacobchaffin/Developer/bazooka/packages/babel-preset-bazooka/index.js",
+		"/Users/jacobchaffin/Developer/bazooka/packages/bazooka-scripts/package.json",
+		"/Users/jacobchaffin/Developer/bazooka/packages/babel-preset-bazooka/package.json",
+		"/Users/jacobchaffin/Developer/bazooka/packages/eslint-config-bazooka/package.json",
+		"/Users/jacobchaffin/Developer/bazooka/package.json",
+		"/Users/jacobchaffin/Developer/bazooka/packages/bazooka-utils/lib/index.js",
+		"/Users/jacobchaffin/Developer/bazooka/packages/bazooka-utils/src/test/hasAllOf.test.js",
+		"/Users/jacobchaffin/Developer/lerna-repo/package.json",
+		"/Users/jacobchaffin/Developer/lerna-repo/package",
+		"/Users/jacobchaffin/.npmrc",
+		"/Users/jacobchaffin/Developer/bazooka/lerna.json",
+		"/Users/jacobchaffin/.yarnrc",
+		"/Users/jacobchaffin/Developer/bazooka/.npmrc",
+		"/Users/jacobchaffin/Developer/bazooka/packages/bazooka-utils/src/extensions/index.js",
+		"/Users/jacobchaffin/dotfiles/latex/install.sh",
+		"/Users/jacobchaffin/.emacs.d/dotemacs.el",
+		"/Applications/.emacs.d",
+		"/Users/jacobchaffin/.zprezto/extra/aliases/macos-aliases",
+		"/Users/jacobchaffin/Library/Application Support/SketchUp 2023/SketchUp/PrivatePreferences.json",
+		"/Users/jacobchaffin/dotfiles/zsh/prezto/runcoms/zpreztorc"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 98.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"adela"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 108.0,
+		"history":
+		[
+		]
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 32.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "AVA.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"pagebuilder",
+				"avacosmetika1-cp-91bbf8308d77/library/page/PageBuilderFactory.php"
+			],
+			[
+				"dev",
+				"devServer.js"
+			],
+			[
+				"serve",
+				"server.js"
+			],
+			[
+				"webpac",
+				"webpack.config.babel.js"
+			],
+			[
+				"inddex.js",
+				"node_modules/istanbul-lib-report/node_modules/make-dir/index.js"
+			],
+			[
+				"",
+				"webpack.config.babel.js"
+			],
+			[
+				".b",
+				".babelrc"
+			],
+			[
+				"pack",
+				"package.json"
+			],
+			[
+				"inde",
+				"src/client/index.js"
+			],
+			[
+				"app.js",
+				"src/client/components/App.js"
+			],
+			[
+				"webp",
+				"webpack.config.babel.js"
+			],
+			[
+				"index",
+				"src/client/index.js"
+			],
+			[
+				"app.s",
+				"src/client/components/App.js"
+			],
+			[
+				"web",
+				"webpack.config.babel.js"
+			],
+			[
+				"index.js",
+				"src/client/index.js"
+			],
+			[
+				"configbabel.js",
+				"webpack.config.babel.js"
+			],
+			[
+				"webpack",
+				"webpack.config.babel.js"
+			],
+			[
+				"App.js",
+				"src/client/components/App.js"
+			],
+			[
+				"preset-bazooka/index.js",
+				"packages/babel-preset-bazooka/index.js"
+			],
+			[
+				"bazooka-utils/index.js",
+				"packages/bazooka-utils/lib/index.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 195.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

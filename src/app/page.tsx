@@ -6,8 +6,8 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
+          src="/images/logo.png"
+          alt="Rainbow Glow logo"
           width={180}
           height={38}
           priority
@@ -66,7 +66,7 @@ export default function Home() {
             height={16}
           />
           Learn
-        </a>
+        </a>  
         <a
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
