@@ -344,7 +344,7 @@ const WishlistPage: React.FC = () => {
               Share Your Wishlist
             </h3>
             <p className="text-gray-600 mb-4">
-              Let friends and family know what you're interested in.
+              Let friends and family know what you&apos;re interested in.
             </p>
             <Button
               onClick={() => {

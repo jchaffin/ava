@@ -3,7 +3,7 @@ import { verifyToken, extractTokenFromHeader } from './jwt'
 import { TokenPayload } from './jwt'
 
 // Middleware to verify JWT token
-export const withAuth = (handler: Function) => {
+export const withAuth = (handler: (request: NextRequest) => Promise<NextResponse>) => {
   return async (request: NextRequest) => {
     try {
       const authHeader = request.headers.get('authorization')
@@ -30,7 +30,7 @@ export const withAuth = (handler: Function) => {
 }
 
 // Middleware to verify admin role
-export const withAdminAuth = (handler: Function) => {
+export const withAdminAuth = (handler: (request: NextRequest) => Promise<NextResponse>) => {
   return async (request: NextRequest) => {
     try {
       const authHeader = request.headers.get('authorization')
