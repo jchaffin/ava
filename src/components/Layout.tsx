@@ -3,7 +3,7 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useCart, useAuth } from '@/context'
 import { Button } from './ui'
 
@@ -45,10 +45,7 @@ interface NavigationItem {
   userOnly?: boolean
 }
 
-interface MobileMenuState {
-  isOpen: boolean
-  activeSubmenu: string | null
-}
+
 
 interface UserMenuState {
   isOpen: boolean

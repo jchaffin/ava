@@ -39,7 +39,7 @@ export default function TestThemePage() {
           <h2 className="text-xl font-semibold mb-4">Current Theme State</h2>
           <div className="bg-theme-secondary p-4 rounded-lg">
             <p><strong>HTML class:</strong> {document.documentElement.className}</p>
-            <p><strong>Has 'dark' class:</strong> {document.documentElement.classList.contains('dark') ? 'Yes' : 'No'}</p>
+            <p><strong>Has &apos;dark&apos; class:</strong> {document.documentElement.classList.contains('dark') ? 'Yes' : 'No'}</p>
             <p><strong>LocalStorage theme:</strong> {typeof window !== 'undefined' ? localStorage.getItem('theme') || 'none' : 'N/A'}</p>
           </div>
         </div>
