@@ -4,7 +4,7 @@ import React, { ButtonHTMLAttributes, ReactNode } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'solid'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   loading?: boolean
@@ -22,10 +22,12 @@ const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
   
   const variants = {
-    primary: 'bg-theme-primary text-theme-secondary hover:bg-theme-secondary focus:ring-theme-primary shadow-sm',
+    primary: 'bg-theme-tertiary text-theme-primary hover:bg-theme-secondary focus:ring-theme-primary shadow-sm',
     secondary: 'bg-theme-secondary text-theme-primary hover:bg-theme-tertiary focus:ring-theme-primary border border-theme shadow-sm',
-    danger: 'bg-[var(--ava-accent)] text-theme-primary hover:bg-red-700 focus:ring-[var(--ava-accent)] shadow-sm',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
     ghost: 'bg-transparent text-theme-primary hover:bg-theme-secondary focus:ring-theme-primary border border-theme hover:border-theme-dark',
+    outline: 'bg-transparent text-theme-primary border border-theme hover:bg-theme-secondary focus:ring-theme-primary shadow-sm',
+    solid: 'bg-[var(--ava-accent)] text-theme-primary hover:bg-red-700 focus:ring-[var(--ava-accent)] shadow-sm',
   }
   
   const sizes = {
