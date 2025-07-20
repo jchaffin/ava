@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import connectDB from '../../../../lib/mongoose'
-import { authOptions } from '../../../../lib/auth'
-import { Product, Order } from '../../../../models'
-import { ApiResponse, IProduct, CreateProductInput } from '../../../../types'
+import connectDB from '@/lib/mongoose'
+import { authOptions } from '@/lib/auth'
+import { Product, Order } from '@/models'
+import { ApiResponse, IProduct, CreateProductInput, ProductAnalytics } from '@/types'
 import { isValidObjectId } from 'mongoose'
 
 interface RouteParams {
@@ -14,15 +14,6 @@ interface RouteParams {
 
 interface ProductUpdateData extends Partial<CreateProductInput> {
   // Additional fields that might be updated
-}
-
-interface ProductAnalytics {
-  totalSales: number
-  totalRevenue: number
-  averageRating: number
-  reviewCount: number
-  viewCount: number
-  lastOrderDate?: Date
 }
 
 // GET /api/products/[id] - Get single product
@@ -105,7 +96,7 @@ export async function GET(
 export async function PUT(
   request: NextRequest,
   { params }: RouteParams
-): Promise<NextResponse<ApiResponse<IProduct>>> {
+): Promise<NextResponse<ApiResponse<IProduct> | ApiResponse<{ validationErrors: { field: string; message: string }[] }>>> {
   try {
     const { id } = params
 
@@ -205,7 +196,6 @@ export async function PUT(
     if (body.description !== undefined) updateData.description = body.description.trim()
     if (body.price !== undefined) updateData.price = parseFloat(body.price.toString())
     if (body.image !== undefined) updateData.image = body.image.trim()
-    if (body.category !== undefined) updateData.category = body.category
     if (body.stock !== undefined) updateData.stock = parseInt(body.stock.toString())
     if (body.featured !== undefined) updateData.featured = Boolean(body.featured)
 
@@ -253,8 +243,8 @@ export async function PUT(
     console.error('Error updating product:', error)
 
     // Handle MongoDB validation errors
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map((err: any) => ({
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'ValidationError') {
+      const validationErrors = Object.values((error as any).errors).map((err: any) => ({
         field: err.path,
         message: err.message,
       }))
@@ -271,7 +261,7 @@ export async function PUT(
     }
 
     // Handle MongoDB cast errors (invalid ObjectId, etc.)
-    if (error.name === 'CastError') {
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'CastError') {
       return NextResponse.json(
         {
           success: false,
@@ -466,13 +456,7 @@ function validateProductUpdateData(data: ProductUpdateData): Array<{ field: stri
     }
   }
 
-  // Category validation (if provided)
-  if (data.category !== undefined) {
-    const validCategories = ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Sports', 'Toys']
-    if (!validCategories.includes(data.category)) {
-      errors.push({ field: 'category', message: 'Invalid product category' })
-    }
-  }
+
 
   // Stock validation (if provided)
   if (data.stock !== undefined) {
@@ -528,22 +512,27 @@ async function getProductAnalytics(productId: string): Promise<ProductAnalytics>
     }
 
     return {
-      totalSales: stats.totalSales,
-      totalRevenue: stats.totalRevenue,
+      views: 0, // Would come from analytics tracking
+      sales: stats.totalSales,
+      revenue: stats.totalRevenue,
+      conversionRate: 0, // Would be calculated
       averageRating: 0, // Would come from reviews
       reviewCount: 0, // Would come from reviews
-      viewCount: 0, // Would come from analytics tracking
-      lastOrderDate: stats.lastOrderDate,
+      wishlistCount: 0, // Would come from wishlist data
+      returnRate: 0, // Would come from returns data
     }
 
   } catch (error) {
     console.error('Error getting product analytics:', error)
     return {
-      totalSales: 0,
-      totalRevenue: 0,
+      views: 0,
+      sales: 0,
+      revenue: 0,
+      conversionRate: 0,
       averageRating: 0,
       reviewCount: 0,
-      viewCount: 0,
+      wishlistCount: 0,
+      returnRate: 0,
     }
   }
 }

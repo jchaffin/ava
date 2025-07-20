@@ -640,29 +640,7 @@ export interface ApplyCouponResponse extends ApiResponse<{
   newTotal: number
 }> {}
 
-// Notification API Types
-export interface GetNotificationsRequest extends PaginationParams {
-  unread?: boolean
-  type?: 'order' | 'promotion' | 'system' | 'security'
-}
 
-export interface GetNotificationsResponse extends PaginatedResponse<Notification> {}
-
-export interface MarkNotificationReadRequest {
-  id: string
-}
-
-export interface MarkNotificationReadResponse extends ApiResponse<{ message: string }> {}
-
-export interface Notification {
-  id: string
-  type: 'order' | 'promotion' | 'system' | 'security'
-  title: string
-  message: string
-  read: boolean
-  data?: Record<string, any>
-  createdAt: string
-}
 
 // File Upload API Types
 export interface UploadFileRequest {
@@ -841,9 +819,7 @@ export interface ApiClient {
   validateCoupon(data: ValidateCouponRequest): Promise<ValidateCouponResponse>
   applyCoupon(data: ApplyCouponRequest): Promise<ApplyCouponResponse>
 
-  // Notifications
-  getNotifications(params: GetNotificationsRequest): Promise<GetNotificationsResponse>
-  markNotificationRead(data: MarkNotificationReadRequest): Promise<MarkNotificationReadResponse>
+
 
   // File Upload
   uploadFile(data: UploadFileRequest): Promise<UploadFileResponse>

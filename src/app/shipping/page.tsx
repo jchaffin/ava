@@ -1,0 +1,259 @@
+'use client'
+
+import React from 'react'
+import { 
+  TruckIcon, 
+  ClockIcon, 
+  MapPinIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon
+} from '@heroicons/react/24/outline'
+
+const ShippingPage: React.FC = () => {
+  const shippingOptions = [
+    {
+      name: "Standard Shipping",
+      time: "3-5 business days",
+      price: "$5.99",
+      description: "Free on orders over $50",
+      icon: TruckIcon
+    },
+    {
+      name: "Express Shipping",
+      time: "1-2 business days",
+      price: "$12.99",
+      description: "Free on orders over $100",
+      icon: ClockIcon
+    },
+    {
+      name: "Overnight Shipping",
+      time: "Next business day",
+      price: "$24.99",
+      description: "Available for most locations",
+      icon: MapPinIcon
+    }
+  ]
+
+  const shippingInfo = {
+    processingTime: "1-2 business days",
+    businessHours: "Monday - Friday, 9AM - 6PM EST",
+    excludedDays: ["Saturdays", "Sundays", "Federal Holidays"],
+    tracking: "All orders include tracking information",
+    insurance: "All packages are insured up to $100"
+  }
+
+  const restrictions = [
+    "We do not ship to PO Boxes",
+    "International shipping available to select countries",
+    "Some products may have shipping restrictions",
+    "Signature required for orders over $200"
+  ]
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Shipping Information</h1>
+        <p className="text-lg text-gray-600">
+          Fast, reliable shipping to get your skincare products to you quickly and safely.
+        </p>
+      </div>
+
+      {/* Shipping Options */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Options</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {shippingOptions.map((option, index) => (
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <div className="bg-blue-100 p-3 rounded-lg mr-4">
+                  <option.icon className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{option.name}</h3>
+                  <p className="text-sm text-gray-500">{option.time}</p>
+                </div>
+              </div>
+              <div className="text-2xl font-bold text-gray-900 mb-2">{option.price}</div>
+              <p className="text-sm text-gray-600">{option.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Processing Information */}
+      <div className="bg-blue-50 rounded-lg p-8 mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Processing & Delivery</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Processing Time</h3>
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600 mr-3" />
+                <span className="text-gray-700">Orders processed within {shippingInfo.processingTime}</span>
+              </div>
+              <div className="flex items-center">
+                <ClockIcon className="w-5 h-5 text-blue-600 mr-3" />
+                <span className="text-gray-700">Business hours: {shippingInfo.businessHours}</span>
+              </div>
+              <div className="flex items-center">
+                <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mr-3" />
+                <span className="text-gray-700">No processing on: {shippingInfo.excludedDays.join(', ')}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Package Protection</h3>
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600 mr-3" />
+                <span className="text-gray-700">{shippingInfo.tracking}</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600 mr-3" />
+                <span className="text-gray-700">{shippingInfo.insurance}</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600 mr-3" />
+                <span className="text-gray-700">Eco-friendly packaging materials</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Shipping Restrictions */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Restrictions</h2>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <ul className="space-y-2">
+            {restrictions.map((restriction, index) => (
+              <li key={index} className="flex items-start">
+                <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700">{restriction}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* International Shipping */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">International Shipping</h2>
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <p className="text-gray-600 mb-4">
+            We currently ship to the following countries:
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              'United States', 'Canada', 'United Kingdom', 'Australia',
+              'Germany', 'France', 'Japan', 'South Korea'
+            ].map((country, index) => (
+              <div key={index} className="flex items-center">
+                <CheckCircleIcon className="w-4 h-4 text-green-600 mr-2" />
+                <span className="text-gray-700 text-sm">{country}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600">
+              <strong>Note:</strong> International shipping rates and delivery times vary by country. 
+              Additional customs duties and taxes may apply and are the responsibility of the recipient.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tracking Orders */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Tracking Your Order</h2>
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">How to Track</h3>
+              <ul className="space-y-3 text-gray-600">
+                <li>• Check your order confirmation email for tracking information</li>
+                <li>• Visit your account dashboard to view order status</li>
+                <li>• Use the tracking number provided by the carrier</li>
+                <li>• Contact customer service for assistance</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Updates</h3>
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Order Confirmed</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Processing</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Shipped</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                  <span className="text-gray-700">Delivered</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="font-semibold text-gray-900 mb-2">When will my order ship?</h3>
+            <p className="text-gray-600">
+              Orders are typically processed and shipped within 1-2 business days. You'll receive 
+              a confirmation email with tracking information once your order ships.
+            </p>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="font-semibold text-gray-900 mb-2">Do you ship internationally?</h3>
+            <p className="text-gray-600">
+              Yes, we ship to select countries. International shipping rates and delivery times 
+              vary by location. Additional customs duties may apply.
+            </p>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="font-semibold text-gray-900 mb-2">What if my package is lost or damaged?</h3>
+            <p className="text-gray-600">
+              All packages are insured. If your package is lost or damaged, please contact our 
+              customer service team immediately. We'll work with the carrier to resolve the issue.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Section */}
+      <div className="bg-gray-50 rounded-lg p-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Need Help?</h2>
+        <p className="text-gray-600 mb-6">
+          Have questions about shipping? Our customer service team is here to help.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/contact"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          >
+            Contact Us
+          </a>
+          <a
+            href="/faq"
+            className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+          >
+            View FAQ
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ShippingPage 

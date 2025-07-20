@@ -8,7 +8,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
-  category: string;
+
   description?: string;
 }
 
@@ -44,7 +44,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
       {/* Product Details */}
       <div className="flex-1 min-w-0">
         <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
-        <p className="text-sm text-gray-500 capitalize">{item.category}</p>
+
         {item.description && (
           <p className="text-sm text-gray-600 mt-1 line-clamp-2">
             {item.description}

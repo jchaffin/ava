@@ -1,14 +1,16 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { useSession, signIn, signOut, SessionProvider } from 'next-auth/react'
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import { useSession, signIn, signOut, SessionProvider, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { IUser } from '../types'
+import { IUser } from '@/types'
 import toast from 'react-hot-toast'
 
-interface AuthUser extends Omit<IUser, 'password' | 'comparePassword'> {
+// Define AuthUser extending IUser (which extends Mongoose Document)
+interface AuthUser extends Omit<IUser, 'password' | 'comparePassword' | 'image'> {
   id: string
   role: 'user' | 'admin'
+  image?: string | null
 }
 
 interface AuthContextType {
@@ -61,15 +63,38 @@ interface AuthContextProviderProps {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Helper function to create AuthUser from session data
+const createAuthUserFromSession = (sessionUser: any): AuthUser => {
+  return {
+    id: sessionUser.id || '',
+    _id: sessionUser.id || '',
+    name: sessionUser.name || '',
+    email: sessionUser.email || '',
+    role: (sessionUser.role as 'user' | 'admin') || 'user',
+    image: sessionUser.image || null,
+    createdAt: new Date(), // This would come from the actual user data
+    updatedAt: new Date(),
+    address: undefined, // This would be fetched separately if needed
+  } as AuthUser
+}
+
 // Internal provider component that uses NextAuth session
 const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) => {
   const { data: session, status, update } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<AuthUser | null>(null)
+  
+  console.log('AuthContext: useSession hook', { session, status })
 
   // Update user state when session changes
   useEffect(() => {
+    console.log('AuthContext: Session changed', { 
+      session: session ? { user: session.user, expires: session.expires } : null, 
+      status, 
+      user: user ? { id: user.id, name: user.name, email: user.email } : null 
+    })
+    
     if (status === 'loading') {
       setIsLoading(true)
       return
@@ -78,28 +103,24 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     setIsLoading(false)
 
     if (session?.user) {
-      const authUser: AuthUser = {
-        id: session.user.id,
-        _id: session.user.id,
-        name: session.user.name || '',
-        email: session.user.email || '',
-        role: session.user.role || 'user',
-        createdAt: new Date(), // This would come from the actual user data
-        updatedAt: new Date(),
-        address: undefined, // This would be fetched separately if needed
-      }
+      const authUser = createAuthUserFromSession(session.user)
+      console.log('AuthContext: Setting user', authUser)
       setUser(authUser)
     } else {
+      console.log('AuthContext: Clearing user')
       setUser(null)
     }
   }, [session, status])
+
+  // Add computed properties for better reactivity
+  const isAuthenticated = !!user
 
   const login = async (credentials: LoginCredentials): Promise<AuthResult> => {
     try {
       setIsLoading(true)
 
       const result = await signIn('credentials', {
-        email: credentials.email,
+        email: credentials.email.trim().toLowerCase(),
         password: credentials.password,
         redirect: false,
       })
@@ -115,14 +136,49 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       }
 
       if (result?.ok) {
-        // Refresh session to get updated user data
-        await update()
+        console.log('AuthContext: Login successful, updating session')
+        
+        // Determine role based on email
+        const isAdmin = credentials.email === 'admin@ava.com'
+        const role = isAdmin ? 'admin' as const : 'user' as const
+        
+        // Create user object from credentials for immediate UI update
+        const immediateUser = {
+          id: credentials.email, // Temporary ID
+          _id: credentials.email,
+          name: isAdmin ? 'Admin User' : 'Demo User',
+          email: credentials.email,
+          role: role,
+          image: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as AuthUser
+        
+        // Set user immediately for UI responsiveness
+        setUser(immediateUser)
+        setIsLoading(false)
+        
+        // Force a session update in the background
+        update().then(() => {
+          console.log('AuthContext: Session update completed')
+        }).catch(error => {
+          console.error('AuthContext: Session update failed', error)
+        })
+        
         toast.success('Welcome back!')
+        
+        // Handle redirection based on role
+        setTimeout(() => {
+          if (isAdmin) {
+            window.location.href = '/admin/dashboard'
+          } else {
+            window.location.href = '/'
+          }
+        }, 100)
         
         return {
           success: true,
           message: 'Login successful',
-          user: user,
         }
       }
 
@@ -152,14 +208,25 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       setIsLoading(true)
       
       // Clear any local storage or additional cleanup
-      localStorage.removeItem('cart')
-      localStorage.removeItem('wishlist')
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('ava-cart')
+        localStorage.removeItem('wishlist')
+        sessionStorage.clear()
+      }
       
-      await signOut({ redirect: false })
+      // Clear user state immediately
       setUser(null)
       
+      // Sign out from NextAuth
+      await signOut({ redirect: false })
+      
+      // Force a session update to ensure state is cleared
+      await update()
+      
       toast.success('You have been logged out')
-      router.push('/')
+      
+      // Use window.location for a hard redirect to ensure clean state
+      window.location.href = '/'
       
     } catch (error) {
       console.error('Logout error:', error)
@@ -184,6 +251,17 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         }
       }
 
+      // Validate password strength
+      if (userData.password.length < 6) {
+        const errorMessage = 'Password must be at least 6 characters long'
+        toast.error(errorMessage)
+        return {
+          success: false,
+          message: errorMessage,
+          error: 'WEAK_PASSWORD',
+        }
+      }
+
       // Call registration API
       const response = await fetch('/api/auth/register', {
         method: 'POST',
@@ -191,8 +269,8 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: userData.name,
-          email: userData.email,
+          name: userData.name.trim(),
+          email: userData.email.trim().toLowerCase(),
           password: userData.password,
         }),
       })
@@ -264,10 +342,10 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         return false
       }
 
-      const updatedUser = await response.json()
+      const result = await response.json()
       
       // Update local user state
-      setUser(prev => prev ? { ...prev, ...updatedUser.data } : null)
+      setUser(prev => prev ? { ...prev, ...result.data } : null)
       
       // Update session
       await update()
@@ -284,15 +362,15 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     }
   }
 
-  const refreshUser = async (): Promise<void> => {
+  const refreshUser = useCallback(async (): Promise<void> => {
     try {
       if (!user?.id) return
 
       const response = await fetch('/api/user/profile')
       if (!response.ok) return
 
-      const userData = await response.json()
-      setUser(prev => prev ? { ...prev, ...userData.data } : null)
+      const result = await response.json()
+      setUser(prev => prev ? { ...prev, ...result.data } : null)
       
       // Update session with fresh data
       await update()
@@ -300,9 +378,9 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     } catch (error) {
       console.error('Error refreshing user data:', error)
     }
-  }
+  }, [user?.id, update])
 
-  const hasRole = (role: 'user' | 'admin'): boolean => {
+  const hasRole = useCallback((role: 'user' | 'admin'): boolean => {
     if (!user) return false
     
     if (role === 'admin') {
@@ -310,9 +388,9 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     }
     
     return user.role === 'user' || user.role === 'admin'
-  }
+  }, [user])
 
-  const canAccess = (resource: string): boolean => {
+  const canAccess = useCallback((resource: string): boolean => {
     if (!user) return false
 
     // Define resource permissions
@@ -323,15 +401,17 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       'products-manage': ['admin'],
       'users-manage': ['admin'],
       'settings': ['admin'],
+      'cart': ['user', 'admin'],
+      'checkout': ['user', 'admin'],
     }
 
     const requiredRoles = permissions[resource]
     if (!requiredRoles) return true // No restrictions
 
     return requiredRoles.includes(user.role)
-  }
+  }, [user])
 
-  const requireAuth = (redirectTo: string = '/signin'): boolean => {
+  const requireAuth = useCallback((redirectTo: string = '/signin'): boolean => {
     if (!user && !isLoading) {
       const currentPath = window.location.pathname
       const callbackUrl = encodeURIComponent(currentPath)
@@ -339,9 +419,9 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       return false
     }
     return !!user
-  }
+  }, [user, isLoading, router])
 
-  const requireRole = (role: 'user' | 'admin', redirectTo: string = '/'): boolean => {
+  const requireRole = useCallback((role: 'user' | 'admin', redirectTo: string = '/'): boolean => {
     if (!requireAuth()) return false
     
     if (!hasRole(role)) {
@@ -351,7 +431,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     }
     
     return true
-  }
+  }, [requireAuth, hasRole, router])
 
   const contextValue: AuthContextType = {
     // User state
@@ -475,6 +555,9 @@ function getAuthErrorMessage(error: string): string {
     'PasswordMismatch': 'Incorrect password',
     'TooManyRequests': 'Too many login attempts. Please try again later.',
     'NetworkError': 'Network error. Please check your connection.',
+    'PASSWORD_MISMATCH': 'Passwords do not match',
+    'WEAK_PASSWORD': 'Password is too weak',
+    'REGISTRATION_FAILED': 'Registration failed. Please try again.',
   }
 
   return errorMessages[error] || 'An error occurred during authentication'

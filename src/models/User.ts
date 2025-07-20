@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import bcrypt from 'bcryptjs'
-import { IUser } from '../types'
+import { IUser } from '@/types'
 
 const UserSchema = new Schema<IUser>({
   name: {
@@ -28,6 +28,18 @@ const UserSchema = new Schema<IUser>({
     type: String,
     default: 'user',
     enum: ['user', 'admin'],
+  },
+  image: {
+    type: String,
+    default: null,
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  lastLoginAt: {
+    type: Date,
+    default: null,
   },
   address: {
     street: String,

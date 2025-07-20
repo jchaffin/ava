@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import { IOrder } from '../types'
+import { IOrder } from '@/types'
 
 const OrderSchema = new Schema<IOrder>({
   user: {
@@ -88,4 +88,3 @@ OrderSchema.index({ user: 1 })
 OrderSchema.index({ createdAt: -1 })
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema)
-```

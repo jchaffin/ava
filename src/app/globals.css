@@ -1,30 +1,473 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* AVA Brand Colors - Premium Skincare Palette */
+  --ava-primary: #2D3748;      /* Deep charcoal - primary brand color */
+  --ava-secondary: #4A5568;    /* Medium gray - secondary text */
+  --ava-accent: #E53E3E;       /* Warm red accent - call-to-action */
+  --ava-gold: #D69E2E;         /* Premium gold - highlights */
+  --ava-cream: #F7FAFC;        /* Soft cream - backgrounds */
+  --ava-white: #FFFFFF;        /* Pure white */
+  --ava-black: #1A202C;        /* Deep black */
+  
+  /* Semantic Colors */
+  --ava-success: #38A169;      /* Green for success states */
+  --ava-warning: #D69E2E;      /* Gold for warnings */
+  --ava-error: #E53E3E;        /* Red for errors */
+  --ava-info: #3182CE;         /* Blue for info */
+  
+  /* Background Colors */
+  --ava-bg-primary: var(--ava-white);
+  --ava-bg-secondary: var(--ava-cream);
+  --ava-bg-tertiary: #EDF2F7;
+  
+  /* Text Colors */
+  --ava-text-primary: var(--ava-black);
+  --ava-text-secondary: var(--ava-secondary);
+  --ava-text-muted: #718096;
+  
+  /* Border Colors */
+  --ava-border-light: #E2E8F0;
+  --ava-border-medium: #CBD5E0;
+  --ava-border-dark: #A0AEC0;
+  
+  /* Shadow Colors */
+  --ava-shadow-light: rgba(45, 55, 72, 0.1);
+  --ava-shadow-medium: rgba(45, 55, 72, 0.15);
+  --ava-shadow-heavy: rgba(45, 55, 72, 0.25);
+  
+  /* Gradient Colors */
+  --ava-gradient-primary: linear-gradient(135deg, #2D3748 0%, #4A5568 100%);
+  --ava-gradient-accent: linear-gradient(135deg, #E53E3E 0%, #C53030 100%);
+  --ava-gradient-gold: linear-gradient(135deg, #D69E2E 0%, #B7791F 100%);
+  --ava-gradient-cream: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+  
+  /* Typography */
+  --ava-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ava-font-secondary: 'Playfair Display', Georgia, serif;
+  
+  /* Spacing Scale */
+  --ava-space-xs: 0.25rem;
+  --ava-space-sm: 0.5rem;
+  --ava-space-md: 1rem;
+  --ava-space-lg: 1.5rem;
+  --ava-space-xl: 2rem;
+  --ava-space-2xl: 3rem;
+  --ava-space-3xl: 4rem;
+  
+  /* Border Radius */
+  --ava-radius-sm: 0.25rem;
+  --ava-radius-md: 0.5rem;
+  --ava-radius-lg: 0.75rem;
+  --ava-radius-xl: 1rem;
+  --ava-radius-2xl: 1.5rem;
+  
+  /* Transitions */
+  --ava-transition-fast: 150ms ease-in-out;
+  --ava-transition-normal: 300ms ease-in-out;
+  --ava-transition-slow: 500ms ease-in-out;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--ava-bg-primary);
+  --color-foreground: var(--ava-text-primary);
+  --font-sans: var(--ava-font-primary);
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --ava-bg-primary: var(--ava-black);
+    --ava-bg-secondary: #2D3748;
+    --ava-bg-tertiary: #4A5568;
+    --ava-text-primary: var(--ava-white);
+    --ava-text-secondary: #E2E8F0;
+    --ava-text-muted: #A0AEC0;
+    --ava-border-light: #4A5568;
+    --ava-border-medium: #718096;
+    --ava-border-dark: #A0AEC0;
   }
 }
 
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ava-bg-primary);
+  color: var(--ava-text-primary);
+  font-family: var(--ava-font-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ava-font-secondary);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ava-text-primary);
+  margin-bottom: var(--ava-space-md);
 }
 
 h1 {
-  color: blue;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--ava-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: var(--ava-space-md);
+  color: var(--ava-text-secondary);
+}
+
+/* Links */
+a {
+  color: var(--ava-accent);
+  text-decoration: none;
+  transition: var(--ava-transition-fast);
+}
+
+a:hover {
+  color: #C53030;
+  text-decoration: underline;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ava-space-sm) var(--ava-space-lg);
+  border-radius: var(--ava-radius-md);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--ava-transition-fast);
+  cursor: pointer;
+  border: none;
+  font-size: 0.875rem;
+}
+
+.btn-primary {
+  background: var(--ava-gradient-accent);
+  color: var(--ava-white);
+  box-shadow: 0 4px 6px var(--ava-shadow-medium);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px var(--ava-shadow-heavy);
+}
+
+.btn-secondary {
+  background: var(--ava-gradient-cream);
+  color: var(--ava-text-primary);
+  border: 1px solid var(--ava-border-medium);
+}
+
+.btn-secondary:hover {
+  background: var(--ava-bg-tertiary);
+  border-color: var(--ava-border-dark);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--ava-accent);
+  border: 2px solid var(--ava-accent);
+}
+
+.btn-outline:hover {
+  background: var(--ava-accent);
+  color: var(--ava-white);
+}
+
+/* Cards */
+.card {
+  background: var(--ava-bg-primary);
+  border-radius: var(--ava-radius-lg);
+  box-shadow: 0 2px 4px var(--ava-shadow-light);
+  border: 1px solid var(--ava-border-light);
+  transition: var(--ava-transition-normal);
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px var(--ava-shadow-medium);
+  transform: translateY(-2px);
+}
+
+.card-elevated {
+  box-shadow: 0 4px 8px var(--ava-shadow-medium);
+}
+
+.card-elevated:hover {
+  box-shadow: 0 12px 24px var(--ava-shadow-heavy);
+}
+
+/* Form Elements */
+input, textarea, select {
+  background: var(--ava-bg-primary);
+  border: 1px solid var(--ava-border-medium);
+  border-radius: var(--ava-radius-md);
+  padding: var(--ava-space-sm) var(--ava-space-md);
+  color: var(--ava-text-primary);
+  transition: var(--ava-transition-fast);
+  font-family: var(--ava-font-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--ava-accent);
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+/* Navigation */
+.nav-link {
+  color: var(--ava-text-secondary);
+  font-weight: 500;
+  transition: var(--ava-transition-fast);
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--ava-accent);
+}
+
+.nav-link.active {
+  color: var(--ava-accent);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ava-gradient-accent);
+  border-radius: 1px;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ava-space-xs) var(--ava-space-sm);
+  border-radius: var(--ava-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-primary {
+  background: var(--ava-gradient-accent);
+  color: var(--ava-white);
+}
+
+.badge-secondary {
+  background: var(--ava-gradient-cream);
+  color: var(--ava-text-secondary);
+  border: 1px solid var(--ava-border-medium);
+}
+
+.badge-gold {
+  background: var(--ava-gradient-gold);
+  color: var(--ava-white);
+}
+
+/* Alerts */
+.alert {
+  padding: var(--ava-space-md);
+  border-radius: var(--ava-radius-md);
+  border-left: 4px solid;
+  margin-bottom: var(--ava-space-md);
+}
+
+.alert-success {
+  background: rgba(56, 161, 105, 0.1);
+  border-left-color: var(--ava-success);
+  color: var(--ava-success);
+}
+
+.alert-warning {
+  background: rgba(214, 158, 46, 0.1);
+  border-left-color: var(--ava-warning);
+  color: var(--ava-warning);
+}
+
+.alert-error {
+  background: rgba(229, 62, 62, 0.1);
+  border-left-color: var(--ava-error);
+  color: var(--ava-error);
+}
+
+.alert-info {
+  background: rgba(49, 130, 206, 0.1);
+  border-left-color: var(--ava-info);
+  color: var(--ava-info);
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--ava-border-light);
+  border-radius: 50%;
+  border-top-color: var(--ava-accent);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out;
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: var(--ava-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-primary {
+  background: var(--ava-gradient-primary);
+}
+
+.bg-gradient-accent {
+  background: var(--ava-gradient-accent);
+}
+
+.bg-gradient-gold {
+  background: var(--ava-gradient-gold);
+}
+
+.bg-gradient-cream {
+  background: var(--ava-gradient-cream);
+}
+
+.shadow-ava {
+  box-shadow: 0 4px 6px var(--ava-shadow-medium);
+}
+
+.shadow-ava-lg {
+  box-shadow: 0 8px 16px var(--ava-shadow-heavy);
+}
+
+.border-ava {
+  border: 1px solid var(--ava-border-medium);
+}
+
+.border-ava-light {
+  border: 1px solid var(--ava-border-light);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  .card {
+    margin-bottom: var(--ava-space-md);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
 }

@@ -5,10 +5,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { useCart } from '../context'
+import { useCart } from '@/context'
 import { Button } from './ui'
-import { IProduct } from '../types'
-import { formatPrice } from '../utils/helpers'
+import { IProduct } from '@/types'
+import { formatPrice } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import {
   HeartIcon,
@@ -29,7 +29,7 @@ interface ProductCardProps {
   showQuickActions?: boolean
   showWishlist?: boolean
   showRating?: boolean
-  showCategory?: boolean
+
   showStock?: boolean
   onWishlistToggle?: (productId: string, isWishlisted: boolean) => void
   onQuickView?: (product: IProduct) => void
@@ -49,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showQuickActions = true,
   showWishlist = true,
   showRating = true,
-  showCategory = true,
+
   showStock = true,
   onWishlistToggle,
   onQuickView,
@@ -278,19 +278,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const renderProductInfo = () => (
     <div className={`p-4 ${variant === 'list' ? 'flex-1 ml-4' : ''}`}>
-      {/* Category */}
-      {showCategory && (
-        <div className="flex items-center text-sm text-gray-500 mb-2">
-          <TagIcon className="w-4 h-4 mr-1" />
-          <Link 
-            href={`/products?category=${product.category}`}
-            className="hover:text-blue-600"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {product.category}
-          </Link>
-        </div>
-      )}
+
 
       {/* Product Name */}
       <Link href={`/products/${product._id}`}>
@@ -399,6 +387,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               alt={product.name}
               width={96}
               height={96}
+              sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
               className={`${getImageClasses()} ${state.imageLoading ? 'hidden' : 'block'}`}
               onLoad={handleImageLoad}
               onError={handleImageError}
@@ -438,6 +427,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               src={product.image}
               alt={product.name}
               fill
+              sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
               className={`${getImageClasses()} transition-transform duration-300 group-hover:scale-105 ${
                 state.imageLoading ? 'opacity-0' : 'opacity-100'
               }`}

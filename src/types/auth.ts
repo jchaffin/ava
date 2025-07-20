@@ -31,38 +31,3 @@ export interface RegisterInput {
   password: string
   confirmPassword: string
 }
-```
-
-### src/types/user.ts
-```typescript
-import { Document } from 'mongoose'
-
-export interface IUser extends Document {
-  _id: string
-  name: string
-  email: string
-  password: string
-  role: 'user' | 'admin'
-  address?: {
-    street?: string
-    city?: string
-    state?: string
-    zipCode?: string
-    country?: string
-  }
-  createdAt: Date
-  updatedAt: Date
-  comparePassword(candidatePassword: string): Promise<boolean>
-}
-
-export interface CreateUserInput {
-  name: string
-  email: string
-  password: string
-  role?: 'user' | 'admin'
-}
-
-export interface LoginCredentials {
-  email: string
-  password: string
-}

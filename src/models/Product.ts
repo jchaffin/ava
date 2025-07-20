@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
-import { IProduct } from '../types'
+import { IProductDocument } from '@/types'
 
-const ProductSchema = new Schema<IProduct>({
+const ProductSchema = new Schema<IProductDocument>({
   name: {
     type: String,
     required: [true, 'Product name is required'],
@@ -22,11 +22,11 @@ const ProductSchema = new Schema<IProduct>({
     type: String,
     required: [true, 'Product image is required'],
   },
-  category: {
+  sizes: {
     type: String,
-    required: [true, 'Product category is required'],
-    enum: ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Sports', 'Toys'],
+    default: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   },
+
   stock: {
     type: Number,
     required: [true, 'Stock quantity is required'],
@@ -42,8 +42,7 @@ const ProductSchema = new Schema<IProduct>({
 })
 
 // Index for better query performance
-ProductSchema.index({ category: 1 })
 ProductSchema.index({ featured: 1 })
 ProductSchema.index({ price: 1 })
 
-export default mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema)
+export default mongoose.models.Product || mongoose.model<IProductDocument>('Product', ProductSchema)

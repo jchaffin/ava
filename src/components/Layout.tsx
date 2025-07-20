@@ -2,28 +2,28 @@
 
 import React, { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { useCart, useAuth } from '../context'
+import { useCart, useAuth } from '@/context'
 import { Button } from './ui'
 import { 
   ShoppingCartIcon, 
   UserIcon, 
-  MagnifyingGlassIcon,
   Bars3Icon,
   XMarkIcon,
   HeartIcon,
-  BellIcon,
   ChevronDownIcon,
   HomeIcon,
-  TagIcon,
   CogIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
   ClipboardDocumentListIcon,
+  ChartBarIcon,
+  StarIcon,
+  CubeIcon,
 } from '@heroicons/react/24/outline'
 import { ShoppingCartIcon as ShoppingCartSolidIcon } from '@heroicons/react/24/solid'
-import { CATEGORIES } from '../utils/constants'
+
 import toast from 'react-hot-toast'
 
 interface LayoutProps {
@@ -36,10 +36,11 @@ interface LayoutProps {
 interface NavigationItem {
   name: string
   href: string
-  icon?: React.ComponentType<any>
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
   children?: NavigationItem[]
   requireAuth?: boolean
   adminOnly?: boolean
+  userOnly?: boolean
 }
 
 interface MobileMenuState {
@@ -51,13 +52,6 @@ interface UserMenuState {
   isOpen: boolean
 }
 
-interface SearchState {
-  query: string
-  isOpen: boolean
-  suggestions: string[]
-  loading: boolean
-}
-
 const Layout: React.FC<LayoutProps> = ({ 
   children, 
   showNavigation = true, 
@@ -66,9 +60,20 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const router = useRouter()
   const pathname = usePathname()
-  const { data: session, status } = useSession()
-  const { getTotalItems, getTotalPrice } = useCart()
-  const { hasRole } = useAuth()
+  const { getTotalItems } = useCart()
+  const { user, isAuthenticated, isLoading, hasRole, logout } = useAuth()
+  
+  // Debug logging
+  console.log('Layout: Auth state', { 
+    user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : null, 
+    isAuthenticated, 
+    isLoading
+  })
+
+  // Automatically hide navigation and footer for admin routes
+  const isAdminRoute = pathname.startsWith('/admin')
+  const shouldShowNavigation = showNavigation && !isAdminRoute
+  const shouldShowFooter = showFooter && !isAdminRoute
 
   const [mobileMenu, setMobileMenu] = useState<MobileMenuState>({
     isOpen: false,
@@ -78,20 +83,10 @@ const Layout: React.FC<LayoutProps> = ({
   const [userMenu, setUserMenu] = useState<UserMenuState>({
     isOpen: false,
   })
-  
-  const [search, setSearch] = useState<SearchState>({
-    query: '',
-    isOpen: false,
-    suggestions: [],
-    loading: false,
-  })
 
-  const [notifications, setNotifications] = useState({
-    count: 3, // This would come from API
-    items: [] as any[],
-  })
 
-  // Navigation items configuration
+
+  // Navigation items configuration - Updated for AVA skincare
   const navigationItems: NavigationItem[] = [
     {
       name: 'Home',
@@ -101,27 +96,11 @@ const Layout: React.FC<LayoutProps> = ({
     {
       name: 'Products',
       href: '/products',
-      children: CATEGORIES.map(category => ({
-        name: category,
-        href: `/products?category=${encodeURIComponent(category)}`,
-      })),
     },
     {
-      name: 'Categories',
-      href: '/categories',
-      icon: TagIcon,
-      children: [
-        { name: 'Electronics', href: '/products?category=Electronics' },
-        { name: 'Clothing', href: '/products?category=Clothing' },
-        { name: 'Books', href: '/products?category=Books' },
-        { name: 'Home & Garden', href: '/products?category=Home%20%26%20Garden' },
-        { name: 'Sports', href: '/products?category=Sports' },
-        { name: 'Toys', href: '/products?category=Toys' },
-      ],
-    },
-    {
-      name: 'Deals',
-      href: '/deals',
+      name: 'Featured',
+      href: '/products?featured=true',
+      icon: StarIcon,
     },
     {
       name: 'About',
@@ -133,13 +112,21 @@ const Layout: React.FC<LayoutProps> = ({
     },
   ]
 
-  // User menu items
+  // User menu items for regular users
   const userMenuItems: NavigationItem[] = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: ChartBarIcon,
+      requireAuth: true,
+      userOnly: true, // Only show for regular users
+    },
     {
       name: 'My Profile',
       href: '/profile',
       icon: UserCircleIcon,
       requireAuth: true,
+      userOnly: true, // Only show for regular users
     },
     {
       name: 'My Orders',
@@ -159,9 +146,41 @@ const Layout: React.FC<LayoutProps> = ({
       icon: CogIcon,
       requireAuth: true,
     },
+  ]
+
+  // Admin menu items
+  const adminMenuItems: NavigationItem[] = [
     {
       name: 'Admin Dashboard',
-      href: '/admin',
+      href: '/admin/dashboard',
+      icon: ChartBarIcon,
+      requireAuth: true,
+      adminOnly: true,
+    },
+    {
+      name: 'Manage Products',
+      href: '/admin/products',
+      icon: CubeIcon,
+      requireAuth: true,
+      adminOnly: true,
+    },
+    {
+      name: 'Manage Orders',
+      href: '/admin/orders',
+      icon: ClipboardDocumentListIcon,
+      requireAuth: true,
+      adminOnly: true,
+    },
+    {
+      name: 'Analytics',
+      href: '/admin/analytics',
+      icon: ChartBarIcon,
+      requireAuth: true,
+      adminOnly: true,
+    },
+    {
+      name: 'Settings',
+      href: '/admin/settings',
       icon: CogIcon,
       requireAuth: true,
       adminOnly: true,
@@ -192,65 +211,47 @@ const Layout: React.FC<LayoutProps> = ({
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!search.query.trim()) return
-
-    router.push(`/search?q=${encodeURIComponent(search.query)}`)
-    setSearch(prev => ({ ...prev, isOpen: false }))
-  }
-
-  const handleSearchInput = async (value: string) => {
-    setSearch(prev => ({ ...prev, query: value }))
-
-    if (value.length > 2) {
-      setSearch(prev => ({ ...prev, loading: true }))
-      
-      try {
-        // Simulate API call for search suggestions
-        setTimeout(() => {
-          setSearch(prev => ({
-            ...prev,
-            suggestions: [
-              `${value} products`,
-              `${value} electronics`,
-              `${value} clothing`,
-            ],
-            loading: false,
-          }))
-        }, 300)
-      } catch (error) {
-        setSearch(prev => ({ ...prev, loading: false }))
-      }
-    } else {
-      setSearch(prev => ({ ...prev, suggestions: [] }))
-    }
+  // Show loading state while authentication is being established
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <div className="w-32 h-8 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
+                <div className="w-20 h-8 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   const handleSignOut = async () => {
     try {
-      await signOut({ redirect: false })
-      toast.success('Signed out successfully')
-      router.push('/')
+      await logout()
     } catch (error) {
+      console.error('Sign out error:', error)
       toast.error('Error signing out')
     }
   }
 
   const toggleMobileMenu = () => {
-    setMobileMenu(prev => ({ 
-      ...prev, 
-      isOpen: !prev.isOpen,
-      activeSubmenu: null,
-    }))
+    setMobileMenu(prev => ({ ...prev, isOpen: !prev.isOpen }))
   }
 
-  const toggleSubmenu = (menuName: string) => {
-    setMobileMenu(prev => ({
-      ...prev,
-      activeSubmenu: prev.activeSubmenu === menuName ? null : menuName,
-    }))
-  }
+
 
   const isActiveLink = (href: string): boolean => {
     if (href === '/') {
@@ -262,337 +263,246 @@ const Layout: React.FC<LayoutProps> = ({
   const renderDesktopNavigation = () => (
     <nav className="hidden lg:flex items-center space-x-8">
       {navigationItems.map((item) => (
-        <div key={item.name} className="relative group">
-          <Link
-            href={item.href}
-            className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-              isActiveLink(item.href)
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-            }`}
-          >
-            {item.icon && <item.icon className="w-4 h-4 mr-2" />}
-            {item.name}
-            {item.children && (
-              <ChevronDownIcon className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" />
-            )}
-          </Link>
-
-          {/* Dropdown menu */}
-          {item.children && (
-            <div className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <div className="py-2">
-                {item.children.map((child) => (
-                  <Link
-                    key={child.name}
-                    href={child.href}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-                  >
-                    {child.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <Link
+          key={item.name}
+          href={item.href}
+          className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+            isActiveLink(item.href)
+              ? 'text-ava-accent bg-ava-cream'
+              : 'text-ava-text-secondary hover:text-ava-accent hover:bg-ava-bg-secondary'
+          }`}
+        >
+          {item.icon && <item.icon className="w-4 h-4" />}
+          <span>{item.name}</span>
+        </Link>
       ))}
     </nav>
   )
 
   const renderMobileNavigation = () => (
-    <div
-      data-menu="mobile"
-      className={`lg:hidden fixed inset-0 z-50 ${
-        mobileMenu.isOpen ? 'block' : 'hidden'
-      }`}
-    >
+    <div className="lg:hidden fixed inset-0 z-50">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={toggleMobileMenu} />
-
-      {/* Menu */}
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50"
+        onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+      />
+      
+      {/* Mobile menu */}
       <div className="fixed inset-y-0 left-0 w-80 bg-white shadow-xl">
-        <div className="flex items-center justify-between p-4 border-b">
-          <Link href="/" className="text-xl font-bold text-gray-800">
-            EcomStore
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <Link href="/" className="flex items-center" onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}>
+            <Image
+              src="/logo.png"
+              alt="AVA Logo"
+              width={100}
+              height={32}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
-          <button onClick={toggleMobileMenu}>
-            <XMarkIcon className="w-6 h-6 text-gray-600" />
+          <button
+            onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+            className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          >
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="overflow-y-auto h-full pb-20">
-          {/* User section */}
-          {session ? (
-            <div className="p-4 border-b bg-gray-50">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                  <UserIcon className="w-6 h-6 text-gray-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{session.user.name}</p>
-                  <p className="text-sm text-gray-600">{session.user.email}</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-4 border-b">
-              <Link
-                href="/signin"
-                className="block w-full text-center bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-              >
-                Sign In
-              </Link>
-            </div>
-          )}
-
-          {/* Navigation items */}
-          <div className="py-2">
-            {navigationItems.map((item) => (
-              <div key={item.name}>
-                <div className="flex items-center justify-between">
-                  <Link
-                    href={item.href}
-                    className={`flex-1 flex items-center px-4 py-3 text-sm font-medium ${
-                      isActiveLink(item.href)
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    {item.icon && <item.icon className="w-5 h-5 mr-3" />}
-                    {item.name}
-                  </Link>
-                  {item.children && (
-                    <button
-                      onClick={() => toggleSubmenu(item.name)}
-                      className="px-4 py-3"
-                    >
-                      <ChevronDownIcon
-                        className={`w-4 h-4 transition-transform ${
-                          mobileMenu.activeSubmenu === item.name ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </button>
-                  )}
-                </div>
-
-                {/* Submenu */}
-                {item.children && mobileMenu.activeSubmenu === item.name && (
-                  <div className="bg-gray-50">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.name}
-                        href={child.href}
-                        className="block px-8 py-2 text-sm text-gray-600 hover:text-blue-600"
-                      >
-                        {child.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* User menu items */}
-          {session && (
-            <>
-              <div className="border-t mt-4 pt-4">
-                <div className="px-4 mb-2">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    Account
-                  </p>
-                </div>
-                {userMenuItems
-                  .filter(item => !item.adminOnly || hasRole('admin'))
-                  .map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      {item.icon && <item.icon className="w-5 h-5 mr-3" />}
-                      {item.name}
-                    </Link>
-                  ))}
-                
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                >
-                  <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
-                  Sign Out
-                </button>
-              </div>
-            </>
-          )}
+        <div className="px-4 py-6 space-y-2">
+          {navigationItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${
+                isActiveLink(item.href)
+                  ? 'text-ava-accent bg-ava-cream'
+                  : 'text-ava-text-secondary hover:text-ava-accent hover:bg-ava-bg-secondary'
+              }`}
+            >
+              {item.icon && <item.icon className="w-5 h-5" />}
+              <span>{item.name}</span>
+            </Link>
+          ))}
         </div>
+
+                 {/* User section */}
+         {isAuthenticated ? (
+           <div className="px-4 py-6 border-t border-gray-200">
+             <div className="mb-4">
+               <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
+               <p className="text-sm text-gray-500">{user?.email || ''}</p>
+             </div>
+            <div className="space-y-2">
+              {(hasRole('admin') ? adminMenuItems : userMenuItems)
+                .filter(item => !item.requireAuth || isAuthenticated)
+                .filter(item => !item.adminOnly || hasRole('admin'))
+                .filter(item => !item.userOnly || !hasRole('admin'))
+                .map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+                  >
+                    {item.icon && <item.icon className="w-5 h-5" />}
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              <button
+                onClick={() => {
+                  handleSignOut()
+                  setMobileMenu({ isOpen: false, activeSubmenu: null })
+                }}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 w-full transition-colors duration-200"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="px-4 py-6 border-t border-gray-200 space-y-3">
+            <Link
+              href="/signin"
+              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+              className="block w-full px-4 py-3 text-center text-base font-medium text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/register"
+              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+              className="block w-full px-4 py-3 text-center text-base font-medium text-white bg-ava-accent hover:bg-red-700 rounded-lg transition-colors duration-200"
+            >
+              Sign Up
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
 
   const renderUserMenu = () => (
-    <div data-menu="user" className="relative">
+    <div className="relative" data-menu="user">
       <button
         onClick={() => setUserMenu(prev => ({ isOpen: !prev.isOpen }))}
-        className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100"
+        className="flex items-center space-x-2 p-2 rounded-lg text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
       >
-        <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-          <UserIcon className="w-5 h-5 text-gray-600" />
+        <div className="w-8 h-8 bg-ava-accent rounded-full flex items-center justify-center">
+          <UserIcon className="w-4 h-4 text-white" />
         </div>
-        <span className="hidden md:block text-sm font-medium text-gray-700">
-          {session?.user.name}
-        </span>
-        <ChevronDownIcon className="w-4 h-4 text-gray-500" />
+        <span className="hidden md:block text-sm font-medium">{user?.name || 'User'}</span>
+        <ChevronDownIcon className="w-4 h-4" />
       </button>
 
       {userMenu.isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border z-50">
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <div className="px-4 py-3 border-b border-gray-200">
+            <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
+            <p className="text-sm text-gray-500">{user?.email || ''}</p>
+          </div>
+          
           <div className="py-2">
-            {userMenuItems
+            {(hasRole('admin') ? adminMenuItems : userMenuItems)
+              .filter(item => !item.requireAuth || isAuthenticated)
               .filter(item => !item.adminOnly || hasRole('admin'))
+              .filter(item => !item.userOnly || !hasRole('admin'))
               .map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => setUserMenu({ isOpen: false })}
+                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
                 >
-                  {item.icon && <item.icon className="w-4 h-4 mr-3" />}
-                  {item.name}
+                  {item.icon && <item.icon className="w-4 h-4" />}
+                  <span>{item.name}</span>
                 </Link>
               ))}
-            
-            <hr className="my-2" />
-            
-            <button
-              onClick={handleSignOut}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-            >
-              <ArrowRightOnRectangleIcon className="w-4 h-4 mr-3" />
-              Sign Out
-            </button>
           </div>
-        </div>
-      )}
-    </div>
-  )
-
-  const renderSearchBar = () => (
-    <div className="relative flex-1 max-w-lg mx-4">
-      <form onSubmit={handleSearch}>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            value={search.query}
-            onChange={(e) => handleSearchInput(e.target.value)}
-            onFocus={() => setSearch(prev => ({ ...prev, isOpen: true }))}
-            placeholder="Search products..."
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-      </form>
-
-      {/* Search suggestions */}
-      {search.isOpen && search.suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-          {search.suggestions.map((suggestion, index) => (
+          
+          <div className="border-t border-gray-200 pt-2">
             <button
-              key={index}
               onClick={() => {
-                setSearch(prev => ({ ...prev, query: suggestion, isOpen: false }))
-                router.push(`/search?q=${encodeURIComponent(suggestion)}`)
+                handleSignOut()
+                setUserMenu({ isOpen: false })
               }}
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full transition-colors duration-200"
             >
-              {suggestion}
+              <ArrowRightOnRectangleIcon className="w-4 h-4" />
+              <span>Sign Out</span>
             </button>
-          ))}
+          </div>
         </div>
       )}
     </div>
   )
 
   const renderHeader = () => (
-    <header className="bg-white shadow-md sticky top-0 z-40">
+    <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Mobile menu button */}
           <button
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
           >
             <Bars3Icon className="w-6 h-6" />
           </button>
 
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-gray-800">EcomStore</span>
+            <Image
+              src="/logo.png"
+              alt="AVA Logo"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop navigation */}
           {renderDesktopNavigation()}
 
-          {/* Search bar */}
-          <div className="hidden md:block flex-1 max-w-lg">
-            {renderSearchBar()}
-          </div>
-
           {/* Right side actions */}
-          <div className="flex items-center space-x-4">
-            {/* Search icon for mobile */}
-            <button className="md:hidden p-2 text-gray-600 hover:text-gray-900">
-              <MagnifyingGlassIcon className="w-6 h-6" />
-            </button>
+          <div className="flex items-center space-x-2">
 
-            {/* Notifications */}
-            {session && (
-              <Link href="/notifications" className="relative p-2 text-gray-600 hover:text-gray-900">
-                <BellIcon className="w-6 h-6" />
-                {notifications.count > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {notifications.count > 9 ? '9+' : notifications.count}
-                  </span>
-                )}
-              </Link>
-            )}
-
-            {/* Wishlist */}
-            {session && (
-              <Link href="/wishlist" className="p-2 text-gray-600 hover:text-gray-900">
-                <HeartIcon className="w-6 h-6" />
+            {/* Wishlist - only show for regular users */}
+            {isAuthenticated && !hasRole('admin') && (
+              <Link href="/wishlist" className="p-2 text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200">
+                <HeartIcon className="w-5 h-5" />
               </Link>
             )}
 
             {/* Shopping cart */}
-            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-gray-900">
+            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200">
               {getTotalItems() > 0 ? (
-                <ShoppingCartSolidIcon className="w-6 h-6 text-blue-600" />
+                <ShoppingCartSolidIcon className="w-5 h-5 text-ava-accent" />
               ) : (
-                <ShoppingCartIcon className="w-6 h-6" />
+                <ShoppingCartIcon className="w-5 h-5" />
               )}
               {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-ava-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                   {getTotalItems() > 9 ? '9+' : getTotalItems()}
                 </span>
               )}
             </Link>
 
             {/* User menu or sign in */}
-            {session ? (
+            {isAuthenticated ? (
               renderUserMenu()
             ) : (
               <div className="flex items-center space-x-2">
                 <Link
                   href="/signin"
-                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-700 hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-medium"
+                  className="bg-ava-accent text-white hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                 >
                   Sign Up
                 </Link>
@@ -600,31 +510,35 @@ const Layout: React.FC<LayoutProps> = ({
             )}
           </div>
         </div>
-
-        {/* Mobile search bar */}
-        <div className="md:hidden pb-4">
-          {renderSearchBar()}
-        </div>
       </div>
+      
+      {/* Mobile navigation overlay */}
+      {mobileMenu.isOpen && renderMobileNavigation()}
     </header>
   )
 
   const renderFooter = () => (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-ava-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">EcomStore</h3>
+            <h3 className="text-lg font-semibold mb-4">AVA Skincare</h3>
             <p className="text-gray-400 mb-4">
-              Your one-stop shop for everything you need. Quality products, great prices, and excellent service.
+              Premium skincare products for radiant, healthy skin. Discover your natural beauty with our carefully curated collection.
             </p>
             <div className="flex space-x-4">
               {/* Social media links */}
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                <span className="sr-only">Instagram</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
                 <span className="sr-only">Facebook</span>
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M20 10C20 4.477 15.523 0 10 0S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clipRule="evenodd" />
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </a>
             </div>
@@ -634,46 +548,41 @@ const Layout: React.FC<LayoutProps> = ({
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link href="/about" className="text-gray-400 hover:text-white">About Us</Link></li>
-              <li><Link href="/contact" className="text-gray-400 hover:text-white">Contact</Link></li>
-              <li><Link href="/faq" className="text-gray-400 hover:text-white">FAQ</Link></li>
-              <li><Link href="/shipping" className="text-gray-400 hover:text-white">Shipping Info</Link></li>
-              <li><Link href="/returns" className="text-gray-400 hover:text-white">Returns</Link></li>
+              <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors duration-200">About Us</Link></li>
+              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors duration-200">Products</Link></li>
+              <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
+              <li><Link href="/shipping" className="text-gray-400 hover:text-white transition-colors duration-200">Shipping Info</Link></li>
+              <li><Link href="/returns" className="text-gray-400 hover:text-white transition-colors duration-200">Returns</Link></li>
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Customer Service */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Categories</h3>
+            <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2">
-              {CATEGORIES.slice(0, 5).map((category) => (
-                <li key={category}>
-                  <Link 
-                    href={`/products?category=${encodeURIComponent(category)}`}
-                    className="text-gray-400 hover:text-white"
-                  >
-                    {category}
-                  </Link>
-                </li>
-              ))}
+              <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors duration-200">FAQ</Link></li>
+              <li><Link href="/support" className="text-gray-400 hover:text-white transition-colors duration-200">Support</Link></li>
+              <li><Link href="/size-guide" className="text-gray-400 hover:text-white transition-colors duration-200">Size Guide</Link></li>
+              <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
             </ul>
           </div>
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
+            <h3 className="text-lg font-semibold mb-4">Stay Connected</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to get special offers and updates.
+              Subscribe for skincare tips, new products, and exclusive offers.
             </p>
             <form className="flex">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-3 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-ava-accent"
               />
               <Button
                 type="submit"
-                className="rounded-l-none"
+                className="rounded-l-none bg-ava-accent hover:bg-red-700"
                 size="md"
               >
                 Subscribe
@@ -684,7 +593,7 @@ const Layout: React.FC<LayoutProps> = ({
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 EcomStore. All rights reserved.
+            © 2024 AVA Skincare. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
@@ -704,14 +613,13 @@ const Layout: React.FC<LayoutProps> = ({
 
   return (
     <div className={`min-h-screen flex flex-col bg-gray-50 ${className}`}>
-      {showNavigation && renderHeader()}
-      {renderMobileNavigation()}
+      {shouldShowNavigation && renderHeader()}
       
       <main className="flex-1">
         {children}
       </main>
       
-      {showFooter && renderFooter()}
+      {shouldShowFooter && renderFooter()}
     </div>
   )
 }

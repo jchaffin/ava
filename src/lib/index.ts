@@ -1,3 +1,5 @@
 export { default as connectDB } from './mongoose'
 export { default as clientPromise } from './mongodb'
 export { authOptions, handler } from './auth'
+export * from './jwt'
+export * from './auth-middleware'

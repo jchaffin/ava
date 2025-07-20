@@ -5,10 +5,10 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Layout } from '../../components'
-import { Button } from '../../components/ui'
-import { IOrder, IOrderItem } from '../../types'
-import { formatPrice, formatDate } from '../../utils/helpers'
+
+import { Button } from '@/components/ui'
+import { IOrder, IOrderItem } from '@/types'
+import { formatPrice, formatDate } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 
 interface OrdersPageState {
@@ -134,94 +134,87 @@ const OrdersPage: React.FC = () => {
 
   if (status === 'loading' || state.loading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-            <p className="text-gray-600">Loading your orders...</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-600">Loading your orders...</p>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   if (state.error) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center max-w-md">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
-                <svg
-                  className="w-6 h-6 text-red-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-red-900 mb-2">
-                Unable to Load Orders
-              </h3>
-              <p className="text-red-700 mb-4">{state.error}</p>
-              <Button onClick={fetchOrders} variant="danger">
-                Try Again
-              </Button>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+              <svg
+                className="w-6 h-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
             </div>
+            <h3 className="text-lg font-medium text-red-900 mb-2">
+              Unable to Load Orders
+            </h3>
+            <p className="text-red-700 mb-4">{state.error}</p>
+            <Button onClick={fetchOrders} variant="danger">
+              Try Again
+            </Button>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   if (state.orders.length === 0) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center max-w-md">
-            <div className="bg-gray-50 rounded-lg p-8">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-100 rounded-full mb-4">
-                <svg
-                  className="w-8 h-8 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                No Orders Yet
-              </h2>
-              <p className="text-gray-600 mb-6">
-                You haven't placed any orders yet. Start shopping to see your order history here.
-              </p>
-              <Link href="/products">
-                <Button size="lg">
-                  Start Shopping
-                </Button>
-              </Link>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="bg-gray-50 rounded-lg p-8">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-100 rounded-full mb-4">
+              <svg
+                className="w-8 h-8 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
             </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              No Orders Yet
+            </h2>
+            <p className="text-gray-600 mb-6">
+              You haven't placed any orders yet. Start shopping to see your order history here.
+            </p>
+            <Link href="/products">
+              <Button size="lg">
+                Start Shopping
+              </Button>
+            </Link>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -309,6 +302,7 @@ const OrdersPage: React.FC = () => {
                             alt={typeof item.product === 'object' ? item.product.name : 'Product'}
                             width={64}
                             height={64}
+                            sizes="64px"
                             className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                           />
                         </div>
@@ -399,7 +393,6 @@ const OrdersPage: React.FC = () => {
           </div>
         )}
       </div>
-    </Layout>
   )
 }
 

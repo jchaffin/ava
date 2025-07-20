@@ -374,7 +374,6 @@ export const validateProductForm = (data: {
   description: string
   price: number | string
   image: string
-  category: string
   stock: number | string
 }): ValidationResult => {
   const errors: string[] = []
@@ -390,9 +389,6 @@ export const validateProductForm = (data: {
   
   const imageValidation = validateImageUrl(data.image)
   if (!imageValidation.isValid) errors.push(imageValidation.error!)
-  
-  const categoryValidation = validateRequired(data.category, 'Category')
-  if (!categoryValidation.isValid) errors.push(categoryValidation.error!)
   
   const stockValidation = validateProductStock(data.stock)
   if (!stockValidation.isValid) errors.push(stockValidation.error!)

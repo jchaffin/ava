@@ -2,9 +2,35 @@ import NextAuth, { NextAuthOptions, User as NextAuthUser } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import connectDB from '@/lib/mongoose'
-import  User  from '@/lib/models'
+import { User } from '@/models'
 import { AuthCredentials } from '@/types'
 import bcrypt from 'bcryptjs'
+
+// Global type declaration for gtag
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void
+  }
+}
+
+// Environment variable validation
+const requiredEnvVars = {
+  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+}
+
+// Check for required environment variables
+Object.entries(requiredEnvVars).forEach(([key, value]) => {
+  if (!value) {
+    console.warn(`Missing required environment variable: ${key}`)
+  }
+})
+
+// Optional environment variables for OAuth
+const optionalEnvVars = {
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -31,13 +57,18 @@ export const authOptions: NextAuthOptions = {
         try {
           await connectDB()
           
-          // Find user by email
+          // Find user by email (case-insensitive)
           const user = await User.findOne({ 
-            email: credentials.email.toLowerCase() 
+            email: credentials.email.toLowerCase().trim() 
           }).select('+password')
           
           if (!user) {
             throw new Error('No user found with this email')
+          }
+
+          // Check if user is active
+          if (user.role === 'banned') {
+            throw new Error('Account has been suspended')
           }
 
           // Verify password
@@ -47,7 +78,12 @@ export const authOptions: NextAuthOptions = {
             throw new Error('Invalid password')
           }
 
-          // Return user object
+          // Update last login
+          await User.findByIdAndUpdate(user._id, {
+            lastLoginAt: new Date(),
+          })
+
+          // Return user object (exclude password)
           return {
             id: user._id.toString(),
             email: user.email,
@@ -64,24 +100,21 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
-    // Google OAuth Provider
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code'
+    // Google OAuth Provider (only if environment variables are set)
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        authorization: {
+          params: {
+            prompt: 'consent',
+            access_type: 'offline',
+            response_type: 'code',
+            scope: 'openid email profile',
+          }
         }
-      }
-    }),
-
-    // Additional providers can be added here
-    // GitHubProvider({
-    //   clientId: process.env.GITHUB_ID!,
-    //   clientSecret: process.env.GITHUB_SECRET!,
-    // }),
+      })
+    ] : []),
   ],
 
   // Session configuration
@@ -100,12 +133,16 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // JWT callback - runs whenever a JWT is created, updated, or accessed
     async jwt({ token, user, account, profile }) {
+      console.log('NextAuth: JWT callback', { token, user, account })
+      
       // Initial sign in
       if (user) {
         token.id = user.id
         token.role = user.role
         token.email = user.email
         token.name = user.name
+        token.picture = user.image
+        console.log('NextAuth: JWT callback - user data set', token)
       }
 
       // Handle OAuth sign-in
@@ -121,16 +158,26 @@ export const authOptions: NextAuthOptions = {
             existingUser = await User.create({
               name: profile.name,
               email: profile.email,
-              password: await bcrypt.hash(Math.random().toString(36), 12), // Random password for OAuth users
+              password: await bcrypt.hash(Math.random().toString(36) + Date.now(), 12), // More secure random password
               role: 'user',
-              image: profile.picture,
+              image: (profile as any).picture, // Type assertion for Google profile
+              emailVerified: true, // Google emails are verified
+              lastLoginAt: new Date(),
+            })
+          } else {
+            // Update existing user's last login
+            await User.findByIdAndUpdate(existingUser._id, {
+              lastLoginAt: new Date(),
+              image: (profile as any).picture, // Type assertion for Google profile
             })
           }
 
           token.id = existingUser._id.toString()
           token.role = existingUser.role
+          token.picture = (profile as any).picture // Type assertion for Google profile
         } catch (error) {
           console.error('OAuth user creation error:', error)
+          throw new Error('Failed to create or update user account')
         }
       }
 
@@ -139,13 +186,17 @@ export const authOptions: NextAuthOptions = {
 
     // Session callback - runs whenever a session is checked
     async session({ session, token }) {
+      console.log('NextAuth: Session callback', { token, session })
+      
       if (token && session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as 'user' | 'admin'
         session.user.email = token.email as string
         session.user.name = token.name as string
+        session.user.image = token.picture as string
       }
 
+      console.log('NextAuth: Session callback result', session)
       return session
     },
 
@@ -168,12 +219,18 @@ export const authOptions: NextAuthOptions = {
         // For OAuth providers
         if (account?.provider === 'google') {
           // Check if email is verified for Google
-          if (profile?.email_verified !== true) {
+          if ((profile as any)?.email_verified !== true) {
             return false
           }
 
-          // Additional checks can be added here
-          // For example: domain restrictions, user approval, etc.
+          // Check if user is banned
+          if (profile?.email) {
+            const existingUser = await User.findOne({ email: profile.email })
+            if (existingUser && existingUser.role === 'banned') {
+              return false
+            }
+          }
+
           return true
         }
 
@@ -193,7 +250,6 @@ export const authOptions: NextAuthOptions = {
   // Custom pages
   pages: {
     signIn: '/signin',
-    signUp: '/register',
     error: '/auth/error',
     verifyRequest: '/auth/verify-request',
     newUser: '/welcome',
@@ -204,8 +260,8 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, isNewUser }) {
       console.log(`User ${user.email} signed in via ${account?.provider}`)
       
-      // Analytics tracking
-      if (typeof window !== 'undefined' && window.gtag) {
+      // Analytics tracking (only in production)
+      if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'login', {
           method: account?.provider,
           user_id: user.id,
@@ -231,9 +287,6 @@ export const authOptions: NextAuthOptions = {
   // Security options
   useSecureCookies: process.env.NODE_ENV === 'production',
   
-  // Database adapter (optional - for storing sessions in database)
-  // adapter: MongoDBAdapter(clientPromise),
-
   // Debug mode for development
   debug: process.env.NODE_ENV === 'development',
 
@@ -244,6 +297,25 @@ export const authOptions: NextAuthOptions = {
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+      },
+    },
+    callbackUrl: {
+      name: `next-auth.callback-url`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+    csrfToken: {
+      name: `next-auth.csrf-token`,
       options: {
         httpOnly: true,
         sameSite: 'lax',

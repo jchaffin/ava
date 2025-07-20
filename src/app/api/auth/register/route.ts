@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '../../../../lib/mongoose'
-import { User } from '../../../../models'
+import connectDB from '@/lib/mongoose'
+import { User } from '@/models'
 import { CreateUserInput, ApiResponse } from '@/types'
 import bcrypt from 'bcryptjs'
 

@@ -1,5 +1,5 @@
 import { formatPrice, formatDate, formatNumber, formatPercentage } from './helpers'
-import { IProduct, IOrder, IUser } from '../types'
+import { IProduct, IOrder, IUser } from '@/types'
 
 // Product Formatters
 export const formatProductPrice = (product: IProduct): string => {

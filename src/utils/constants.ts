@@ -1,9 +1,4 @@
-// Product Categories
-export const CATEGORIES = [
-  'Beauty',
-] as const
 
-export type Category = typeof CATEGORIES[number]
 
 // Order Status
 export const ORDER_STATUS = {
@@ -218,12 +213,26 @@ export const DATE_FORMATS = {
 // Theme Configuration
 export const THEME = {
   COLORS: {
-    PRIMARY: '#3B82F6', // blue-500
-    SECONDARY: '#6B7280', // gray-500
-    SUCCESS: '#10B981', // green-500
-    WARNING: '#F59E0B', // yellow-500
-    DANGER: '#EF4444', // red-500
-    INFO: '#06B6D4', // cyan-500
+    PRIMARY: '#2D3748', // AVA deep charcoal
+    SECONDARY: '#4A5568', // AVA medium gray
+    ACCENT: '#E53E3E', // AVA warm red
+    GOLD: '#D69E2E', // AVA premium gold
+    CREAM: '#F7FAFC', // AVA soft cream
+    SUCCESS: '#38A169', // Green for success states
+    WARNING: '#D69E2E', // Gold for warnings
+    DANGER: '#E53E3E', // Red for errors
+    INFO: '#3182CE', // Blue for info
+  },
+  GRADIENTS: {
+    PRIMARY: 'linear-gradient(135deg, #2D3748 0%, #4A5568 100%)',
+    ACCENT: 'linear-gradient(135deg, #E53E3E 0%, #C53030 100%)',
+    GOLD: 'linear-gradient(135deg, #D69E2E 0%, #B7791F 100%)',
+    CREAM: 'linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%)',
+  },
+  SHADOWS: {
+    LIGHT: '0 2px 4px rgba(45, 55, 72, 0.1)',
+    MEDIUM: '0 4px 6px rgba(45, 55, 72, 0.15)',
+    HEAVY: '0 8px 16px rgba(45, 55, 72, 0.25)',
   },
   BREAKPOINTS: {
     SM: '640px',

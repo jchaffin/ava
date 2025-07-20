@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Layout, ProductCard } from '../../components'
-import { Button } from '../../components/ui'
-import { IProduct, ProductFilters } from '../../types'
-import { CATEGORIES } from '../../utils/constants'
+import Image from 'next/image'
+import { ProductCard } from '@/components'
+import { Button } from '@/components/ui'
+import { IProduct, ProductFilters } from '@/types'
+
 import { 
   FunnelIcon, 
   Squares2X2Icon, 
@@ -27,19 +28,11 @@ interface ProductsPageState {
 }
 
 interface FilterState {
-  category: string
-  priceRange: [number, number]
   sortBy: string
   sortOrder: 'asc' | 'desc'
   searchTerm: string
   inStock: boolean
   featured: boolean
-}
-
-interface PriceRange {
-  label: string
-  min: number
-  max: number
 }
 
 const ProductsPage: React.FC = () => {
@@ -58,8 +51,6 @@ const ProductsPage: React.FC = () => {
   })
 
   const [filters, setFilters] = useState<FilterState>({
-    category: searchParams.get('category') || '',
-    priceRange: [0, 1000],
     sortBy: searchParams.get('sortBy') || 'createdAt',
     sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
     searchTerm: searchParams.get('search') || '',
@@ -71,15 +62,6 @@ const ProductsPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false)
   const [productsPerPage] = useState(12)
 
-  const priceRanges: PriceRange[] = [
-    { label: 'All Prices', min: 0, max: 10000 },
-    { label: 'Under $25', min: 0, max: 25 },
-    { label: '$25 - $50', min: 25, max: 50 },
-    { label: '$50 - $100', min: 50, max: 100 },
-    { label: '$100 - $500', min: 100, max: 500 },
-    { label: 'Over $500', min: 500, max: 10000 },
-  ]
-
   const sortOptions = [
     { value: 'createdAt-desc', label: 'Newest First' },
     { value: 'createdAt-asc', label: 'Oldest First' },
@@ -90,13 +72,14 @@ const ProductsPage: React.FC = () => {
     { value: 'featured-desc', label: 'Featured First' },
   ]
 
+  // Fetch products on mount and when filters/page changes
   useEffect(() => {
     fetchProducts()
-  }, [filters, state.currentPage])
+  }, [filters.searchTerm, filters.inStock, filters.featured, filters.sortBy, filters.sortOrder, state.currentPage])
 
   useEffect(() => {
     updateURLParams()
-  }, [filters])
+  }, [filters.searchTerm, filters.sortBy, filters.sortOrder, filters.inStock, filters.featured])
 
   const fetchProducts = async () => {
     try {
@@ -111,15 +94,19 @@ const ProductsPage: React.FC = () => {
 
       const data = await response.json()
       
-      setState(prev => ({
-        ...prev,
-        products: data.products || data,
-        totalProducts: data.pagination?.totalProducts || data.length,
-        totalPages: data.pagination?.totalPages || 1,
-        hasNextPage: data.pagination?.hasNextPage || false,
-        hasPrevPage: data.pagination?.hasPrevPage || false,
-        loading: false,
-      }))
+      if (data.success && data.data) {
+        setState(prev => ({
+          ...prev,
+          products: data.data.products || [],
+          totalProducts: data.data.pagination?.totalProducts || 0,
+          totalPages: data.data.pagination?.totalPages || 1,
+          hasNextPage: data.data.pagination?.hasNextPage || false,
+          hasPrevPage: data.data.pagination?.hasPrevPage || false,
+          loading: false,
+        }))
+      } else {
+        throw new Error(data.message || 'Failed to fetch products')
+      }
 
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -134,12 +121,9 @@ const ProductsPage: React.FC = () => {
   const buildQueryParams = (): string => {
     const params = new URLSearchParams()
 
-    if (filters.category) params.append('category', filters.category)
     if (filters.searchTerm) params.append('search', filters.searchTerm)
     if (filters.inStock) params.append('inStock', 'true')
     if (filters.featured) params.append('featured', 'true')
-    if (filters.priceRange[0] > 0) params.append('minPrice', filters.priceRange[0].toString())
-    if (filters.priceRange[1] < 10000) params.append('maxPrice', filters.priceRange[1].toString())
     
     params.append('sortBy', filters.sortBy)
     params.append('sortOrder', filters.sortOrder)
@@ -152,7 +136,6 @@ const ProductsPage: React.FC = () => {
   const updateURLParams = () => {
     const params = new URLSearchParams()
 
-    if (filters.category) params.set('category', filters.category)
     if (filters.searchTerm) params.set('search', filters.searchTerm)
     if (filters.sortBy !== 'createdAt') params.set('sortBy', filters.sortBy)
     if (filters.sortOrder !== 'desc') params.set('sortOrder', filters.sortOrder)
@@ -192,8 +175,6 @@ const ProductsPage: React.FC = () => {
 
   const clearFilters = () => {
     setFilters({
-      category: '',
-      priceRange: [0, 1000],
       sortBy: 'createdAt',
       sortOrder: 'desc',
       searchTerm: '',
@@ -205,11 +186,9 @@ const ProductsPage: React.FC = () => {
 
   const getActiveFilterCount = (): number => {
     let count = 0
-    if (filters.category) count++
     if (filters.searchTerm) count++
     if (filters.inStock) count++
     if (filters.featured) count++
-    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) count++
     return count
   }
 
@@ -308,9 +287,12 @@ const ProductsPage: React.FC = () => {
         {state.products.map((product) => (
           <div key={product._id} className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6">
             <div className="flex-shrink-0">
-              <img
+              <Image
                 src={product.image}
                 alt={product.name}
+                width={96}
+                height={96}
+                sizes="96px"
                 className="w-24 h-24 object-cover rounded-lg"
               />
             </div>
@@ -328,9 +310,7 @@ const ProductsPage: React.FC = () => {
                 <span className="text-lg font-bold text-green-600">
                   ${product.price.toFixed(2)}
                 </span>
-                <span className="text-sm text-gray-500">
-                  {product.category}
-                </span>
+
                 {product.stock === 0 ? (
                   <span className="text-sm text-red-600">Out of Stock</span>
                 ) : (
@@ -351,14 +331,28 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
+    <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Prominent Logo Section */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/logo.png"
+              alt="AVA Premium Skincare"
+              width={300}
+              height={100}
+              className="h-20 w-auto"
+              priority
+            />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Premium Skincare Collection</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Discover your perfect beauty routine with our scientifically-formulated products designed for radiant, healthy skin.
+          </p>
+        </div>
+
+        {/* Search Bar */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Products</h1>
-          
-          {/* Search Bar */}
-          <form onSubmit={handleSearchSubmit} className="relative max-w-md">
+          <form onSubmit={handleSearchSubmit} className="relative max-w-md mx-auto">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
             </div>
@@ -367,7 +361,7 @@ const ProductsPage: React.FC = () => {
               value={filters.searchTerm}
               onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
               placeholder="Search products..."
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-[#2D3748] focus:border-[#2D3748] text-lg"
             />
           </form>
         </div>
@@ -390,56 +384,9 @@ const ProductsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Category Filter */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Category</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={filters.category === ''}
-                      onChange={() => handleFilterChange('category', '')}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">All Categories</span>
-                  </label>
-                  {CATEGORIES.map((category) => (
-                    <label key={category} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={filters.category === category}
-                        onChange={() => handleFilterChange('category', category)}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">{category}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
 
-              {/* Price Range Filter */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Price Range</h3>
-                <div className="space-y-2">
-                  {priceRanges.map((range) => (
-                    <label key={range.label} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="priceRange"
-                        checked={
-                          filters.priceRange[0] === range.min && 
-                          filters.priceRange[1] === range.max
-                        }
-                        onChange={() => handleFilterChange('priceRange', [range.min, range.max])}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                      />
-                      <span className="ml-2 text-sm text-gray-700">{range.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+
+
 
               {/* Additional Filters */}
               <div className="space-y-3">
@@ -582,7 +529,6 @@ const ProductsPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </Layout>
   )
 }
 

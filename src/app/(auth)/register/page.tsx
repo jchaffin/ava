@@ -1,96 +1,15 @@
-// pages/api/auth/register.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import connectDB from '@/lib/mongodb';
-import { User } from '@/models';
+'use client'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  await connectDB();
-
-  try {
-    const { email, password, name, confirmPassword } = req.body;
-
-    // Validation
-    if (!email || !password || !name || !confirmPassword) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: 'Passwords do not match' });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address' });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists with this email' });
-    }
-
-    // Hash password
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Create user
-    const user = new User({
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      name,
-      cart: [],
-      orders: [],
-    });
-
-    await user.save();
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Return success response (excluding password)
-    res.status(201).json({
-      message: 'User created successfully',
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-      },
-      token,
-    });
-
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}
-
-// pages/register.tsx
 import React, { useState } from 'react';
-import { GetServerSideProps } from 'next';
-import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, User, Mail, Lock, ShoppingBag } from 'lucide-react';
+import { useAuth } from '@/context';
+import toast from 'react-hot-toast';
 
 const Register: React.FC = () => {
   const router = useRouter();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -118,29 +37,24 @@ const Register: React.FC = () => {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const result = await register(formData);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
+      if (result.success) {
+        // Redirect based on user role or return URL
+        const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl');
+        if (callbackUrl) {
+          router.push(callbackUrl);
+        } else if (result.user?.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/');
+        }
+      } else {
+        setError(result.message || 'Registration failed');
       }
-
-      // Store token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      // Redirect to dashboard or home page
-      router.push('/');
-
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Registration failed');
+      setError('Registration failed');
+      toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -150,16 +64,11 @@ const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Head>
-        <title>Register - Ecommerce App</title>
-        <meta name="description" content="Create your account to start shopping" />
-      </Head>
-
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full">
+            <div className="bg-[#2D3748] p-3 rounded-full">
               <ShoppingBag className="h-8 w-8 text-white" />
             </div>
           </div>
@@ -189,7 +98,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -211,7 +120,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -233,7 +142,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Create a password"
                   />
                   <button
@@ -269,7 +178,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Confirm your password"
                   />
                   <button
@@ -299,7 +208,7 @@ const Register: React.FC = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#2D3748] hover:bg-[#4A5568] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D3748] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -315,11 +224,11 @@ const Register: React.FC = () => {
               </button>
             </div>
 
-            {/* Login Link */}
+            {/* Sign in Link */}
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link href="/signin" className="font-medium text-[#2D3748] hover:text-[#4A5568]">
                   Sign in here
                 </Link>
               </p>
@@ -331,11 +240,11 @@ const Register: React.FC = () => {
         <div className="text-center">
           <p className="text-xs text-gray-500">
             By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+            <Link href="/terms" className="text-[#2D3748] hover:text-[#4A5568]">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+            <Link href="/privacy" className="text-[#2D3748] hover:text-[#4A5568]">
               Privacy Policy
             </Link>
           </p>
@@ -343,15 +252,6 @@ const Register: React.FC = () => {
       </div>
     </div>
   );
-};
-
-// Check if user is already logged in
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  // You can check for existing session/token here
-  // For now, we'll just return props
-  return {
-    props: {},
-  };
 };
 
 export default Register;

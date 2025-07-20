@@ -6,6 +6,9 @@ export interface IUser extends Document {
   email: string
   password: string
   role: 'user' | 'admin'
+  image?: string
+  emailVerified?: boolean
+  lastLoginAt?: Date
   address?: {
     street?: string
     city?: string
@@ -23,6 +26,8 @@ export interface CreateUserInput {
   email: string
   password: string
   role?: 'user' | 'admin'
+  image?: string
+  emailVerified?: boolean
 }
 
 export interface LoginCredentials {

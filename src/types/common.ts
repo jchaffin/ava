@@ -118,21 +118,7 @@ export interface ToastState {
   dismissible?: boolean
 }
 
-export interface NotificationState {
-  id: string
-  type: 'info' | 'success' | 'warning' | 'error'
-  title: string
-  message: string
-  timestamp: Date
-  read: boolean
-  actions?: NotificationAction[]
-}
 
-export interface NotificationAction {
-  label: string
-  action: () => void
-  style?: 'primary' | 'secondary' | 'danger'
-}
 
 // Component Props Base Interfaces
 export interface BaseComponentProps {
@@ -314,17 +300,7 @@ export interface UserPreferences {
   language: string
   currency: string
   timezone: string
-  notifications: NotificationPreferences
   privacy: PrivacySettings
-}
-
-export interface NotificationPreferences {
-  email: boolean
-  push: boolean
-  sms: boolean
-  orderUpdates: boolean
-  promotions: boolean
-  newsletter: boolean
 }
 
 export interface PrivacySettings {

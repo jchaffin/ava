@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import connectDB from '../../../lib/mongoose'
-import { authOptions } from '../../../lib/auth'
-import { Product } from '../../../models'
-import { CreateProductInput, ApiResponse, IProduct, ProductFilters } from '../../../types'
+import connectDB from '@/lib/mongoose'
+import { authOptions } from '@/lib/auth'
+import { Product } from '@/models'
+import { CreateProductInput, ApiResponse, IProduct, ProductFilters, ProductLeanResult } from '@/types'
 
 interface ProductQueryParams {
   page?: string
   limit?: string
-  category?: string
   featured?: string
   inStock?: string
   search?: string
@@ -19,7 +18,7 @@ interface ProductQueryParams {
 }
 
 interface ProductsResponse {
-  products: IProduct[]
+  products: ProductLeanResult[]
   pagination: {
     currentPage: number
     totalPages: number
@@ -38,7 +37,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     const queryParams: ProductQueryParams = {
       page: searchParams.get('page') || '1',
       limit: searchParams.get('limit') || '12',
-      category: searchParams.get('category') || undefined,
       featured: searchParams.get('featured') || undefined,
       inStock: searchParams.get('inStock') || undefined,
       search: searchParams.get('search') || undefined,
@@ -79,7 +77,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     // Prepare response
     const response: ProductsResponse = {
-      products: products as IProduct[],
+      products: products as ProductLeanResult[],
       pagination: {
         currentPage: page,
         totalPages,
@@ -183,7 +181,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       description: body.description.trim(),
       price: parseFloat(body.price.toString()),
       image: body.image.trim(),
-      category: body.category,
       stock: parseInt(body.stock.toString()),
       featured: body.featured || false,
     }
@@ -255,10 +252,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
 function buildProductFilter(params: ProductQueryParams): Record<string, any> {
   const filter: Record<string, any> = {}
 
-  // Category filter
-  if (params.category) {
-    filter.category = params.category
-  }
+
 
   // Featured filter
   if (params.featured === 'true') {
@@ -293,7 +287,6 @@ function buildProductFilter(params: ProductQueryParams): Record<string, any> {
     filter.$or = [
       { name: searchRegex },
       { description: searchRegex },
-      { category: searchRegex },
     ]
   }
 
@@ -362,13 +355,7 @@ function validateProductData(data: CreateProductInput): Array<{ field: string; m
     errors.push({ field: 'image', message: 'Please provide a valid image URL' })
   }
 
-  // Category validation
-  const validCategories = ['Electronics', 'Clothing', 'Books', 'Home & Garden', 'Sports', 'Toys']
-  if (!data.category) {
-    errors.push({ field: 'category', message: 'Product category is required' })
-  } else if (!validCategories.includes(data.category)) {
-    errors.push({ field: 'category', message: 'Invalid product category' })
-  }
+
 
   // Stock validation
   if (data.stock === undefined || data.stock === null) {
@@ -407,13 +394,7 @@ export async function searchProducts(searchTerm: string, filters?: ProductFilter
     $or: [
       { name: searchRegex },
       { description: searchRegex },
-      { category: searchRegex },
     ]
-  }
-
-  // Apply additional filters
-  if (filters?.category) {
-    baseFilter.category = filters.category
   }
 
   if (filters?.featured) {
@@ -458,7 +439,6 @@ export async function getProductAnalytics(): Promise<{
   totalProducts: number
   outOfStockProducts: number
   lowStockProducts: number
-  categoryCounts: Record<string, number>
   averagePrice: number
 }> {
   await connectDB()
@@ -467,30 +447,20 @@ export async function getProductAnalytics(): Promise<{
     totalProducts,
     outOfStockProducts,
     lowStockProducts,
-    categoryStats,
     priceStats,
   ] = await Promise.all([
     Product.countDocuments(),
     Product.countDocuments({ stock: 0 }),
     Product.countDocuments({ stock: { $lte: 5, $gt: 0 } }),
     Product.aggregate([
-      { $group: { _id: '$category', count: { $sum: 1 } } }
-    ]),
-    Product.aggregate([
       { $group: { _id: null, averagePrice: { $avg: '$price' } } }
     ]),
   ])
-
-  const categoryCounts = categoryStats.reduce((acc, stat) => {
-    acc[stat._id] = stat.count
-    return acc
-  }, {})
 
   return {
     totalProducts,
     outOfStockProducts,
     lowStockProducts,
-    categoryCounts,
     averagePrice: priceStats[0]?.averagePrice || 0,
   }
 }
@@ -502,7 +472,6 @@ function sanitizeProductInput(input: CreateProductInput): CreateProductInput {
     description: input.description?.toString().trim().slice(0, 2000) || '',
     price: Math.max(0, Math.min(999999.99, parseFloat(input.price?.toString() || '0'))),
     image: input.image?.toString().trim() || '',
-    category: input.category || '',
     stock: Math.max(0, Math.min(999999, parseInt(input.stock?.toString() || '0'))),
     featured: Boolean(input.featured),
   }

@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Layout } from '../../../components'
-import { Button } from '../../../components/ui'
-import { useCart } from '../../../context'
-import { IProduct } from '../../../types'
-import { formatPrice } from '../../../utils/helpers'
+
+import { Button } from '@/components/ui'
+import { useCart } from '@/context'
+import { IProduct } from '@/types'
+import { formatPrice } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import { 
   HeartIcon, 
@@ -22,9 +22,9 @@ import {
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 
 interface ProductDetailsPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 interface ProductPageState {
@@ -49,7 +49,7 @@ interface ProductReview {
 }
 
 const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
-  const { id } = params
+  const { id } = React.use(params)
   const router = useRouter()
   const { data: session } = useSession()
   const { addItem } = useCart()
@@ -87,13 +87,17 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
         throw new Error(`Failed to fetch product: ${response.statusText}`)
       }
 
-      const product: IProduct = await response.json()
+      const responseData = await response.json()
       
-      setState(prev => ({
-        ...prev,
-        product,
-        loading: false,
-      }))
+      if (responseData.success && responseData.data) {
+        setState(prev => ({
+          ...prev,
+          product: responseData.data,
+          loading: false,
+        }))
+      } else {
+        throw new Error(responseData.message || 'Failed to fetch product')
+      }
 
       // Check if product is in wishlist (if user is logged in)
       if (session?.user?.id) {
@@ -284,48 +288,44 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
   if (state.loading) {
     return (
-      <Layout>
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="animate-pulse">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="aspect-square bg-gray-300 rounded-lg"></div>
-              <div className="space-y-4">
-                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                <div className="h-6 bg-gray-300 rounded w-1/4"></div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                </div>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="aspect-square bg-gray-300 rounded-lg"></div>
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded"></div>
+                <div className="h-4 bg-gray-300 rounded"></div>
+                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
               </div>
             </div>
           </div>
         </div>
-      </Layout>
+      </div>
     )
   }
 
   if (state.error || !state.product) {
     return (
-      <Layout>
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Product Not Found
-            </h1>
-            <p className="text-gray-600 mb-8">
-              {state.error || 'The product you are looking for does not exist.'}
-            </p>
-            <Link href="/products">
-              <Button>
-                <ArrowLeftIcon className="w-4 h-4 mr-2" />
-                Back to Products
-              </Button>
-            </Link>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Product Not Found
+          </h1>
+          <p className="text-gray-600 mb-8">
+            {state.error || 'The product you are looking for does not exist.'}
+          </p>
+          <Link href="/products">
+            <Button>
+              <ArrowLeftIcon className="w-4 h-4 mr-2" />
+              Back to Products
+            </Button>
+          </Link>
         </div>
-      </Layout>
+      </div>
     )
   }
 
@@ -335,17 +335,12 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
   const isLowStock = product.stock > 0 && product.stock <= 5
 
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
           <Link href="/" className="hover:text-gray-700">Home</Link>
           <span>/</span>
           <Link href="/products" className="hover:text-gray-700">Products</Link>
-          <span>/</span>
-          <Link href={`/products?category=${product.category}`} className="hover:text-gray-700">
-            {product.category}
-          </Link>
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>
@@ -358,6 +353,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                 src={product.image}
                 alt={product.name}
                 fill
+                sizes={product.sizes || '(max-width: 768px) 100vw, 50vw'}
                 className="object-cover"
                 priority
               />
@@ -387,6 +383,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                     alt={`${product.name} view ${index}`}
                     width={100}
                     height={100}
+                    sizes="100px"
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
@@ -460,12 +457,8 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Category</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{product.category}</dd>
-                </div>
-                <div>
                   <dt className="text-sm font-medium text-gray-500">SKU</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{product._id.slice(-8).toUpperCase()}</dd>
+                  <dd className="mt-1 text-sm text-gray-900">{product._id?.slice(-8).toUpperCase() || 'N/A'}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Availability</dt>
@@ -613,7 +606,6 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
           )}
         </div>
       </div>
-    </Layout>
   )
 }
 

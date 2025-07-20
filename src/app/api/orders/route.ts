@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import connectDB from '../../../lib/mongoose'
-import { authOptions } from '../../../lib/auth'
-import { Order, Product, User } from '../../../models'
-import { CreateOrderInput, ApiResponse, IOrder, IOrderItem } from '../../../types'
+import connectDB from '@/lib/mongoose'
+import { authOptions } from '@/lib/auth'
+import { Order, Product, User } from '@/models'
+import { CreateOrderInput, ApiResponse, IOrder, IOrderItem } from '@/types'
 
 interface OrderQueryParams {
   page?: string

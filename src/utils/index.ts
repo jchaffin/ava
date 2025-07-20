@@ -12,13 +12,12 @@ export {
   debounce,
   throttle,
   storage,
-  validateEmail,
-  validatePassword,
+  isValidEmail,
+  isValidPassword,
   isValidUrl,
 } from './helpers'
 
 export {
-  CATEGORIES,
   ORDER_STATUS,
   PAYMENT_METHODS,
   USER_ROLES,
