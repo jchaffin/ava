@@ -47,8 +47,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Validate and sanitize parameters
-    const page = Math.max(1, parseInt(queryParams.page))
-    const limit = Math.min(50, Math.max(1, parseInt(queryParams.limit))) // Max 50 products per page
+    const page = Math.max(1, parseInt(queryParams.page || '1'))
+    const limit = Math.min(50, Math.max(1, parseInt(queryParams.limit || '10'))) // Max 50 products per page
     const skip = (page - 1) * limit
 
     // Connect to database
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 }
 
 // POST /api/products - Create new product (Admin only)
-export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<IProduct>>> {
+export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<IProduct> | { success: false; message: string; error: string; data: { validationErrors: { field: string; message: string; }[] } }>> {
   try {
     // Check authentication and authorization
     const session = await getServerSession(authOptions)
@@ -203,12 +203,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       { status: 201 }
     )
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating product:', error)
 
     // Handle MongoDB validation errors
     if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map((err: any) => ({
+      const validationErrors = Object.values(error.errors || {}).map((err: any) => ({
         field: err.path,
         message: err.message,
       }))
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
 
     // Handle MongoDB duplicate key error
     if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0]
+      const field = Object.keys(error.keyPattern || {})[0]
       return NextResponse.json(
         {
           success: false,
@@ -403,8 +403,6 @@ export async function searchProducts(searchTerm: string, filters?: ProductFilter
 
   const products = await Product.find(baseFilter)
     .sort({ 
-      // Boost exact matches in name
-      name: searchTerm ? { $regex: new RegExp(`^${searchTerm}`, 'i') } : undefined,
       createdAt: -1 
     })
     .limit(filters?.limit || 20)

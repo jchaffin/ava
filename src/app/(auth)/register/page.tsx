@@ -52,7 +52,7 @@ const Register: React.FC = () => {
       } else {
         setError(result.message || 'Registration failed');
       }
-    } catch (error) {
+    } catch {
       setError('Registration failed');
       toast.error('An unexpected error occurred');
     } finally {

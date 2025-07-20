@@ -58,7 +58,7 @@ const Layout: React.FC<LayoutProps> = ({
   showFooter = true,
   className = '' 
 }) => {
-  const router = useRouter()
+
   const pathname = usePathname()
   const { getTotalItems } = useCart()
   const { user, isAuthenticated, isLoading, hasRole, logout } = useAuth()

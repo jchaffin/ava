@@ -27,7 +27,7 @@ const NotFound = () => {
               Page Not Found
             </h2>
             <p className="text-gray-600 mb-8">
-              Oops! The page you're looking for doesn't exist.
+              Oops! The page you&apos;re looking for doesn&apos;t exist.
             </p>
           </div>
         </div>
@@ -95,7 +95,7 @@ const NotFound = () => {
         {/* Search Suggestion */}
         <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
           <p className="text-sm text-gray-600 mb-2">
-            Can't find what you're looking for?
+            Can&apos;t find what you&apos;re looking for?
           </p>
           <Link
             href="/products"

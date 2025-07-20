@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { 
   HeartIcon, 
   SparklesIcon, 
@@ -28,7 +29,7 @@ const AboutPage: React.FC = () => {
     {
       icon: GlobeAltIcon,
       title: "Sustainability",
-      description: "We're committed to eco-friendly practices and sustainable packaging solutions."
+      description: "We&apos;re committed to eco-friendly practices and sustainable packaging solutions."
     }
   ]
 
@@ -56,7 +57,7 @@ const AboutPage: React.FC = () => {
       <div className="text-center mb-16">
         <h1 className="text-5xl font-bold text-gray-900 mb-6">About AVA Skincare</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          We're passionate about creating premium skincare products that help you discover your natural beauty. 
+          We&apos;re passionate about creating premium skincare products that help you discover your natural beauty. 
           Our scientifically-formulated solutions combine the best of nature and innovation.
         </p>
       </div>
@@ -175,7 +176,7 @@ const AboutPage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Customer Satisfaction</h3>
               <p className="text-gray-600">
                 Your satisfaction is our priority. We offer a 30-day return policy and dedicated 
-                customer support to ensure you're completely happy with your purchase.
+                customer support to ensure you&apos;re completely happy with your purchase.
               </p>
             </div>
           </div>
@@ -190,18 +191,18 @@ const AboutPage: React.FC = () => {
           radiant, healthy skin.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
+          <Link
             href="/products"
             className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
           >
             Shop Products
-          </a>
-          <a
+          </Link>
+          <Link
             href="/contact"
             className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { Order } from '@/models'
 import { ApiResponse } from '@/types'
 
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<any>>> {
+export async function GET(): Promise<NextResponse<ApiResponse<any>>> {
   try {
     // Check authentication and authorization
     const session = await getServerSession(authOptions)

@@ -62,9 +62,9 @@ export default function PaymentSuccessPage() {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
             <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
             <ul className="text-sm text-blue-800 space-y-1 text-left">
-              <li>• You'll receive an order confirmation email</li>
-              <li>• We'll process and ship your order within 1-2 business days</li>
-              <li>• You'll get tracking information once shipped</li>
+              <li>• You&apos;ll receive an order confirmation email</li>
+              <li>• We&apos;ll process and ship your order within 1-2 business days</li>
+              <li>• You&apos;ll get tracking information once shipped</li>
               <li>• Enjoy your new skincare products!</li>
             </ul>
           </div>

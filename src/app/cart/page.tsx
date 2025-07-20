@@ -19,10 +19,7 @@ import {
   ShieldCheckIcon,
   CreditCardIcon,
 } from '@heroicons/react/24/outline'
-import { 
-  ShoppingBagIcon as ShoppingBagSolidIcon,
-  HeartIcon,
-} from '@heroicons/react/24/solid'
+
 import toast from 'react-hot-toast'
 
 const CartPage: React.FC = () => {
@@ -111,7 +108,7 @@ const CartPage: React.FC = () => {
               Your cart is empty
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Looks like you haven't added any products to your cart yet. Start shopping to discover our amazing skincare products.
+              Looks like you haven&apos;t added any products to your cart yet. Start shopping to discover our amazing skincare products.
             </p>
             <div className="space-y-4">
               <Link href="/products">
@@ -314,7 +311,7 @@ const CartPage: React.FC = () => {
                   <ApplePayButton
                     amount={total}
                     currency="usd"
-                    onSuccess={(paymentIntent) => {
+                    onSuccess={() => {
                       toast.success('Payment successful!')
                       clearCart()
                       router.push('/orders/success?success=true')

@@ -12,9 +12,7 @@ interface WishlistItem {
 }
 
 // GET /api/wishlist - Get user's wishlist
-export async function GET(
-  request: NextRequest
-): Promise<NextResponse<ApiResponse<{ items: WishlistItem[] }>>> {
+export async function GET(): Promise<NextResponse<ApiResponse<{ items: WishlistItem[] }>>> {
   try {
     // Check authentication
     const session = await getServerSession(authOptions)
@@ -34,7 +32,6 @@ export async function GET(
 
     // In a real app, you would have a Wishlist model
     // For now, we'll use mock data or localStorage-based wishlist
-    const userId = session.user.id
 
     // Mock wishlist data - in a real app, this would come from the database
     const mockWishlistItems: WishlistItem[] = [

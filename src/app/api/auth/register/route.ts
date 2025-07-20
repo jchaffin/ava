@@ -104,12 +104,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       { status: 201 }
     )
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration error:', error)
 
     // Handle MongoDB validation errors
     if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map((err: any) => ({
+      const validationErrors = Object.values(error.errors || {}).map((err: any) => ({
         field: err.path,
         message: err.message,
       }))
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
 
     // Handle MongoDB duplicate key error
     if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0]
+      const field = Object.keys(error.keyPattern || {})[0]
       return NextResponse.json(
         {
           success: false,
@@ -397,8 +397,26 @@ export async function POST_ENHANCED(request: NextRequest): Promise<NextResponse<
 
     // Continue with existing validation and user creation logic...
     // (Same as the original POST function above)
+    
+    // For now, return a placeholder response
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Enhanced registration not yet implemented',
+        error: 'NOT_IMPLEMENTED',
+      },
+      { status: 501 }
+    )
 
-  } catch (error) {
+  } catch (error: any) {
     // Same error handling as above...
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Internal server error',
+        error: 'SERVER_ERROR',
+      },
+      { status: 500 }
+    )
   }
 }

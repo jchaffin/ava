@@ -179,7 +179,7 @@ export const shuffle = <T>(array: T[]): T[] => {
 }
 
 export const unique = <T>(array: T[]): T[] => {
-  return [...new Set(array)]
+  return Array.from(new Set(array))
 }
 
 export const groupBy = <T>(array: T[], key: keyof T): Record<string, T[]> => {
@@ -192,7 +192,7 @@ export const groupBy = <T>(array: T[], key: keyof T): Record<string, T[]> => {
 }
 
 // Object Utilities
-export const pick = <T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
+export const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
   const result = {} as Pick<T, K>
   keys.forEach((key) => {
     if (key in obj) {
@@ -238,7 +238,8 @@ export const parseQueryString = (queryString: string): Record<string, string | s
   const params = new URLSearchParams(queryString)
   const result: Record<string, string | string[]> = {}
   
-  for (const [key, value] of params.entries()) {
+  const entries = Array.from(params.entries())
+  for (const [key, value] of entries) {
     if (result[key]) {
       if (Array.isArray(result[key])) {
         (result[key] as string[]).push(value)

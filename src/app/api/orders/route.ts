@@ -18,7 +18,7 @@ interface CreateOrderRequestBody extends CreateOrderInput {
 }
 
 // GET /api/orders - Fetch user orders
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<IOrder[]>>> {
+export async function GET(request: NextRequest): Promise<NextResponse<{ success: true; message: string; data: any[]; pagination: { currentPage: number; totalPages: number; totalOrders: number; hasNextPage: boolean; hasPrevPage: boolean; limit: number } } | { success: false; message: string; error: string }>> {
   try {
     // Check authentication
     const session = await getServerSession(authOptions)
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Validate query parameters
-    const page = Math.max(1, parseInt(queryParams.page))
-    const limit = Math.min(50, Math.max(1, parseInt(queryParams.limit))) // Max 50 orders per page
+    const page = Math.max(1, parseInt(queryParams.page || '1'))
+    const limit = Math.min(50, Math.max(1, parseInt(queryParams.limit || '10'))) // Max 50 orders per page
     const skip = (page - 1) * limit
 
     // Connect to database
@@ -74,7 +74,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     // Build sort object
     const sort: any = {}
-    sort[queryParams.sortBy] = queryParams.sortOrder === 'asc' ? 1 : -1
+    if (queryParams.sortBy) {
+      sort[queryParams.sortBy] = queryParams.sortOrder === 'asc' ? 1 : -1
+    }
 
     // Fetch orders with pagination
     const [orders, totalOrders] = await Promise.all([
@@ -127,7 +129,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 }
 
 // POST /api/orders - Create new order
-export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<IOrder>>> {
+export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<IOrder> | { success: false; message: string; error: string; data: { validationErrors: { field: string; message: string; }[] } }>> {
   try {
     // Check authentication
     const session = await getServerSession(authOptions)
@@ -239,12 +241,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       { status: 201 }
     )
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating order:', error)
 
     // Handle MongoDB validation errors
     if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map((err: any) => ({
+      const validationErrors = Object.values(error.errors || {}).map((err: any) => ({
         field: err.path,
         message: err.message,
       }))
@@ -286,7 +288,7 @@ function validateOrderData(data: CreateOrderRequestBody): Array<{ field: string;
   } else {
     const requiredAddressFields = ['street', 'city', 'state', 'zipCode', 'country']
     for (const field of requiredAddressFields) {
-      if (!data.shippingAddress[field]) {
+      if (!(field in data.shippingAddress) || !(data.shippingAddress as any)[field]) {
         errors.push({ field: `shippingAddress.${field}`, message: `${field} is required` })
       }
     }

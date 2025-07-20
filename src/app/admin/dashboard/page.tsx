@@ -12,15 +12,11 @@ import {
   TrendingUp,
   TrendingDown,
   Eye,
-  Star,
   AlertTriangle,
   Plus,
   Edit,
-  Trash2,
   BarChart3,
   Calendar,
-  Filter,
-  Search,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -127,13 +123,7 @@ const AdminDashboard: React.FC = () => {
     }).format(amount)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  }
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -191,7 +181,7 @@ const AdminDashboard: React.FC = () => {
                   <Calendar className="w-4 h-4 text-gray-400" />
                   <select
                     value={selectedPeriod}
-                    onChange={(e) => setSelectedPeriod(e.target.value as any)}
+                    onChange={(e) => setSelectedPeriod(e.target.value as 'day' | 'week' | 'month' | 'year')}
                     className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="day">Today</option>

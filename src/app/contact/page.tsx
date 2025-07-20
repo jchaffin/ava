@@ -79,7 +79,7 @@ const ContactPage: React.FC = () => {
         category: 'general',
         priority: 'normal'
       })
-    } catch (error) {
+    } catch {
       toast.error('Failed to send message. Please try again.')
     } finally {
       setLoading(false)
@@ -92,7 +92,7 @@ const ContactPage: React.FC = () => {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Have a question or need help? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          Have a question or need help? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
         </p>
       </div>
 

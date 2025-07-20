@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
-import { useSession, signIn, signOut, SessionProvider, getSession } from 'next-auth/react'
+import { useSession, signIn, signOut, SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { IUser } from '@/types'
 import toast from 'react-hot-toast'
@@ -110,7 +110,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       console.log('AuthContext: Clearing user')
       setUser(null)
     }
-  }, [session, status])
+  }, [session, status, user])
 
   // Add computed properties for better reactivity
   const isAuthenticated = !!user
@@ -496,7 +496,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requireRole,
   fallback,
-  redirectTo = '/signin',
 }) => {
   const { isAuthenticated, hasRole, isLoading } = useAuth()
 

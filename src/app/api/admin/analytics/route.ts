@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import connectDB from '@/lib/mongoose'
 import { authOptions } from '@/lib/auth'
-import { Order, Product, User } from '@/models'
+import { Order, User } from '@/models'
 
 export async function GET(request: NextRequest) {
   try {

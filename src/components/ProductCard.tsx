@@ -15,7 +15,6 @@ import {
   ShoppingCartIcon,
   EyeIcon,
   StarIcon,
-  TagIcon,
   TruckIcon,
 } from '@heroicons/react/24/outline'
 import {
@@ -110,7 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     try {
       addItem(product)
       toast.success(`${product.name} added to cart!`)
-    } catch (error) {
+    } catch {
       toast.error('Failed to add item to cart')
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
@@ -143,7 +142,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ? 'Added to wishlist' 
           : 'Removed from wishlist'
       )
-    } catch (error) {
+    } catch {
       toast.error('Failed to update wishlist')
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
