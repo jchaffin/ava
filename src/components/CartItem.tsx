@@ -30,7 +30,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
   const totalPrice = item.price * item.quantity;
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+    <div className="flex items-center gap-4 p-4 bg-theme-primary rounded-lg shadow-sm border border-theme hover:shadow-md transition-shadow">
       {/* Product Image */}
       <div className="relative w-20 h-20 flex-shrink-0">
         <Image
@@ -43,15 +43,15 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
 
       {/* Product Details */}
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
+        <h3 className="font-semibold text-theme-primary truncate">{item.name}</h3>
 
         {item.description && (
-          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+          <p className="text-sm text-theme-secondary mt-1 line-clamp-2">
             {item.description}
           </p>
         )}
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-lg font-bold text-gray-900">
+          <span className="text-lg font-bold text-theme-primary">
             ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
           </span>
         </div>
@@ -67,7 +67,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
       <div className="flex items-center gap-2">
         <button
           onClick={() => handleQuantityChange(item.quantity - 1)}
-          className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+          className="p-1 rounded-md hover:bg-theme-secondary transition-colors"
           aria-label="Decrease quantity"
           disabled={item.quantity <= 1}
         >
@@ -78,7 +78,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
         
         <button
           onClick={() => handleQuantityChange(item.quantity + 1)}
-          className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+          className="p-1 rounded-md hover:bg-theme-secondary transition-colors"
           aria-label="Increase quantity"
           disabled={item.quantity >= stock}
         >

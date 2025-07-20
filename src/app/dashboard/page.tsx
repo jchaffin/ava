@@ -40,6 +40,7 @@ const DashboardPage: React.FC = () => {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { hasRole } = useAuth()
+  const [isClient, setIsClient] = useState(false)
   
   const [stats, setStats] = useState<DashboardStats>({
     totalOrders: 0,
@@ -53,6 +54,12 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+    
     if (status === 'loading') return
     
     if (status === 'unauthenticated') {
@@ -61,7 +68,7 @@ const DashboardPage: React.FC = () => {
     }
 
     fetchDashboardData()
-  }, [status, session])
+  }, [status, session, isClient])
 
   const fetchDashboardData = async () => {
     try {
@@ -171,10 +178,10 @@ const DashboardPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-theme-primary">
                 Welcome back, {session.user?.name?.split(' ')[0]}!
               </h1>
-              <p className="mt-1 text-gray-600">
+              <p className="mt-1 text-theme-secondary">
                 Here&apos;s what&apos;s happening with your account today.
               </p>
             </div>
@@ -201,8 +208,8 @@ const DashboardPage: React.FC = () => {
                 <ShoppingBagIcon className="h-8 w-8 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                <p className="text-sm font-medium text-theme-secondary">Total Orders</p>
+                <p className="text-2xl font-bold text-theme-primary">{stats.totalOrders}</p>
               </div>
             </div>
           </div>
@@ -213,8 +220,8 @@ const DashboardPage: React.FC = () => {
                 <CurrencyDollarIcon className="h-8 w-8 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Spent</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalSpent)}</p>
+                <p className="text-sm font-medium text-theme-secondary">Total Spent</p>
+                <p className="text-2xl font-bold text-theme-primary">{formatCurrency(stats.totalSpent)}</p>
               </div>
             </div>
           </div>
@@ -225,8 +232,8 @@ const DashboardPage: React.FC = () => {
                 <HeartIcon className="h-8 w-8 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Wishlist Items</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.wishlistItems}</p>
+                <p className="text-sm font-medium text-theme-secondary">Wishlist Items</p>
+                <p className="text-2xl font-bold text-theme-primary">{stats.wishlistItems}</p>
               </div>
             </div>
           </div>
@@ -237,8 +244,8 @@ const DashboardPage: React.FC = () => {
                 <StarIcon className="h-8 w-8 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Reviews</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.reviews}</p>
+                <p className="text-sm font-medium text-theme-secondary">Reviews</p>
+                <p className="text-2xl font-bold text-theme-primary">{stats.reviews}</p>
               </div>
             </div>
           </div>
@@ -250,7 +257,7 @@ const DashboardPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
+                  <h2 className="text-lg font-semibold text-theme-primary">Recent Orders</h2>
                   <Link 
                     href="/orders"
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center"
@@ -275,16 +282,16 @@ const DashboardPage: React.FC = () => {
                               </div>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-sm font-medium text-theme-primary">
                                 Order #{order._id.slice(-8)}
                               </p>
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-theme-muted">
                                 {order.orderItems.length} items • {formatDate(order.createdAt)}
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-theme-primary">
                               {formatCurrency(order.totalPrice)}
                             </p>
                             <Link 
@@ -301,7 +308,7 @@ const DashboardPage: React.FC = () => {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingBagIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 mb-4">No orders yet</p>
+                    <p className="text-theme-muted mb-4">No orders yet</p>
                     <Button onClick={() => router.push('/products')}>
                       Start Shopping
                     </Button>
@@ -316,13 +323,13 @@ const DashboardPage: React.FC = () => {
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+                <h2 className="text-lg font-semibold text-theme-primary">Quick Actions</h2>
               </div>
               <div className="p-6">
                 <div className="space-y-3">
                   <Link
                     href="/profile"
-                    className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-center p-3 ava-text-tertiary hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <UserIcon className="h-5 w-5 mr-3 text-gray-400" />
                     <span className="text-sm font-medium">Edit Profile</span>
@@ -330,7 +337,7 @@ const DashboardPage: React.FC = () => {
                   
                   <Link
                     href="/orders"
-                    className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-center p-3 ava-text-tertiary hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <ClipboardDocumentListIcon className="h-5 w-5 mr-3 text-gray-400" />
                     <span className="text-sm font-medium">View Orders</span>
@@ -338,7 +345,7 @@ const DashboardPage: React.FC = () => {
                   
                   <Link
                     href="/wishlist"
-                    className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-center p-3 ava-text-tertiary hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <HeartIcon className="h-5 w-5 mr-3 text-gray-400" />
                     <span className="text-sm font-medium">Wishlist</span>
@@ -346,7 +353,7 @@ const DashboardPage: React.FC = () => {
                   
                   <Link
                     href="/settings"
-                    className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="flex items-center p-3 ava-text-tertiary hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <CogIcon className="h-5 w-5 mr-3 text-gray-400" />
                     <span className="text-sm font-medium">Settings</span>
@@ -355,7 +362,7 @@ const DashboardPage: React.FC = () => {
                   {hasRole('admin') && (
                     <Link
                       href="/admin"
-                      className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="flex items-center p-3 ava-text-tertiary hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       <ChartBarIcon className="h-5 w-5 mr-3 text-gray-400" />
                       <span className="text-sm font-medium">Admin Dashboard</span>
@@ -369,7 +376,7 @@ const DashboardPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">Featured Products</h2>
+                  <h2 className="text-lg font-semibold text-theme-primary">Featured Products</h2>
                   <Link 
                     href="/products"
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -393,10 +400,10 @@ const DashboardPage: React.FC = () => {
                           className="h-12 w-12 object-cover rounded-lg"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-sm font-medium text-theme-primary truncate">
                             {product.name}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-theme-muted">
                             {formatCurrency(product.price)}
                           </p>
                         </div>
@@ -405,7 +412,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <p className="text-gray-500 text-sm">No featured products</p>
+                    <p className="text-theme-muted text-sm">No featured products</p>
                   </div>
                 )}
               </div>

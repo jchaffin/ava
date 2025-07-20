@@ -87,11 +87,11 @@ const ContactPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 bg-white min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 py-8 bg-theme-primary min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-theme-primary mb-4">Contact Us</h1>
+        <p className="text-lg text-theme-secondary max-w-2xl mx-auto">
           Have a question or need help? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
         </p>
       </div>
@@ -99,8 +99,8 @@ const ContactPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact Form */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+          <div className="bg-theme-primary border border-theme rounded-lg p-8 shadow-lg">
+            <h2 className="text-2xl font-bold text-theme-primary mb-6">Send us a Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -123,7 +123,7 @@ const ContactPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium ava-text-tertiary mb-2">
                     Category
                   </label>
                   <select
@@ -139,7 +139,7 @@ const ContactPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium ava-text-tertiary mb-2">
                     Priority
                   </label>
                   <select
@@ -165,7 +165,7 @@ const ContactPage: React.FC = () => {
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium ava-text-tertiary mb-2">
                   Message
                 </label>
                 <textarea
@@ -195,12 +195,12 @@ const ContactPage: React.FC = () => {
         <div className="space-y-6">
           {/* Contact Details */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
+            <h3 className="text-lg font-semibold text-theme-primary mb-4">Get in Touch</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <EnvelopeIcon className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="font-medium text-gray-900">Email</p>
+                  <p className="font-medium text-theme-primary">Email</p>
                   <a href={`mailto:${contactInfo.email}`} className="text-blue-600 hover:underline">
                     {contactInfo.email}
                   </a>
@@ -209,7 +209,7 @@ const ContactPage: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <PhoneIcon className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="font-medium text-gray-900">Phone</p>
+                  <p className="font-medium text-theme-primary">Phone</p>
                   <a href={`tel:${contactInfo.phone}`} className="text-blue-600 hover:underline">
                     {contactInfo.phone}
                   </a>
@@ -218,15 +218,15 @@ const ContactPage: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <MapPinIcon className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="font-medium text-gray-900">Address</p>
-                  <p className="text-gray-600 whitespace-pre-line">{contactInfo.address}</p>
+                  <p className="font-medium text-theme-primary">Address</p>
+                  <p className="text-theme-secondary whitespace-pre-line">{contactInfo.address}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <ClockIcon className="w-5 h-5 text-gray-400 mt-1" />
                 <div>
-                  <p className="font-medium text-gray-900">Business Hours</p>
-                  <p className="text-gray-600 whitespace-pre-line">{contactInfo.hours}</p>
+                  <p className="font-medium text-theme-primary">Business Hours</p>
+                  <p className="text-theme-secondary whitespace-pre-line">{contactInfo.hours}</p>
                 </div>
               </div>
             </div>
@@ -234,28 +234,28 @@ const ContactPage: React.FC = () => {
 
           {/* Quick Actions */}
           <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-semibold text-theme-primary mb-4">Quick Actions</h3>
             <div className="space-y-3">
               <a
                 href="/faq"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
               >
                 <DocumentTextIcon className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-700">Browse FAQ</span>
+                <span className="ava-text-tertiary">Browse FAQ</span>
               </a>
               <a
                 href="/support"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
               >
                 <ChatBubbleLeftRightIcon className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-700">Get Support</span>
+                <span className="ava-text-tertiary">Get Support</span>
               </a>
               <a
                 href="/orders"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
               >
                 <DocumentTextIcon className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-700">Track Order</span>
+                <span className="ava-text-tertiary">Track Order</span>
               </a>
             </div>
           </div>

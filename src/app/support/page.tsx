@@ -83,8 +83,8 @@ const SupportPage: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Customer Support</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-theme-primary mb-4">Customer Support</h1>
+        <p className="text-lg text-theme-secondary max-w-2xl mx-auto">
           We&apos;re here to help! Choose the best way to get in touch with our customer service team.
         </p>
       </div>
@@ -94,26 +94,26 @@ const SupportPage: React.FC = () => {
         {supportOptions.map((option, index) => (
           <div 
             key={index} 
-            className={`bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200 ${
-              option.priority === 'high' ? 'border-blue-200' : 'border-gray-200'
+            className={`bg-theme-primary border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200 ${
+              option.priority === 'high' ? 'border-blue-200' : 'border-theme'
             }`}
           >
             <div className="flex items-start space-x-4">
               <div className={`p-3 rounded-lg ${
-                option.priority === 'high' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'
+                option.priority === 'high' ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-theme-secondary'
               }`}>
                 <option.icon className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{option.title}</h3>
-                <p className="text-gray-600 text-sm mb-4">{option.description}</p>
+                <h3 className="text-lg font-semibold text-theme-primary mb-2">{option.title}</h3>
+                <p className="text-theme-secondary text-sm mb-4">{option.description}</p>
                 {option.href ? (
                   <a
                     href={option.href}
                     className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                       option.priority === 'high' 
-                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-theme-primary hover:bg-blue-700' 
+                        : 'bg-gray-100 ava-text-tertiary hover:bg-gray-200'
                     }`}
                   >
                     Get Help
@@ -123,8 +123,8 @@ const SupportPage: React.FC = () => {
                     onClick={option.action}
                     className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
                       option.priority === 'high' 
-                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-theme-primary hover:bg-blue-700' 
+                        : 'bg-gray-100 ava-text-tertiary hover:bg-gray-200'
                     }`}
                   >
                     Get Help
@@ -139,40 +139,40 @@ const SupportPage: React.FC = () => {
       {/* Contact Information */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Contact Details */}
-        <div className="bg-white border border-gray-200 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
+        <div className="bg-theme-primary border border-theme rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-theme-primary mb-6">Contact Information</h2>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <PhoneIcon className="w-5 h-5 text-gray-400" />
               <div>
-                <p className="font-medium text-gray-900">Phone</p>
-                <p className="text-gray-600">{contactInfo.phone}</p>
+                <p className="font-medium text-theme-primary">Phone</p>
+                <p className="text-theme-secondary">{contactInfo.phone}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <EnvelopeIcon className="w-5 h-5 text-gray-400" />
+              <EnvelopeIcon className="w-5 h-5 text-theme-muted" />
               <div>
-                <p className="font-medium text-gray-900">Email</p>
-                <p className="text-gray-600">{contactInfo.email}</p>
+                <p className="font-medium text-theme-primary">Email</p>
+                <p className="text-theme-secondary">{contactInfo.email}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <ClockIcon className="w-5 h-5 text-gray-400" />
+              <ClockIcon className="w-5 h-5 text-theme-muted" />
               <div>
-                <p className="font-medium text-gray-900">Business Hours</p>
-                <p className="text-gray-600">{contactInfo.hours}</p>
+                <p className="font-medium text-theme-primary">Business Hours</p>
+                <p className="text-theme-secondary">{contactInfo.hours}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Quick Help */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Help</h2>
+        <div className="bg-theme-secondary border border-theme rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-theme-primary mb-6">Quick Help</h2>
           <div className="space-y-4">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Common Issues</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <h3 className="font-semibold text-theme-primary mb-2">Common Issues</h3>
+              <ul className="space-y-2 text-sm text-theme-secondary">
                 <li>• Order tracking and status</li>
                 <li>• Product recommendations</li>
                 <li>• Return and refund requests</li>
@@ -181,8 +181,8 @@ const SupportPage: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Before Contacting Us</h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <h3 className="font-semibold text-theme-primary mb-2">Before Contacting Us</h3>
+              <ul className="space-y-2 text-sm text-theme-secondary">
                 <li>• Check our <a href="/faq" className="text-blue-600 hover:underline">FAQ page</a></li>
                 <li>• Review your order confirmation email</li>
                 <li>• Have your order number ready</li>
@@ -205,7 +205,7 @@ const SupportPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href="tel:+1-800-AVA-SKIN"
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 text-center"
+                className="bg-red-600 text-theme-primary px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 text-center"
               >
                 Call Now
               </a>

@@ -51,15 +51,15 @@ const AdminNav: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white shadow-sm border-r border-gray-200 w-64 min-h-screen">
+    <nav className="bg-theme-primary shadow-sm border-r border-theme w-64 min-h-screen">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">A</span>
+            <span className="text-theme-primary font-bold text-sm">A</span>
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Admin Panel</h1>
-            <p className="text-sm text-gray-500">Welcome, {user?.name}</p>
+            <h1 className="text-lg font-semibold text-theme-primary">Admin Panel</h1>
+            <p className="text-sm text-theme-muted">Welcome, {user?.name}</p>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ const AdminNav: React.FC = () => {
                 className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive(item.href)
                     ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    : 'text-theme-secondary hover:bg-theme-secondary hover:text-theme-primary'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -87,7 +87,7 @@ const AdminNav: React.FC = () => {
           <Button
             variant="ghost"
             onClick={logout}
-            className="w-full justify-start text-gray-600 hover:text-gray-900"
+            className="w-full justify-start text-theme-secondary hover:text-theme-primary"
           >
             <LogOut className="w-5 h-5 mr-3" />
             Sign Out

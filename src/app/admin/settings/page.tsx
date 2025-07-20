@@ -167,7 +167,7 @@ const AdminSettings: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading settings...</p>
+            <p className="mt-4 text-theme-secondary">Loading settings...</p>
           </div>
         </div>
       </AdminLayout>
@@ -182,8 +182,8 @@ const AdminSettings: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <h1 className="text-3xl font-bold text-theme-primary">Settings</h1>
+                <p className="mt-1 text-sm text-theme-muted">
                   Manage your store configuration and preferences
                 </p>
               </div>
@@ -216,7 +216,7 @@ const AdminSettings: React.FC = () => {
                         className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                           activeTab === tab.id
                             ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            : 'border-transparent text-theme-muted hover:ava-text-tertiary hover:border-gray-300'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -231,7 +231,7 @@ const AdminSettings: React.FC = () => {
               <div className="p-6">
                 {activeTab === 'general' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">General Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">General Settings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
                         label="Site Name"
@@ -273,7 +273,7 @@ const AdminSettings: React.FC = () => {
 
                 {activeTab === 'appearance' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">Appearance Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">Appearance Settings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
                         label="Primary Color"
@@ -282,7 +282,7 @@ const AdminSettings: React.FC = () => {
                         onChange={(e) => updateSetting('appearance', 'primaryColor', e.target.value)}
                       />
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
                           Theme
                         </label>
                         <select
@@ -313,12 +313,12 @@ const AdminSettings: React.FC = () => {
 
                 {activeTab === 'notifications' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">Notification Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">Notification Settings</h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Email Notifications</h4>
-                          <p className="text-sm text-gray-500">Receive notifications via email</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Email Notifications</h4>
+                          <p className="text-sm text-theme-muted">Receive notifications via email</p>
                         </div>
                         <input
                           type="checkbox"
@@ -329,8 +329,8 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Order Notifications</h4>
-                          <p className="text-sm text-gray-500">Get notified about new orders</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Order Notifications</h4>
+                          <p className="text-sm text-theme-muted">Get notified about new orders</p>
                         </div>
                         <input
                           type="checkbox"
@@ -341,8 +341,8 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Low Stock Alerts</h4>
-                          <p className="text-sm text-gray-500">Get notified when products are low in stock</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Low Stock Alerts</h4>
+                          <p className="text-sm text-theme-muted">Get notified when products are low in stock</p>
                         </div>
                         <input
                           type="checkbox"
@@ -353,8 +353,8 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Marketing Emails</h4>
-                          <p className="text-sm text-gray-500">Receive marketing and promotional emails</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Marketing Emails</h4>
+                          <p className="text-sm text-theme-muted">Receive marketing and promotional emails</p>
                         </div>
                         <input
                           type="checkbox"
@@ -369,12 +369,12 @@ const AdminSettings: React.FC = () => {
 
                 {activeTab === 'security' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">Security Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">Security Settings</h3>
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
-                          <p className="text-sm text-gray-500">Require 2FA for admin accounts</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Two-Factor Authentication</h4>
+                          <p className="text-sm text-theme-muted">Require 2FA for admin accounts</p>
                         </div>
                         <input
                           type="checkbox"
@@ -384,7 +384,7 @@ const AdminSettings: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
                           Session Timeout (minutes)
                         </label>
                         <input
@@ -397,10 +397,10 @@ const AdminSettings: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900 mb-4">Password Policy</h4>
+                        <h4 className="text-sm font-medium text-theme-primary mb-4">Password Policy</h4>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium ava-text-tertiary mb-2">
                               Minimum Length
                             </label>
                             <input
@@ -416,7 +416,7 @@ const AdminSettings: React.FC = () => {
                             />
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Require Uppercase Letters</span>
+                            <span className="text-sm ava-text-tertiary">Require Uppercase Letters</span>
                             <input
                               type="checkbox"
                               checked={settings.security.passwordPolicy.requireUppercase}
@@ -428,7 +428,7 @@ const AdminSettings: React.FC = () => {
                             />
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Require Numbers</span>
+                            <span className="text-sm ava-text-tertiary">Require Numbers</span>
                             <input
                               type="checkbox"
                               checked={settings.security.passwordPolicy.requireNumbers}
@@ -440,7 +440,7 @@ const AdminSettings: React.FC = () => {
                             />
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Require Symbols</span>
+                            <span className="text-sm ava-text-tertiary">Require Symbols</span>
                             <input
                               type="checkbox"
                               checked={settings.security.passwordPolicy.requireSymbols}
@@ -459,12 +459,12 @@ const AdminSettings: React.FC = () => {
 
                 {activeTab === 'payment' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">Payment Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">Payment Settings</h3>
                     <div className="space-y-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Stripe Payments</h4>
-                          <p className="text-sm text-gray-500">Enable Stripe payment processing</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Stripe Payments</h4>
+                          <p className="text-sm text-theme-muted">Enable Stripe payment processing</p>
                         </div>
                         <input
                           type="checkbox"
@@ -475,8 +475,8 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">PayPal Payments</h4>
-                          <p className="text-sm text-gray-500">Enable PayPal payment processing</p>
+                          <h4 className="text-sm font-medium text-theme-primary">PayPal Payments</h4>
+                          <p className="text-sm text-theme-muted">Enable PayPal payment processing</p>
                         </div>
                         <input
                           type="checkbox"
@@ -487,8 +487,8 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900">Apple Pay</h4>
-                          <p className="text-sm text-gray-500">Enable Apple Pay for mobile users</p>
+                          <h4 className="text-sm font-medium text-theme-primary">Apple Pay</h4>
+                          <p className="text-sm text-theme-muted">Enable Apple Pay for mobile users</p>
                         </div>
                         <input
                           type="checkbox"
@@ -499,7 +499,7 @@ const AdminSettings: React.FC = () => {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium ava-text-tertiary mb-2">
                             Currency
                           </label>
                           <select
@@ -514,7 +514,7 @@ const AdminSettings: React.FC = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-medium ava-text-tertiary mb-2">
                             Tax Rate (%)
                           </label>
                           <input
@@ -534,10 +534,10 @@ const AdminSettings: React.FC = () => {
 
                 {activeTab === 'shipping' && (
                   <div className="space-y-6">
-                    <h3 className="text-lg font-medium text-gray-900">Shipping Settings</h3>
+                    <h3 className="text-lg font-medium text-theme-primary">Shipping Settings</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
                           Free Shipping Threshold ($)
                         </label>
                         <input
@@ -550,7 +550,7 @@ const AdminSettings: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
                           Default Shipping Cost ($)
                         </label>
                         <input
@@ -564,7 +564,7 @@ const AdminSettings: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-4">Shipping Zones</h4>
+                      <h4 className="text-sm font-medium text-theme-primary mb-4">Shipping Zones</h4>
                       <div className="space-y-4">
                         {settings.shipping.shippingZones.map((zone, index) => (
                           <div key={index} className="border border-gray-200 rounded-md p-4">
@@ -629,8 +629,8 @@ const AdminSettings: React.FC = () => {
           ) : (
             <div className="bg-white rounded-lg shadow p-8 text-center">
               <Settings className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Settings Data</h3>
-              <p className="text-gray-500">Settings data will appear here once available.</p>
+              <h3 className="text-lg font-medium text-theme-primary mb-2">No Settings Data</h3>
+              <p className="text-theme-muted">Settings data will appear here once available.</p>
             </div>
           )}
         </div>

@@ -35,6 +35,7 @@ const WishlistPage: React.FC = () => {
   const { data: session, status } = useSession()
   const router = useRouter()
   const { addItem } = useCart()
+  const [isClient, setIsClient] = useState(false)
 
   const [state, setState] = useState<WishlistPageState>({
     items: [],
@@ -43,6 +44,12 @@ const WishlistPage: React.FC = () => {
   })
 
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+    
     if (status === 'loading') return
 
     if (!session) {
@@ -51,7 +58,7 @@ const WishlistPage: React.FC = () => {
     }
 
     fetchWishlist()
-  }, [session, status, router])
+  }, [session, status, router, isClient])
 
   const fetchWishlist = async () => {
     try {
@@ -182,10 +189,10 @@ const WishlistPage: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-theme-primary mb-4">
             Error Loading Wishlist
           </h1>
-          <p className="text-gray-600 mb-8">{state.error}</p>
+          <p className="text-theme-secondary mb-8">{state.error}</p>
           <Button onClick={fetchWishlist}>Try Again</Button>
         </div>
       </div>
@@ -197,17 +204,18 @@ const WishlistPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Wishlist</h1>
-          <p className="text-gray-600">
+          <h1 className="text-3xl font-bold text-theme-primary mb-2">My Wishlist</h1>
+          <p className="text-theme-secondary">
             {state.items.length} item{state.items.length !== 1 ? 's' : ''} in your wishlist
           </p>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
           <Link href="/products">
-            <Button variant="secondary">
-              <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Continue Shopping
+            <Button variant="secondary" size="sm" className="text-sm px-3 py-2">
+              <ArrowLeftIcon className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Continue Shopping</span>
+              <span className="sm:hidden">Shop</span>
             </Button>
           </Link>
           
@@ -215,9 +223,12 @@ const WishlistPage: React.FC = () => {
             <Button 
               variant="danger" 
               onClick={handleClearWishlist}
+              size="sm"
+              className="text-sm px-3 py-2"
             >
-              <TrashIcon className="w-4 h-4 mr-2" />
-              Clear All
+              <TrashIcon className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Clear All</span>
+              <span className="sm:hidden">Clear</span>
             </Button>
           )}
         </div>
@@ -227,15 +238,15 @@ const WishlistPage: React.FC = () => {
       {state.items.length === 0 && (
         <div className="text-center py-16">
           <div className="max-w-md mx-auto">
-            <HeartIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <HeartIcon className="w-16 h-16 text-theme-muted mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-theme-primary mb-2">
               Your wishlist is empty
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-theme-secondary mb-6">
               Start adding products to your wishlist to save them for later.
             </p>
             <Link href="/products">
-              <Button>
+              <Button variant="secondary" size="sm" className="text-sm px-4 py-2">
                 Browse Products
               </Button>
             </Link>
@@ -247,7 +258,7 @@ const WishlistPage: React.FC = () => {
       {state.items.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {state.items.map((item) => (
-            <div key={item.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <div key={item.id} className="bg-theme-primary border border-theme rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               {/* Product Image */}
               <div className="relative aspect-square">
                 <Image
@@ -261,7 +272,7 @@ const WishlistPage: React.FC = () => {
                 {/* Remove from wishlist button */}
                 <button
                   onClick={() => handleRemoveFromWishlist(item.product._id)}
-                  className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+                  className="absolute top-2 right-2 p-2 bg-theme-primary rounded-full shadow-md hover:bg-red-50 transition-colors"
                   aria-label="Remove from wishlist"
                 >
                   <TrashIcon className="w-4 h-4 text-red-500" />
@@ -270,18 +281,18 @@ const WishlistPage: React.FC = () => {
                 {/* Out of stock overlay */}
                 {item.product.stock === 0 && (
                   <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">Out of Stock</span>
+                    <span className="text-theme-primary text-sm font-medium">Out of Stock</span>
                   </div>
                 )}
               </div>
 
               {/* Product Info */}
               <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                <h3 className="font-semibold text-theme-primary mb-2 line-clamp-2">
                   {item.product.name}
                 </h3>
                 
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                <p className="text-theme-secondary text-sm mb-3 line-clamp-2">
                   {item.product.description}
                 </p>
 
@@ -290,7 +301,7 @@ const WishlistPage: React.FC = () => {
                     ${item.product.price.toFixed(2)}
                   </span>
                   
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-theme-muted">
                     Added {new Date(item.addedAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -314,20 +325,23 @@ const WishlistPage: React.FC = () => {
                     onClick={() => handleViewProduct(item.product._id)}
                     variant="secondary"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 text-xs px-2 py-1.5"
                   >
-                    <EyeIcon className="w-4 h-4 mr-1" />
-                    View
+                    <EyeIcon className="w-3 h-3 mr-1" />
+                    <span className="hidden sm:inline">View</span>
+                    <span className="sm:hidden">View</span>
                   </Button>
                   
                   <Button
                     onClick={() => handleAddToCart(item.product)}
                     disabled={item.product.stock === 0}
+                    variant="secondary"
                     size="sm"
-                    className="flex-1"
+                    className="flex-1 text-xs px-2 py-1.5"
                   >
-                    <ShoppingCartIcon className="w-4 h-4 mr-1" />
-                    Add to Cart
+                    <ShoppingCartIcon className="w-3 h-3 mr-1" />
+                    <span className="hidden sm:inline">Add to Cart</span>
+                    <span className="sm:hidden">Cart</span>
                   </Button>
                 </div>
               </div>
@@ -339,11 +353,11 @@ const WishlistPage: React.FC = () => {
       {/* Share Wishlist */}
       {state.items.length > 0 && (
         <div className="mt-12 text-center">
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="bg-theme-secondary rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-theme-primary mb-2">
               Share Your Wishlist
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-theme-secondary mb-4">
               Let friends and family know what you&apos;re interested in.
             </p>
             <Button
@@ -352,6 +366,8 @@ const WishlistPage: React.FC = () => {
                 toast.success('Wishlist link copied to clipboard!')
               }}
               variant="secondary"
+              size="sm"
+              className="text-sm px-4 py-2"
             >
               Copy Link
             </Button>

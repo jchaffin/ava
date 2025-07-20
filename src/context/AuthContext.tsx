@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, ReactNode, useCallback } from 'react'
+import React, { createContext, useContext, useEffect, ReactNode, useCallback, useState } from 'react'
 import { useSession, signIn, signOut, SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { IUser } from '@/types'
@@ -82,13 +82,17 @@ const createAuthUserFromSession = (sessionUser: any): AuthUser => {
 const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) => {
   const { data: session, status, update } = useSession()
   const router = useRouter()
-  
+  const [isClient, setIsClient] = useState(false)
 
+  // Set client flag on mount to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Create user from session directly
   const user = session?.user ? createAuthUserFromSession(session.user) : null
-  const isLoading = status === 'loading'
-  const isAuthenticated = !!user
+  const isLoading = status === 'loading' || !isClient
+  const isAuthenticated = !!user && isClient
 
   const login = async (credentials: LoginCredentials): Promise<AuthResult> => {
     try {
@@ -444,8 +448,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600">You do not have permission to access this page.</p>
+          <h1 className="text-2xl font-bold text-theme-primary mb-4">Access Denied</h1>
+          <p className="text-theme-secondary">You do not have permission to access this page.</p>
         </div>
       </div>
     )

@@ -161,7 +161,7 @@ const EditProduct: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading product...</p>
+            <p className="mt-4 text-theme-secondary">Loading product...</p>
           </div>
         </div>
       </AdminLayout>
@@ -173,7 +173,7 @@ const EditProduct: React.FC = () => {
       <AdminLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-gray-600">Product not found</p>
+            <p className="text-theme-secondary">Product not found</p>
             <Button onClick={() => router.push('/admin/products')} className="mt-4">
               Back to Products
             </Button>
@@ -200,8 +200,8 @@ const EditProduct: React.FC = () => {
                   Back to Products
                 </Button>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <h1 className="text-3xl font-bold text-theme-primary">Edit Product</h1>
+                  <p className="mt-1 text-sm text-theme-muted">
                     Update product information
                   </p>
                 </div>
@@ -272,7 +272,7 @@ const EditProduct: React.FC = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('featured', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="featured" className="ml-2 text-sm text-gray-700">
+                  <label htmlFor="featured" className="ml-2 text-sm ava-text-tertiary">
                     Featured Product
                   </label>
                 </div>
@@ -280,7 +280,7 @@ const EditProduct: React.FC = () => {
 
               {/* Image Upload */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium ava-text-tertiary mb-2">
                   Product Image
                 </label>
                 <div className="flex items-center space-x-4">
@@ -294,7 +294,7 @@ const EditProduct: React.FC = () => {
                       <button
                         type="button"
                         onClick={removeImage}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        className="absolute -top-2 -right-2 bg-red-500 text-theme-primary rounded-full p-1 hover:bg-red-600"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -310,7 +310,7 @@ const EditProduct: React.FC = () => {
                         <button
                           type="button"
                           onClick={removeImage}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute -top-2 -right-2 bg-red-500 text-theme-primary rounded-full p-1 hover:bg-red-600"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -322,9 +322,9 @@ const EditProduct: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-sm text-theme-muted">
                       Upload a new image to replace the current one
                     </p>
                   </div>

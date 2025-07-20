@@ -196,7 +196,7 @@ const AdminProducts: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading products...</p>
+            <p className="mt-4 text-theme-secondary">Loading products...</p>
           </div>
         </div>
       </AdminLayout>
@@ -211,8 +211,8 @@ const AdminProducts: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <h1 className="text-3xl font-bold text-theme-primary">Products</h1>
+                <p className="mt-1 text-sm text-theme-muted">
                   Manage your product catalog
                 </p>
               </div>
@@ -257,7 +257,7 @@ const AdminProducts: React.FC = () => {
 
               {/* Sort */}
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-500">Sort by:</span>
+                <span className="text-sm text-theme-muted">Sort by:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'stock' | 'createdAt')}
@@ -286,7 +286,7 @@ const AdminProducts: React.FC = () => {
           {/* Products Grid */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-theme-primary">
                 Products ({filteredAndSortedProducts.length})
               </h3>
             </div>
@@ -296,22 +296,22 @@ const AdminProducts: React.FC = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Product
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Price
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Stock
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Created
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -330,8 +330,8 @@ const AdminProducts: React.FC = () => {
                                 onClick={() => handleImageClick(product)}
                               />
                               <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  <span className="text-gray-900">
+                                <div className="text-sm font-medium text-theme-primary">
+                                  <span className="text-theme-primary">
                                     {product.name}
                                   </span>
                                   {product.featured && (
@@ -340,19 +340,19 @@ const AdminProducts: React.FC = () => {
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-sm text-gray-500 truncate max-w-xs">
+                                <div className="text-sm text-theme-muted truncate max-w-xs">
                                   {product.description}
                                 </div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            <span className="text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-theme-primary">
+                            <span className="text-theme-primary">
                               {formatCurrency(product.price)}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            <span className="text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-theme-primary">
+                            <span className="text-theme-primary">
                               {product.stock}
                             </span>
                           </td>
@@ -361,7 +361,7 @@ const AdminProducts: React.FC = () => {
                               {stockStatus.text}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-muted">
                             {formatDate(product.createdAt)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -399,7 +399,7 @@ const AdminProducts: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">
+                <p className="text-theme-muted">
                   {searchTerm || filter !== 'all' 
                     ? 'No products match your filters' 
                     : 'No products found'

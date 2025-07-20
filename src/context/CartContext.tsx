@@ -4,6 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect, ReactNode } fr
 import { IProduct } from '@/types'
 import { ProductCartItem } from '@/types/product'
 import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 interface CartState {
   items: ProductCartItem[]
@@ -148,9 +149,17 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     items: [],
     isLoading: true,
   })
+  const [isClient, setIsClient] = useState(false)
 
-  // Load cart from localStorage on mount
+  // Set client flag on mount to prevent hydration mismatch
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Load cart from localStorage on mount (only on client)
+  useEffect(() => {
+    if (!isClient) return
+    
     const loadCart = () => {
       dispatch({ type: 'SET_LOADING', payload: true })
       const savedItems = loadCartFromStorage()
@@ -158,7 +167,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
 
     loadCart()
-  }, [])
+  }, [isClient])
 
   const addItem = (product: IProduct) => {
     try {

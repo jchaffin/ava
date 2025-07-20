@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Variant-specific styling
   const getCardClasses = (): string => {
-    const baseClasses = 'bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
+    const baseClasses = 'bg-theme-primary rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
     
     switch (variant) {
       case 'compact':
@@ -212,7 +212,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
         ))}
-        <span className="text-sm text-gray-600 ml-1">
+        <span className="text-sm text-theme-secondary ml-1">
           ({reviewCount})
         </span>
       </div>
@@ -222,22 +222,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const renderBadges = () => (
     <div className="absolute top-3 left-3 flex flex-col space-y-2">
       {product.featured && (
-        <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+        <span className="bg-blue-500 text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
           Featured
         </span>
       )}
       {discountPercentage > 0 && (
-        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+        <span className="bg-red-500 text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
           -{discountPercentage}%
         </span>
       )}
       {isLowStock && !isOutOfStock && (
-        <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+        <span className="bg-orange-500 text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
           Low Stock
         </span>
       )}
       {isOutOfStock && (
-        <span className="bg-gray-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+        <span className="bg-gray-500 text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
           Out of Stock
         </span>
       )}
@@ -253,23 +253,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             onClick={handleWishlistToggle}
             disabled={state.isLoading}
-            className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-50"
+            className="p-2 bg-theme-primary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-50"
             aria-label={state.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             {state.isWishlisted ? (
               <HeartSolidIcon className="w-5 h-5 text-red-500" />
             ) : (
-              <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500" />
+              <HeartIcon className="w-5 h-5 text-theme-secondary hover:text-red-500" />
             )}
           </button>
         )}
         
         <button
           onClick={handleQuickView}
-          className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
+                      className="p-2 bg-theme-primary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
           aria-label="Quick view product"
         >
-          <EyeIcon className="w-5 h-5 text-gray-600 hover:text-blue-500" />
+          <EyeIcon className="w-5 h-5 text-theme-secondary hover:text-blue-500" />
         </button>
       </div>
     )
@@ -281,7 +281,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Product Name */}
       <Link href={`/products/${product._id}`}>
-        <h3 className={`font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2 ${
+        <h3 className={`font-semibold text-theme-primary hover:text-blue-600 transition-colors line-clamp-2 ${
           variant === 'compact' ? 'text-sm' : 'text-lg'
         }`}>
           {product.name}
@@ -290,7 +290,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Description */}
       {variant !== 'compact' && (
-        <p className="text-gray-600 text-sm mt-2 line-clamp-2">
+        <p className="text-theme-secondary text-sm mt-2 line-clamp-2">
           {product.description}
         </p>
       )}
@@ -311,7 +311,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {formatPrice(product.price)}
           </span>
           {discountPercentage > 0 && (
-            <span className="text-sm text-gray-500 line-through">
+            <span className="text-sm text-theme-muted line-through">
               {formatPrice(product.price * (1 + discountPercentage / 100))}
             </span>
           )}
@@ -400,7 +400,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-medium">Out of Stock</span>
+              <span className="text-theme-primary text-xs font-medium">Out of Stock</span>
             </div>
           )}
         </div>
@@ -443,7 +443,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {isOutOfStock && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="text-white text-lg font-semibold">Out of Stock</span>
+            <span className="text-theme-primary text-lg font-semibold">Out of Stock</span>
           </div>
         )}
 

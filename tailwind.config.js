@@ -11,11 +11,11 @@ module.exports = {
       colors: {
         // AVA Brand Colors - Clean Modern Theme
         'ava': {
-          primary: '#1a202c',
-          secondary: '#4a5568',
-          accent: '#e53e3e',
-          gold: '#d69e2e',
-          cream: '#f7fafc',
+          primary: 'var(--ava-primary)',
+          secondary: 'var(--ava-secondary)',
+          accent: 'var(--ava-accent)',
+          gold: 'var(--ava-gold)',
+          cream: 'var(--ava-cream)',
         },
         // Background colors
         'ava-bg': {
@@ -34,10 +34,27 @@ module.exports = {
           default: 'var(--ava-border)',
           dark: 'var(--ava-border-dark)',
         },
+        // Theme-aware colors for consistent usage
+        'theme': {
+          primary: 'var(--ava-bg-primary)',
+          secondary: 'var(--ava-bg-secondary)',
+          tertiary: 'var(--ava-bg-tertiary)',
+        },
+        // Theme-aware text colors
+        'theme-text': {
+          primary: 'var(--ava-text-primary)',
+          secondary: 'var(--ava-text-secondary)',
+          muted: 'var(--ava-text-muted)',
+        },
+        // Theme-aware border colors
+        'theme-border': {
+          default: 'var(--ava-border)',
+          dark: 'var(--ava-border-dark)',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        'ava-primary': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+        'ava-primary': ['ui-sans-serif', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         'ava-secondary': ['Playfair Display', 'Georgia', 'serif'],
       },
       spacing: {
@@ -129,6 +146,31 @@ module.exports = {
         },
         '.border-ava-light': {
           borderColor: theme('colors.ava-border.dark'),
+        },
+        // Theme-aware utility classes
+        '.bg-theme-primary': {
+          backgroundColor: theme('colors.theme.primary'),
+        },
+        '.bg-theme-secondary': {
+          backgroundColor: theme('colors.theme.secondary'),
+        },
+        '.bg-theme-tertiary': {
+          backgroundColor: theme('colors.theme.tertiary'),
+        },
+        '.text-theme-primary': {
+          color: theme('colors.theme-text.primary'),
+        },
+        '.text-theme-secondary': {
+          color: theme('colors.theme-text.secondary'),
+        },
+        '.text-theme-muted': {
+          color: theme('colors.theme-text.muted'),
+        },
+        '.border-theme': {
+          borderColor: theme('colors.theme-border.default'),
+        },
+        '.border-theme-dark': {
+          borderColor: theme('colors.theme-border.dark'),
         },
         '.animate-fade-in': {
           animation: 'fadeIn 0.5s ease-in-out',

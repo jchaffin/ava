@@ -26,6 +26,8 @@ interface OrderStatusInfo {
 const OrdersPage: React.FC = () => {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
+  
   const [state, setState] = useState<OrdersPageState>({
     orders: [],
     loading: true,
@@ -33,12 +35,18 @@ const OrdersPage: React.FC = () => {
   })
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/signin?callbackUrl=/orders')
-    } else if (session) {
-      fetchOrders()
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      if (status === 'unauthenticated') {
+        router.push('/signin?callbackUrl=/orders')
+      } else if (session) {
+        fetchOrders()
+      }
     }
-  }, [session, status, router])
+  }, [session, status, router, isClient])
 
   const fetchOrders = async () => {
     try {
@@ -137,7 +145,7 @@ const OrdersPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Loading your orders...</p>
+          <p className="text-theme-secondary">Loading your orders...</p>
         </div>
       </div>
     )
@@ -196,10 +204,10 @@ const OrdersPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-theme-primary mb-2">
               No Orders Yet
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-theme-secondary mb-6">
               You haven&apos;t placed any orders yet. Start shopping to see your order history here.
             </p>
             <Link href="/products">
@@ -217,10 +225,10 @@ const OrdersPage: React.FC = () => {
     <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-theme-primary mb-2">
             Order History
           </h1>
-          <p className="text-gray-600">
+          <p className="text-theme-secondary">
             Track and manage your orders. You have {state.orders.length} order{state.orders.length !== 1 ? 's' : ''}.
           </p>
         </div>
@@ -234,17 +242,17 @@ const OrdersPage: React.FC = () => {
             return (
               <div
                 key={order._id}
-                className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+                className="bg-theme-primary border border-theme rounded-lg shadow-sm overflow-hidden"
               >
                 {/* Order Header */}
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <div className="bg-theme-secondary px-6 py-4 border-b border-theme">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-theme-primary">
                           Order #{order._id.slice(-8).toUpperCase()}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-theme-muted">
                           Placed on {formatDate(order.createdAt)}
                         </p>
                       </div>
@@ -303,20 +311,20 @@ const OrdersPage: React.FC = () => {
                             width={64}
                             height={64}
                             sizes="64px"
-                            className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                            className="w-16 h-16 object-cover rounded-lg border border-theme"
                           />
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-gray-900 truncate">
+                          <h4 className="text-sm font-medium text-theme-primary truncate">
                             {typeof item.product === 'object' ? item.product.name : 'Product'}
                           </h4>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-theme-muted">
                             Quantity: {item.quantity}
                           </p>
                         </div>
                         
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-theme-primary">
                           {formatPrice(item.price * item.quantity)}
                         </div>
                       </div>
@@ -325,17 +333,17 @@ const OrdersPage: React.FC = () => {
                 </div>
 
                 {/* Order Summary */}
-                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                <div className="bg-theme-secondary px-6 py-4 border-t border-theme">
                   <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-theme-secondary">
                       <p>Items: {formatPrice(order.itemsPrice)}</p>
                       <p>Shipping: {formatPrice(order.shippingPrice)}</p>
                       <p>Tax: {formatPrice(order.taxPrice)}</p>
                     </div>
                     
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Total</p>
-                      <p className="text-lg font-bold text-gray-900">
+                      <p className="text-sm text-theme-secondary">Total</p>
+                      <p className="text-lg font-bold text-theme-primary">
                         {formatPrice(order.totalPrice)}
                       </p>
                     </div>
@@ -343,11 +351,11 @@ const OrdersPage: React.FC = () => {
 
                   {/* Delivery Information */}
                   {order.shippingAddress && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    <div className="mt-4 pt-4 border-t border-theme">
+                      <h4 className="text-sm font-medium text-theme-primary mb-2">
                         Delivery Address
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-theme-secondary">
                         {order.shippingAddress.street}<br />
                         {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}<br />
                         {order.shippingAddress.country}
@@ -357,7 +365,7 @@ const OrdersPage: React.FC = () => {
 
                   {/* Delivery Status */}
                   {order.isDelivered && order.deliveredAt && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="mt-4 pt-4 border-t border-theme">
                       <div className="flex items-center text-green-600">
                         <svg
                           className="w-5 h-5 mr-2"

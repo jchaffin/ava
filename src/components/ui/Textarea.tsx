@@ -20,7 +20,7 @@ const Textarea: React.FC<TextareaProps> = ({
   return (
     <div className="mb-4">
       {label && (
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+        <label className="block ava-text-tertiary text-sm font-bold mb-2">
           {label}
         </label>
       )}

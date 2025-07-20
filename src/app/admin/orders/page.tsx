@@ -149,7 +149,7 @@ const AdminOrders: React.FC = () => {
       case 'cancelled':
         return <AlertCircle className="w-4 h-4 text-red-500" />
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />
+        return <Clock className="w-4 h-4 text-theme-muted" />
     }
   }
 
@@ -205,7 +205,7 @@ const AdminOrders: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading orders...</p>
+            <p className="mt-4 text-theme-secondary">Loading orders...</p>
           </div>
         </div>
       </AdminLayout>
@@ -220,8 +220,8 @@ const AdminOrders: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Orders Management</h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <h1 className="text-3xl font-bold text-theme-primary">Orders Management</h1>
+                <p className="mt-1 text-sm text-theme-muted">
                   Track and manage customer orders
                 </p>
               </div>
@@ -280,7 +280,7 @@ const AdminOrders: React.FC = () => {
           {/* Orders List */}
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-theme-primary">
                 Orders ({filteredAndSortedOrders.length})
               </h3>
             </div>
@@ -290,25 +290,25 @@ const AdminOrders: React.FC = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Order
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Customer
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Items
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Total
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -317,30 +317,30 @@ const AdminOrders: React.FC = () => {
                     {filteredAndSortedOrders.map((order) => (
                       <tr key={order._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-theme-primary">
                             #{order.orderNumber}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-theme-primary">
                               {order.user.firstName} {order.user.lastName}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-theme-muted">
                               {order.user.email}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-theme-primary">
                             {order.orderItems.length} item{order.orderItems.length !== 1 ? 's' : ''}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-theme-muted">
                             {order.orderItems[0]?.product.name}
                             {order.orderItems.length > 1 && ` +${order.orderItems.length - 1} more`}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-theme-primary">
                           {formatCurrency(order.total)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -351,7 +351,7 @@ const AdminOrders: React.FC = () => {
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-theme-muted">
                           {formatDate(order.createdAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -384,7 +384,7 @@ const AdminOrders: React.FC = () => {
             ) : (
               <div className="text-center py-12">
                 <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">
+                <p className="text-theme-muted">
                   {searchTerm || filter !== 'all' 
                     ? 'No orders match your filters' 
                     : 'No orders found'

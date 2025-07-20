@@ -20,12 +20,13 @@ import {
   UserCircleIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-  StarIcon,
+
   CubeIcon,
 } from '@heroicons/react/24/outline'
 import { ShoppingCartIcon as ShoppingCartSolidIcon } from '@heroicons/react/24/solid'
 
 import toast from 'react-hot-toast'
+import ThemeToggle from './ThemeToggle'
 
 interface LayoutProps {
   children: ReactNode
@@ -64,22 +65,12 @@ const Layout: React.FC<LayoutProps> = ({
   const { getTotalItems } = useCart()
   const { user, isAuthenticated, isLoading, hasRole, logout } = useAuth()
   
-  // Debug logging
-  console.log('Layout: Auth state', { 
-    user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : null, 
-    isAuthenticated, 
-    isLoading
-  })
-
   // Automatically hide navigation and footer for admin routes
   const isAdminRoute = pathname.startsWith('/admin')
   const shouldShowNavigation = showNavigation && !isAdminRoute
   const shouldShowFooter = showFooter && !isAdminRoute
 
-  const [mobileMenu, setMobileMenu] = useState<MobileMenuState>({
-    isOpen: false,
-    activeSubmenu: null,
-  })
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   const [userMenu, setUserMenu] = useState<UserMenuState>({
     isOpen: false,
@@ -185,17 +176,23 @@ const Layout: React.FC<LayoutProps> = ({
 
   // Close menus when route changes
   useEffect(() => {
-    setMobileMenu({ isOpen: false, activeSubmenu: null })
+    setIsMobileMenuOpen(false)
     setUserMenu({ isOpen: false })
   }, [pathname])
+
+  // Debug mobile menu state changes
+  useEffect(() => {
+    console.log('Mobile menu state changed:', isMobileMenuOpen)
+  }, [isMobileMenuOpen])
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element
       
-      if (!target.closest('[data-menu="mobile"]')) {
-        setMobileMenu(prev => ({ ...prev, isOpen: false }))
+      // Only close mobile menu if clicking outside the mobile menu area
+      if (!target.closest('[data-menu="mobile"]') && !target.closest('[data-mobile-menu-button]')) {
+        setIsMobileMenuOpen(false)
       }
       
       if (!target.closest('[data-menu="user"]')) {
@@ -210,8 +207,8 @@ const Layout: React.FC<LayoutProps> = ({
   // Show loading state while authentication is being established
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
+      <div className="min-h-screen flex flex-col bg-theme-primary">
+        <header className="bg-theme-primary shadow-sm border-b border-theme sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
@@ -227,7 +224,7 @@ const Layout: React.FC<LayoutProps> = ({
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
+            <p className="text-theme-secondary">Loading...</p>
           </div>
         </main>
       </div>
@@ -244,7 +241,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const toggleMobileMenu = () => {
-    setMobileMenu(prev => ({ ...prev, isOpen: !prev.isOpen }))
+    setIsMobileMenuOpen((prev) => !prev)
   }
 
 
@@ -276,17 +273,11 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   const renderMobileNavigation = () => (
-    <div className="lg:hidden fixed inset-0 z-50">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50"
-        onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-      />
-      
-      {/* Mobile menu */}
-      <div className="fixed inset-y-0 left-0 w-80 bg-white dark:bg-gray-900 shadow-xl">
+    <div className="lg:hidden fixed inset-0" data-menu="mobile">
+      <div className="fixed inset-y-0 left-0 w-80 bg-white dark:bg-gray-900 shadow-xl z-[9999]">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <Link href="/" className="flex items-center" onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}>
+          <div className="flex-1"></div>
+          <Link href="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
             <Image
               src="/logo.png"
               alt="AVA Logo"
@@ -297,23 +288,23 @@ const Layout: React.FC<LayoutProps> = ({
             />
           </Link>
           <button
-            onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-            className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex-1 flex justify-end p-2 rounded-md text-theme-secondary dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary hover:bg-gray-100 dark:hover:bg-gray-800"
+            aria-label="Close menu"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
-
         <div className="px-4 py-6 space-y-2">
           {navigationItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${
                 isActiveLink(item.href)
-                  ? 'text-ava-accent bg-ava-cream'
-                  : 'text-ava-text-secondary hover:text-ava-accent hover:bg-ava-bg-secondary'
+                  ? 'text-ava-accent bg-theme-secondary'
+                  : 'text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary'
               }`}
             >
               {item.icon && <item.icon className="w-5 h-5" />}
@@ -321,14 +312,12 @@ const Layout: React.FC<LayoutProps> = ({
             </Link>
           ))}
         </div>
-
-                 {/* User section */}
-         {isAuthenticated ? (
-           <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-             <div className="mb-4">
-               <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'User'}</p>
-               <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
-             </div>
+        {isAuthenticated ? (
+          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="mb-4">
+              <p className="text-sm font-medium text-theme-primary dark:text-theme-primary">{user?.name || 'User'}</p>
+              <p className="text-sm text-theme-muted dark:text-gray-400">{user?.email || ''}</p>
+            </div>
             <div className="space-y-2">
               {(hasRole('admin') ? adminMenuItems : userMenuItems)
                 .filter(item => !item.requireAuth || isAuthenticated)
@@ -338,8 +327,8 @@ const Layout: React.FC<LayoutProps> = ({
                   <Link
                     key={item.name}
                     href={item.href}
-                    onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200"
                   >
                     {item.icon && <item.icon className="w-5 h-5" />}
                     <span>{item.name}</span>
@@ -348,7 +337,7 @@ const Layout: React.FC<LayoutProps> = ({
               <button
                 onClick={() => {
                   handleSignOut()
-                  setMobileMenu({ isOpen: false, activeSubmenu: null })
+                  setIsMobileMenuOpen(false)
                 }}
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 w-full transition-colors duration-200"
               >
@@ -361,21 +350,26 @@ const Layout: React.FC<LayoutProps> = ({
           <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <Link
               href="/signin"
-              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-              className="block w-full px-4 py-3 text-center text-base font-medium text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block w-full px-4 py-3 text-center text-base font-medium ava-text-tertiary dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-              className="block w-full px-4 py-3 text-center text-base font-medium text-white bg-ava-accent hover:bg-red-700 rounded-lg transition-colors duration-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block w-full px-4 py-3 text-center text-base font-medium text-theme-primary bg-ava-accent hover:bg-red-700 rounded-lg transition-colors duration-200"
             >
               Sign Up
             </Link>
           </div>
         )}
       </div>
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 z-[9998]"
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
     </div>
   )
 
@@ -383,20 +377,20 @@ const Layout: React.FC<LayoutProps> = ({
     <div className="relative" data-menu="user">
       <button
         onClick={() => setUserMenu(prev => ({ isOpen: !prev.isOpen }))}
-        className="flex items-center space-x-2 p-2 rounded-lg text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+        className="flex items-center space-x-1 md:space-x-2 p-1 md:p-2 rounded-lg ava-text-tertiary hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
       >
-        <div className="w-8 h-8 bg-ava-accent rounded-full flex items-center justify-center">
-          <UserIcon className="w-4 h-4 text-white" />
+        <div className="w-6 h-6 md:w-8 md:h-8 bg-ava-accent rounded-full flex items-center justify-center">
+          <UserIcon className="w-3 h-3 md:w-4 md:h-4 text-theme-primary" />
         </div>
         <span className="hidden md:block text-sm font-medium">{user?.name || 'User'}</span>
-        <ChevronDownIcon className="w-4 h-4" />
+        <ChevronDownIcon className="w-3 h-3 md:w-4 md:h-4" />
       </button>
 
       {userMenu.isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'User'}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
+            <p className="text-sm font-medium text-theme-primary dark:text-theme-primary">{user?.name || 'User'}</p>
+            <p className="text-sm text-theme-muted dark:text-gray-400">{user?.email || ''}</p>
           </div>
           
           <div className="py-2">
@@ -409,7 +403,7 @@ const Layout: React.FC<LayoutProps> = ({
                   key={item.name}
                   href={item.href}
                   onClick={() => setUserMenu({ isOpen: false })}
-                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-700 transition-colors duration-200"
+                  className="flex items-center space-x-3 px-4 py-2 text-sm ava-text-tertiary dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-700 transition-colors duration-200"
                 >
                   {item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.name}</span>
@@ -435,21 +429,25 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   const renderHeader = () => (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-theme-primary shadow-sm border-b border-theme sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Mobile menu button on mobile, hidden on desktop */}
-          <div className="lg:hidden">
+          {/* Left side - Mobile menu button on mobile, Logo on desktop */}
+          <div className="lg:hidden" data-mobile-menu-button>
             <button
-              onClick={toggleMobileMenu}
-              className="p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-gray-100 transition-colors duration-200"
+              onClick={() => {
+                toggleMobileMenu()
+              }}
+              className="p-3 rounded-lg text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
+              aria-label="Open mobile menu"
+              type="button"
             >
               <Bars3Icon className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Center - Logo (centered on mobile, left on desktop) */}
-          <div className="flex-1 flex justify-center lg:justify-start">
+          {/* Logo - hidden on mobile (shown in center), visible on desktop */}
+          <div className="hidden lg:flex lg:flex-1">
             <Link href="/" className="flex items-center">
               <Image
                 src="/logo.png"
@@ -462,32 +460,48 @@ const Layout: React.FC<LayoutProps> = ({
             </Link>
           </div>
 
-          {/* Desktop navigation - hidden on mobile */}
-          <div className="hidden lg:block">
-            {renderDesktopNavigation()}
+          {/* Center - Logo on mobile, Desktop navigation on desktop */}
+          <div className="flex-1 flex justify-center lg:justify-center">
+            {/* Mobile: Logo */}
+            <div className="lg:hidden">
+              <Link href="/" className="flex items-center">
+                <Image
+                  src="/logo.png"
+                  alt="AVA Logo"
+                  width={120}
+                  height={40}
+                  className="h-8 w-auto"
+                  priority
+                />
+              </Link>
+            </div>
+            
+            {/* Desktop: Navigation */}
+            <div className="hidden lg:block">
+              {renderDesktopNavigation()}
+            </div>
           </div>
 
           {/* Right side actions */}
           <div className="flex items-center space-x-2">
-
-
-
+            {/* Theme toggle button */}
+            <ThemeToggle />
             {/* Wishlist - only show for regular users */}
             {isAuthenticated && !hasRole('admin') && (
-              <Link href="/wishlist" className="p-2 text-gray-600 hover:text-ava-accent hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200">
                 <HeartIcon className="w-5 h-5" />
               </Link>
             )}
 
             {/* Shopping cart */}
-            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-ava-accent hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200">
               {getTotalItems() > 0 ? (
                 <ShoppingCartSolidIcon className="w-5 h-5 text-ava-accent" />
               ) : (
                 <ShoppingCartIcon className="w-5 h-5" />
               )}
               {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-ava-accent text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
                   {getTotalItems() > 9 ? '9+' : getTotalItems()}
                 </span>
               )}
@@ -500,13 +514,13 @@ const Layout: React.FC<LayoutProps> = ({
               <div className="flex items-center space-x-2">
                 <Link
                   href="/signin"
-                  className="text-gray-700 hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-ava-accent text-white hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="bg-ava-accent text-theme-primary hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
                 >
                   Sign Up
                 </Link>
@@ -517,12 +531,12 @@ const Layout: React.FC<LayoutProps> = ({
       </div>
       
       {/* Mobile navigation overlay */}
-      {mobileMenu.isOpen && renderMobileNavigation()}
+      {isMobileMenuOpen && renderMobileNavigation()}
     </header>
   )
 
   const renderFooter = () => (
-    <footer className="bg-ava-black text-white">
+    <footer className="bg-ava-black text-theme-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
@@ -533,13 +547,13 @@ const Layout: React.FC<LayoutProps> = ({
             </p>
             <div className="flex space-x-4">
               {/* Social media links */}
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">
                 <span className="sr-only">Instagram</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+              <a href="#" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">
                 <span className="sr-only">Facebook</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -552,11 +566,11 @@ const Layout: React.FC<LayoutProps> = ({
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors duration-200">About Us</Link></li>
-              <li><Link href="/products" className="text-gray-400 hover:text-white transition-colors duration-200">Products</Link></li>
-              <li><Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-200">Contact</Link></li>
-              <li><Link href="/shipping" className="text-gray-400 hover:text-white transition-colors duration-200">Shipping Info</Link></li>
-              <li><Link href="/returns" className="text-gray-400 hover:text-white transition-colors duration-200">Returns</Link></li>
+              <li><Link href="/about" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">About Us</Link></li>
+              <li><Link href="/products" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Products</Link></li>
+              <li><Link href="/contact" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Contact</Link></li>
+              <li><Link href="/shipping" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Shipping Info</Link></li>
+              <li><Link href="/returns" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Returns</Link></li>
             </ul>
           </div>
 
@@ -564,10 +578,10 @@ const Layout: React.FC<LayoutProps> = ({
           <div>
             <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2">
-              <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors duration-200">FAQ</Link></li>
-              <li><Link href="/support" className="text-gray-400 hover:text-white transition-colors duration-200">Support</Link></li>
-              <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
+              <li><Link href="/faq" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">FAQ</Link></li>
+              <li><Link href="/support" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Support</Link></li>
+              <li><Link href="/privacy" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -581,7 +595,7 @@ const Layout: React.FC<LayoutProps> = ({
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-3 py-2 bg-gray-800 text-white placeholder-gray-400 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-ava-accent"
+                className="flex-1 px-3 py-2 bg-gray-800 text-theme-primary placeholder-gray-400 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-ava-accent"
               />
               <Button
                 type="submit"
@@ -599,13 +613,13 @@ const Layout: React.FC<LayoutProps> = ({
             © 2024 AVA Skincare. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
+            <Link href="/privacy" className="text-gray-400 hover:text-theme-primary text-sm">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-gray-400 hover:text-white text-sm">
+            <Link href="/terms" className="text-gray-400 hover:text-theme-primary text-sm">
               Terms of Service
             </Link>
-            <Link href="/cookies" className="text-gray-400 hover:text-white text-sm">
+            <Link href="/cookies" className="text-gray-400 hover:text-theme-primary text-sm">
               Cookie Policy
             </Link>
           </div>
@@ -615,10 +629,10 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   return (
-    <div className={`min-h-screen flex flex-col bg-white ${className}`}>
+    <div className={`min-h-screen flex flex-col bg-theme-primary ${className}`}>
       {shouldShowNavigation && renderHeader()}
       
-      <main className="flex-1 bg-white">
+      <main className="flex-1 bg-theme-primary">
         {children}
       </main>
       

@@ -110,7 +110,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
       <div className="flex items-center justify-center min-h-64">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Please Sign In</h2>
-          <p className="text-gray-600 mb-4">You need to be signed in to checkout</p>
+          <p className="text-theme-secondary mb-4">You need to be signed in to checkout</p>
           <button
             onClick={() => router.push('/signin?callbackUrl=/checkout')}
             className="btn btn-primary"
@@ -127,7 +127,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
       <div className="flex items-center justify-center min-h-64">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Your Cart is Empty</h2>
-          <p className="text-gray-600 mb-4">Add some products to your cart to checkout</p>
+          <p className="text-theme-secondary mb-4">Add some products to your cart to checkout</p>
           <button
             onClick={() => router.push('/products')}
             className="btn btn-primary"
@@ -295,7 +295,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
 
           {/* Payment Options */}
           <div className="border-t pt-6">
-            <h3 className="text-xl font-semibold mb-6 text-gray-900">Payment Method</h3>
+            <h3 className="text-xl font-semibold mb-6 text-theme-primary">Payment Method</h3>
             <div className="bg-gray-50 rounded-lg p-6 space-y-4">
             
             {/* Apple Pay Button */}
@@ -362,7 +362,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gray-100 hover:bg-gray-200 ava-text-tertiary font-medium py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               Cancel

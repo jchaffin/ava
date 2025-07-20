@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
 /* AVA Skincare - Clean Modern Theme */
@@ -8,22 +7,36 @@
   --ava-secondary: #4a5568;    /* Medium gray */
   --ava-accent: #e53e3e;       /* Warm red */
   --ava-gold: #d69e2e;         /* Premium gold */
-  --ava-cream: #f7fafc;        /* Light cream */
+  --ava-cream: #ECD9D2;        /* Light cream */
   
   /* Light Mode Colors (default) */
-  --ava-bg-primary: #ffffff;
+  --ava-bg-primary: #FAF8F7;
   --ava-bg-secondary: #f7fafc;
   --ava-bg-tertiary: #edf2f7;
   --ava-text-primary: #1a202c;
   --ava-text-secondary: #4a5568;
+  --ava-text-tertiary: #7F8088;
   --ava-text-muted: #718096;
   --ava-border: #e2e8f0;
   --ava-border-dark: #cbd5e0;
 }
 
-
-
-
+.dark {
+  --ava-primary: #FAF8F7;
+  --ava-secondary: #cbd5e1;
+  --ava-accent: #e53e3e;
+  --ava-gold: #d69e2e;
+  --ava-cream: #1a202c;
+  --ava-bg-primary: #1a202c;
+  --ava-bg-secondary: #2d3748;
+  --ava-bg-tertiary: #4a5568;
+  --ava-text-primary: #ECD9D2;
+  --ava-text-secondary: #cbd5e1;
+  --ava-text-tertiary: CBD5E1;
+  --ava-text-muted: #a0aec0;
+  --ava-border: #2d3748;
+  --ava-border-dark: #4a5568;
+}
 
 /* Base Styles */
 * {
@@ -35,13 +48,11 @@ html {
 }
 
 body {
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: ui-sans-serif, system-ui, sans-serif;
   background-color: var(--ava-bg-primary);
   color: var(--ava-text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
-
 
 /* Ensure smooth transitions for theme changes */
 * {
@@ -131,12 +142,11 @@ body {
   border-color: var(--ava-border-dark);
 }
 
-/* Typography */
+/* Typography - Remove conflicting base styles */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   font-weight: 600;
   line-height: 1.2;
-  color: var(--ava-text-primary);
   margin-bottom: 1rem;
 }
 
@@ -157,27 +167,22 @@ h3 {
 
 p {
   margin-bottom: 1rem;
-  color: var(--ava-text-secondary);
 }
 
-/* Links */
+/* Links - Remove conflicting base styles */
 a {
-  color: var(--ava-accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #c53030;
   text-decoration: underline;
 }
 
-/* Cards */
+/* Cards - Remove conflicting base styles */
 .card {
-  background: var(--ava-bg-primary);
   border-radius: 0.75rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--ava-border);
   transition: all 0.3s ease;
 }
 
@@ -186,37 +191,24 @@ a:hover {
   transform: translateY(-2px);
 }
 
-/* Form Elements */
+/* Form Elements - Remove conflicting base styles */
 input, textarea, select {
-  background: var(--ava-bg-primary);
-  border: 1px solid var(--ava-border);
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
-  color: var(--ava-text-primary);
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--ava-accent);
   box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
 }
 
-/* Navigation */
+/* Navigation - Remove conflicting base styles */
 .nav-link {
-  color: var(--ava-text-secondary);
   font-weight: 500;
   transition: color 0.2s ease;
   position: relative;
-}
-
-.nav-link:hover {
-  color: var(--ava-accent);
-}
-
-.nav-link.active {
-  color: var(--ava-accent);
 }
 
 /* Animations */
@@ -278,7 +270,7 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
-/* Utility Classes */
+/* Utility Classes - Remove conflicting gradient definitions */
 .text-gradient {
   background: linear-gradient(135deg, var(--ava-primary) 0%, var(--ava-secondary) 100%);
   -webkit-background-clip: text;

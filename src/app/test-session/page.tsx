@@ -57,14 +57,14 @@ export default function TestSessionPage() {
           <button
             onClick={handleDemoLogin}
             disabled={loading}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+            className="bg-blue-500 text-theme-primary px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign in as Demo User'}
           </button>
         ) : (
           <button
             onClick={() => signOut()}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="bg-red-500 text-theme-primary px-4 py-2 rounded hover:bg-red-600"
           >
             Sign Out
           </button>

@@ -49,7 +49,8 @@ interface ProductReview {
 }
 
 const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
-  const { id } = React.use(params)
+  const [id, setId] = useState<string>('')
+  const [isClient, setIsClient] = useState(false)
   const router = useRouter()
   const { data: session } = useSession()
   const { addItem } = useCart()
@@ -65,12 +66,22 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
     loadingReviews: false,
   })
 
+  // Handle params on client side to prevent hydration issues
   useEffect(() => {
-    if (id) {
+    setIsClient(true)
+    const resolveParams = async () => {
+      const resolvedParams = await params
+      setId(resolvedParams.id)
+    }
+    resolveParams()
+  }, [params])
+
+  useEffect(() => {
+    if (id && isClient) {
       fetchProduct()
       fetchReviews()
     }
-  }, [id])
+  }, [id, isClient])
 
   const fetchProduct = async () => {
     try {
@@ -329,10 +340,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-theme-primary mb-4">
             Product Not Found
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-theme-secondary mb-8">
             {state.error || 'The product you are looking for does not exist.'}
           </p>
           <Link href="/products">
@@ -354,12 +365,12 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link href="/" className="hover:text-gray-700">Home</Link>
+        <nav className="flex items-center space-x-2 text-sm text-theme-muted mb-8">
+          <Link href="/" className="hover:ava-text-tertiary">Home</Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-gray-700">Products</Link>
+          <Link href="/products" className="hover:ava-text-tertiary">Products</Link>
           <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-theme-primary">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -375,13 +386,13 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                 priority
               />
               {product.featured && (
-                <div className="absolute top-4 left-4 bg-blue-500 text-white px-2 py-1 rounded text-sm font-medium">
+                <div className="absolute top-4 left-4 bg-blue-500 text-theme-primary px-2 py-1 rounded text-sm font-medium">
                   Featured
                 </div>
               )}
               {isOutOfStock && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                  <span className="text-white text-lg font-semibold">Out of Stock</span>
+                  <span className="text-theme-primary text-lg font-semibold">Out of Stock</span>
                 </div>
               )}
             </div>
@@ -412,14 +423,14 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
           <div className="space-y-6">
             {/* Product Header */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-theme-primary mb-2">
                 {product.name}
               </h1>
               
               <div className="flex items-center space-x-4 mb-4">
                 <div className="flex items-center space-x-1">
                   {renderStars(averageRating)}
-                  <span className="text-sm text-gray-600 ml-2">
+                  <span className="text-sm text-theme-secondary ml-2">
                     ({state.reviews.length} reviews)
                   </span>
                 </div>
@@ -465,27 +476,27 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
             {/* Product Description */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-              <p className="text-gray-600 leading-relaxed">{product.description}</p>
+              <h3 className="text-lg font-semibold text-theme-primary mb-2">Description</h3>
+              <p className="text-theme-secondary leading-relaxed">{product.description}</p>
             </div>
 
             {/* Product Details */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
+              <h3 className="text-lg font-semibold text-theme-primary mb-4">Product Details</h3>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">SKU</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{product._id?.slice(-8).toUpperCase() || 'N/A'}</dd>
+                  <dt className="text-sm font-medium text-theme-muted">SKU</dt>
+                  <dd className="mt-1 text-sm text-theme-primary">{product._id?.slice(-8).toUpperCase() || 'N/A'}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Availability</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
+                  <dt className="text-sm font-medium text-theme-muted">Availability</dt>
+                  <dd className="mt-1 text-sm text-theme-primary">
                     {isOutOfStock ? 'Out of Stock' : `${product.stock} units`}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Added</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
+                  <dt className="text-sm font-medium text-theme-muted">Added</dt>
+                  <dd className="mt-1 text-sm text-theme-primary">
                     {new Date(product.createdAt).toLocaleDateString()}
                   </dd>
                 </div>
@@ -496,7 +507,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
             {!isOutOfStock && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium ava-text-tertiary mb-2">
                     Quantity
                   </label>
                   <div className="flex items-center space-x-3">
@@ -554,16 +565,16 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
               <div className="flex items-center space-x-3">
                 <TruckIcon className="w-6 h-6 text-gray-400" />
                 <div>
-                  <h4 className="font-medium text-gray-900">Free Shipping</h4>
-                  <p className="text-sm text-gray-600">On orders over $100</p>
+                  <h4 className="font-medium text-theme-primary">Free Shipping</h4>
+                  <p className="text-sm text-theme-secondary">On orders over $100</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-3">
                 <ShieldCheckIcon className="w-6 h-6 text-gray-400" />
                 <div>
-                  <h4 className="font-medium text-gray-900">30-Day Returns</h4>
-                  <p className="text-sm text-gray-600">Easy returns and exchanges</p>
+                  <h4 className="font-medium text-theme-primary">30-Day Returns</h4>
+                  <p className="text-sm text-theme-secondary">Easy returns and exchanges</p>
                 </div>
               </div>
             </div>
@@ -572,7 +583,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
         {/* Reviews Section */}
         <div className="mt-16 border-t border-gray-200 pt-16 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
+          <h2 className="text-2xl font-bold text-theme-primary mb-8">Customer Reviews</h2>
           
           {state.loadingReviews ? (
             <div className="space-y-4">
@@ -595,13 +606,13 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                 <div key={review.id} className="border-b border-gray-200 pb-6 bg-white rounded-lg p-6 shadow-sm">
                   <div className="flex items-center space-x-4 mb-3">
                     <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-gray-600">
+                      <span className="text-sm font-medium text-theme-secondary">
                         {review.userName.charAt(0)}
                       </span>
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
-                        <h4 className="font-medium text-gray-900">{review.userName}</h4>
+                        <h4 className="font-medium text-theme-primary">{review.userName}</h4>
                         {review.verified && (
                           <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                             Verified Purchase
@@ -610,13 +621,13 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                       </div>
                       <div className="flex items-center space-x-2">
                         {renderStars(review.rating, 'sm')}
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-theme-muted">
                           {new Date(review.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-700 ml-14">{review.comment}</p>
+                  <p className="ava-text-tertiary ml-14">{review.comment}</p>
                 </div>
               ))}
             </div>

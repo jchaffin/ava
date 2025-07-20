@@ -24,7 +24,7 @@ const Loading: React.FC<LoadingProps> = ({
     <div className={`flex flex-col items-center justify-center space-y-4 ${className}`}>
       <LoadingSpinner size={size} color={color} />
       {text && (
-        <p className="text-sm text-gray-600 animate-pulse">{text}</p>
+        <p className="text-sm text-theme-secondary animate-pulse">{text}</p>
       )}
     </div>
   )
@@ -48,7 +48,7 @@ const Loading: React.FC<LoadingProps> = ({
         <div className="flex flex-col items-center space-y-4">
           <LoadingSpinner size={size} color="primary" />
           {text && (
-            <p className="text-gray-700 font-medium">{text}</p>
+            <p className="ava-text-tertiary font-medium">{text}</p>
           )}
         </div>
       </div>

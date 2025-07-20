@@ -143,10 +143,10 @@ const SignInPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-theme-primary">
               Sign in to your account
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-theme-secondary">
               Or&nbsp;
               <Link
                 href="/register"
@@ -157,7 +157,7 @@ const SignInPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white shadow-md rounded-lg p-8">
+          <div className="bg-theme-primary shadow-md rounded-lg p-8 border border-theme">
             {/* General Error Message */}
             {errors.general && (
               <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
@@ -215,7 +215,7 @@ const SignInPage: React.FC = () => {
                     type="checkbox"
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-theme-primary">
                     Remember me
                   </label>
                 </div>
@@ -223,7 +223,7 @@ const SignInPage: React.FC = () => {
                 <div className="text-sm">
                   <Link
                     href="/forgot-password"
-                    className="font-medium text-[#2D3748] hover:text-[#4A5568]"
+                    className="font-medium text-theme-primary hover:text-theme-secondary"
                   >
                     Forgot your password?
                   </Link>
@@ -246,7 +246,7 @@ const SignInPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => signIn('google')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold shadow-sm transition-colors duration-150"
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150"
                 disabled={loading}
               >
                 <svg className="w-5 h-5" viewBox="0 0 48 48">
@@ -267,11 +267,11 @@ const SignInPage: React.FC = () => {
 
           {/* Additional Links */}
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-theme-secondary">
               Don&apos;t have an account?{' '}
               <Link
                 href="/register"
-                className="font-medium text-[#2D3748] hover:text-[#4A5568]"
+                className="font-medium text-theme-primary hover:text-theme-secondary"
               >
                 Sign up for free
               </Link>

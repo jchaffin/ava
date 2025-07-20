@@ -20,7 +20,7 @@ const Loading = () => {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">AVA</h1>
-        <p className="text-gray-600">Loading your experience...</p>
+        <p className="text-theme-secondary">Loading your experience...</p>
       </div>
 
       {/* Main Loading Spinner */}
@@ -49,7 +49,7 @@ const Loading = () => {
 
       {/* Loading Tips */}
       <div className="text-center max-w-md">
-        <div className="space-y-2 text-sm text-gray-500">
+        <div className="space-y-2 text-sm text-theme-muted">
           <p className="animate-pulse">✨ Preparing your personalized experience</p>
           <p className="animate-pulse" style={{ animationDelay: '0.5s' }}>
             🚀 Loading products and recommendations

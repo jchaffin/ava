@@ -129,7 +129,7 @@ const AdminAnalytics: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading analytics...</p>
+            <p className="mt-4 text-theme-secondary">Loading analytics...</p>
           </div>
         </div>
       </AdminLayout>
@@ -144,8 +144,8 @@ const AdminAnalytics: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <h1 className="text-3xl font-bold text-theme-primary">Analytics</h1>
+                <p className="mt-1 text-sm text-theme-muted">
                   Comprehensive insights into your business performance
                 </p>
               </div>
@@ -193,8 +193,8 @@ const AdminAnalytics: React.FC = () => {
                       <DollarSign className="w-8 h-8 text-green-500" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-medium text-theme-muted">Total Revenue</p>
+                      <p className="text-2xl font-bold text-theme-primary">
                         {formatCurrency(analytics.overview.totalRevenue)}
                       </p>
                     </div>
@@ -207,8 +207,8 @@ const AdminAnalytics: React.FC = () => {
                       <ShoppingBag className="w-8 h-8 text-blue-500" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-500">Total Orders</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-medium text-theme-muted">Total Orders</p>
+                      <p className="text-2xl font-bold text-theme-primary">
                         {formatNumber(analytics.overview.totalOrders)}
                       </p>
                     </div>
@@ -221,8 +221,8 @@ const AdminAnalytics: React.FC = () => {
                       <Users className="w-8 h-8 text-purple-500" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-500">Total Customers</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-medium text-theme-muted">Total Customers</p>
+                      <p className="text-2xl font-bold text-theme-primary">
                         {formatNumber(analytics.overview.totalCustomers)}
                       </p>
                     </div>
@@ -235,8 +235,8 @@ const AdminAnalytics: React.FC = () => {
                       <BarChart3 className="w-8 h-8 text-orange-500" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-500">Avg Order Value</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-medium text-theme-muted">Avg Order Value</p>
+                      <p className="text-2xl font-bold text-theme-primary">
                         {formatCurrency(analytics.overview.averageOrderValue)}
                       </p>
                     </div>
@@ -248,8 +248,8 @@ const AdminAnalytics: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Revenue Chart */}
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
-                  <div className="h-64 flex items-center justify-center text-gray-500">
+                  <h3 className="text-lg font-semibold text-theme-primary mb-4">Revenue Trend</h3>
+                  <div className="h-64 flex items-center justify-center text-theme-muted">
                     <div className="text-center">
                       <BarChart3 className="w-12 h-12 mx-auto mb-2" />
                       <p>Revenue chart will be displayed here</p>
@@ -259,7 +259,7 @@ const AdminAnalytics: React.FC = () => {
 
                 {/* Top Products */}
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h3>
+                  <h3 className="text-lg font-semibold text-theme-primary mb-4">Top Products</h3>
                   <div className="space-y-4">
                     {analytics.topProducts.slice(0, 5).map((product) => (
                       <div key={product._id} className="flex items-center justify-between">
@@ -270,11 +270,11 @@ const AdminAnalytics: React.FC = () => {
                             className="w-10 h-10 rounded object-cover"
                           />
                           <div className="ml-3">
-                            <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                            <p className="text-sm text-gray-500">{formatNumber(product.sales)} sold</p>
+                            <p className="text-sm font-medium text-theme-primary">{product.name}</p>
+                            <p className="text-sm text-theme-muted">{formatNumber(product.sales)} sold</p>
                           </div>
                         </div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-theme-primary">
                           {formatCurrency(product.revenue)}
                         </p>
                       </div>
@@ -284,15 +284,15 @@ const AdminAnalytics: React.FC = () => {
 
                 {/* Customer Segments */}
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Segments</h3>
+                  <h3 className="text-lg font-semibold text-theme-primary mb-4">Customer Segments</h3>
                   <div className="space-y-4">
                     {analytics.customerSegments.map((segment) => (
                       <div key={segment.segment} className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{segment.segment}</p>
-                          <p className="text-sm text-gray-500">{formatNumber(segment.count)} customers</p>
+                          <p className="text-sm font-medium text-theme-primary">{segment.segment}</p>
+                          <p className="text-sm text-theme-muted">{formatNumber(segment.count)} customers</p>
                         </div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-theme-primary">
                           {formatCurrency(segment.revenue)}
                         </p>
                       </div>
@@ -302,15 +302,15 @@ const AdminAnalytics: React.FC = () => {
 
                 {/* Order Status */}
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
+                  <h3 className="text-lg font-semibold text-theme-primary mb-4">Order Status</h3>
                   <div className="space-y-4">
                     {analytics.orderStatus.map((status) => (
                       <div key={status.status} className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-gray-900 capitalize">{status.status}</p>
-                          <p className="text-sm text-gray-500">{formatNumber(status.count)} orders</p>
+                          <p className="text-sm font-medium text-theme-primary capitalize">{status.status}</p>
+                          <p className="text-sm text-theme-muted">{formatNumber(status.count)} orders</p>
                         </div>
-                        <p className="text-sm font-medium text-gray-900">{status.percentage}%</p>
+                        <p className="text-sm font-medium text-theme-primary">{status.percentage}%</p>
                       </div>
                     ))}
                   </div>
@@ -320,8 +320,8 @@ const AdminAnalytics: React.FC = () => {
           ) : (
             <div className="bg-white rounded-lg shadow p-8 text-center">
               <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Analytics Data</h3>
-              <p className="text-gray-500">Analytics data will appear here once available.</p>
+              <h3 className="text-lg font-medium text-theme-primary mb-2">No Analytics Data</h3>
+              <p className="text-theme-muted">Analytics data will appear here once available.</p>
             </div>
           )}
         </div>

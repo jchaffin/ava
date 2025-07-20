@@ -55,7 +55,7 @@ const StripeElementsForm: React.FC<StripeElementsFormProps> = ({ amount, email, 
       {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
       <button
         type="submit"
-        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-theme-primary font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         disabled={isLoading || disabled || !stripe || !elements}
       >
         {isLoading ? (

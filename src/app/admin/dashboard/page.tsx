@@ -57,6 +57,7 @@ interface LowStockProduct {
 const AdminDashboard: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
   const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>([])
@@ -64,6 +65,12 @@ const AdminDashboard: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month')
 
   useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+    
     if (isLoading) return
 
     if (!isAuthenticated || !user?.id) {
@@ -78,7 +85,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     fetchDashboardData()
-  }, [user, isAuthenticated, isLoading, router, selectedPeriod])
+  }, [user, isAuthenticated, isLoading, router, selectedPeriod, isClient])
 
   const fetchDashboardData = async () => {
     try {
@@ -156,7 +163,7 @@ const AdminDashboard: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading dashboard...</p>
+            <p className="mt-4 text-theme-secondary">Loading dashboard...</p>
           </div>
         </div>
       </AdminLayout>
@@ -171,8 +178,8 @@ const AdminDashboard: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="mt-1 text-sm text-gray-500">
+                <h1 className="text-3xl font-bold text-theme-primary">Admin Dashboard</h1>
+                <p className="mt-1 text-sm text-theme-muted">
                   Welcome back, {user?.name}
                 </p>
               </div>
@@ -209,8 +216,8 @@ const AdminDashboard: React.FC = () => {
                     <DollarSign className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Sales</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalSales)}</p>
+                    <p className="text-sm font-medium text-theme-secondary">Total Sales</p>
+                    <p className="text-2xl font-bold text-theme-primary">{formatCurrency(stats.totalSales)}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center">
@@ -227,8 +234,8 @@ const AdminDashboard: React.FC = () => {
                     <ShoppingBag className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Orders</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
+                    <p className="text-sm font-medium text-theme-secondary">Total Orders</p>
+                    <p className="text-2xl font-bold text-theme-primary">{stats.totalOrders}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center">
@@ -247,13 +254,13 @@ const AdminDashboard: React.FC = () => {
                     <Package className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Products</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalProducts}</p>
+                    <p className="text-sm font-medium text-theme-secondary">Total Products</p>
+                    <p className="text-2xl font-bold text-theme-primary">{stats.totalProducts}</p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center">
                   <Eye className="w-4 h-4 text-gray-400" />
-                  <span className="ml-2 text-sm text-gray-600">
+                  <span className="ml-2 text-sm text-theme-secondary">
                     {stats.conversionRate}% conversion rate
                   </span>
                 </div>
@@ -266,7 +273,7 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">Recent Orders</h3>
+                  <h3 className="text-lg font-medium text-theme-primary">Recent Orders</h3>
                   <Button variant="ghost" onClick={() => router.push('/admin/orders')}>
                     View All
                   </Button>
@@ -279,12 +286,12 @@ const AdminDashboard: React.FC = () => {
                       <div key={order._id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                         <div className="flex items-center space-x-4">
                           <div>
-                            <p className="font-medium text-gray-900">#{order.orderNumber}</p>
-                            <p className="text-sm text-gray-500">{order.customer.name}</p>
+                            <p className="font-medium text-theme-primary">#{order.orderNumber}</p>
+                            <p className="text-sm text-theme-muted">{order.customer.name}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium text-gray-900">{formatCurrency(order.total)}</p>
+                          <p className="font-medium text-theme-primary">{formatCurrency(order.total)}</p>
                           <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
                             {order.status}
                           </span>
@@ -295,7 +302,7 @@ const AdminDashboard: React.FC = () => {
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No recent orders</p>
+                    <p className="text-theme-muted">No recent orders</p>
                   </div>
                 )}
               </div>
@@ -305,7 +312,7 @@ const AdminDashboard: React.FC = () => {
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">Low Stock Alert</h3>
+                  <h3 className="text-lg font-medium text-theme-primary">Low Stock Alert</h3>
                   <Button variant="ghost" onClick={() => router.push('/admin/products')}>
                     View All
                   </Button>
@@ -323,8 +330,8 @@ const AdminDashboard: React.FC = () => {
                             className="w-12 h-12 object-cover rounded-lg"
                           />
                           <div>
-                            <p className="font-medium text-gray-900">{product.name}</p>
-                            <p className="text-sm text-gray-500">{formatCurrency(product.price)}</p>
+                            <p className="font-medium text-theme-primary">{product.name}</p>
+                            <p className="text-sm text-theme-muted">{formatCurrency(product.price)}</p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -346,7 +353,7 @@ const AdminDashboard: React.FC = () => {
                 ) : (
                   <div className="text-center py-8">
                     <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">All products are well stocked</p>
+                    <p className="text-theme-muted">All products are well stocked</p>
                   </div>
                 )}
               </div>
@@ -356,7 +363,7 @@ const AdminDashboard: React.FC = () => {
           {/* Quick Actions */}
           <div className="mt-8 bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">Quick Actions</h3>
+              <h3 className="text-lg font-medium text-theme-primary">Quick Actions</h3>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

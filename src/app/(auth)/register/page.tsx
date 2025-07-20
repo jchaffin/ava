@@ -69,22 +69,22 @@ const Register: React.FC = () => {
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <div className="bg-[#2D3748] p-3 rounded-full">
-              <ShoppingBag className="h-8 w-8 text-white" />
+              <ShoppingBag className="h-8 w-8 text-theme-primary" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-          <p className="mt-2 text-gray-600">
+          <h2 className="text-3xl font-bold text-theme-primary">Create Account</h2>
+          <p className="mt-2 text-theme-secondary">
             Join thousands of happy customers
           </p>
         </div>
 
         {/* Registration Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-theme-primary rounded-lg shadow-md p-6 border border-theme">
             <div className="space-y-4">
               {/* Name Field */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium ava-text-tertiary mb-1">
                   Full Name
                 </label>
                 <div className="relative">
@@ -98,7 +98,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -106,7 +106,7 @@ const Register: React.FC = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium ava-text-tertiary mb-1">
                   Email Address
                 </label>
                 <div className="relative">
@@ -120,7 +120,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -128,7 +128,7 @@ const Register: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium ava-text-tertiary mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -142,7 +142,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
                     placeholder="Create a password"
                   />
                   <button
@@ -157,14 +157,14 @@ const Register: React.FC = () => {
                     )}
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-theme-muted">
                   Must be at least 6 characters
                 </p>
               </div>
 
               {/* Confirm Password Field */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium ava-text-tertiary mb-1">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -178,7 +178,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-theme-primary focus:border-theme-primary focus:z-10 sm:text-sm"
                     placeholder="Confirm your password"
                   />
                   <button
@@ -208,11 +208,11 @@ const Register: React.FC = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#2D3748] hover:bg-[#4A5568] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D3748] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-theme-primary bg-theme-primary hover:bg-theme-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? (
                   <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-theme-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -226,9 +226,9 @@ const Register: React.FC = () => {
 
             {/* Sign in Link */}
             <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-theme-secondary">
                 Already have an account?{' '}
-                <Link href="/signin" className="font-medium text-[#2D3748] hover:text-[#4A5568]">
+                <Link href="/signin" className="font-medium text-theme-primary hover:text-theme-secondary">
                   Sign in here
                 </Link>
               </p>
@@ -238,13 +238,13 @@ const Register: React.FC = () => {
 
         {/* Terms and Privacy */}
         <div className="text-center">
-          <p className="text-xs text-gray-500">
-            By creating an account, you agree to our{' '}
-            <Link href="/terms" className="text-[#2D3748] hover:text-[#4A5568]">
+                      <p className="text-xs text-theme-muted">
+              By creating an account, you agree to our{' '}
+            <Link href="/terms" className="text-theme-primary hover:text-theme-secondary">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link href="/privacy" className="text-[#2D3748] hover:text-[#4A5568]">
+            <Link href="/privacy" className="text-theme-primary hover:text-theme-secondary">
               Privacy Policy
             </Link>
           </p>

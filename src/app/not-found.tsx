@@ -26,7 +26,7 @@ const NotFound = () => {
             <h2 className="text-3xl font-bold text-gray-800 mb-2">
               Page Not Found
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-theme-secondary mb-8">
               Oops! The page you&apos;re looking for doesn&apos;t exist.
             </p>
           </div>
@@ -57,19 +57,19 @@ const NotFound = () => {
           <div className="space-y-2">
             <Link 
               href="/"
-              className="block text-[#2D3748] hover:text-[#4A5568] transition-colors"
+              className="block text-theme-primary hover:text-theme-secondary transition-colors"
             >
               Home
             </Link>
             <Link 
               href="/products"
-              className="block text-[#2D3748] hover:text-[#4A5568] transition-colors"
+              className="block text-theme-primary hover:text-theme-secondary transition-colors"
             >
               Products
             </Link>
             <Link 
               href="/cart"
-              className="block text-[#2D3748] hover:text-[#4A5568] transition-colors"
+              className="block text-theme-primary hover:text-theme-secondary transition-colors"
             >
               Shopping Cart
             </Link>
@@ -80,7 +80,7 @@ const NotFound = () => {
         <div className="space-y-4">
           <Button
             onClick={handleGoBack}
-            className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+            className="w-full bg-gray-600 hover:bg-gray-700 text-theme-primary"
           >
             Go Back
           </Button>
@@ -93,13 +93,13 @@ const NotFound = () => {
         </div>
 
         {/* Search Suggestion */}
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-sm">
-          <p className="text-sm text-gray-600 mb-2">
+        <div className="mt-8 p-4 bg-theme-primary rounded-lg shadow-sm border border-theme">
+          <p className="text-sm text-theme-secondary mb-2">
             Can&apos;t find what you&apos;re looking for?
           </p>
           <Link
             href="/products"
-            className="text-[#2D3748] hover:text-[#4A5568] font-medium"
+            className="text-theme-primary hover:text-theme-secondary font-medium"
           >
             Browse our products →
           </Link>

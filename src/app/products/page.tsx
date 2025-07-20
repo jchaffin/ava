@@ -38,6 +38,7 @@ interface FilterState {
 const ProductsPage: React.FC = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
 
   const [state, setState] = useState<ProductsPageState>({
     products: [],
@@ -51,16 +52,28 @@ const ProductsPage: React.FC = () => {
   })
 
   const [filters, setFilters] = useState<FilterState>({
-    sortBy: searchParams.get('sortBy') || 'createdAt',
-    sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
-    searchTerm: searchParams.get('search') || '',
-    inStock: searchParams.get('inStock') === 'true',
-    featured: searchParams.get('featured') === 'true',
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+    searchTerm: '',
+    inStock: false,
+    featured: false,
   })
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFilters, setShowFilters] = useState(false)
   const [productsPerPage] = useState(12)
+
+  // Initialize filters from search params on client side
+  useEffect(() => {
+    setIsClient(true)
+    setFilters({
+      sortBy: searchParams.get('sortBy') || 'createdAt',
+      sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
+      searchTerm: searchParams.get('search') || '',
+      inStock: searchParams.get('inStock') === 'true',
+      featured: searchParams.get('featured') === 'true',
+    })
+  }, [searchParams])
 
   const sortOptions = [
     { value: 'createdAt-desc', label: 'Newest First' },
@@ -74,8 +87,10 @@ const ProductsPage: React.FC = () => {
 
   // Fetch products on mount and when filters/page changes
   useEffect(() => {
-    fetchProducts()
-  }, [filters.searchTerm, filters.inStock, filters.featured, filters.sortBy, filters.sortOrder, state.currentPage])
+    if (isClient) {
+      fetchProducts()
+    }
+  }, [filters.searchTerm, filters.inStock, filters.featured, filters.sortBy, filters.sortOrder, state.currentPage, isClient])
 
   useEffect(() => {
     updateURLParams()
@@ -220,7 +235,7 @@ const ProductsPage: React.FC = () => {
         
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm ava-text-tertiary">
               Showing{' '}
               <span className="font-medium">
                 {(state.currentPage - 1) * productsPerPage + 1}
@@ -299,11 +314,11 @@ const ProductsPage: React.FC = () => {
             
             <div className="flex-1 min-w-0">
               <Link href={`/products/${product._id}`}>
-                <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600">
+                <h3 className="text-lg font-semibold text-theme-primary hover:text-blue-600">
                   {product.name}
                 </h3>
               </Link>
-              <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+              <p className="text-theme-primary text-sm mt-1 line-clamp-2">
                 {product.description}
               </p>
               <div className="mt-2 flex items-center space-x-4">
@@ -331,7 +346,7 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-white min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-theme-primary min-h-screen">
         {/* Prominent Logo Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
@@ -344,8 +359,8 @@ const ProductsPage: React.FC = () => {
               priority
             />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Premium Skincare Collection</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-theme-primary mb-4">Premium Skincare Collection</h1>
+          <p className="text-xl text-theme-secondary max-w-2xl mx-auto">
             Discover your perfect beauty routine with our scientifically-formulated products designed for radiant, healthy skin.
           </p>
         </div>
@@ -369,9 +384,9 @@ const ProductsPage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <div className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6 shadow-lg">
+            <div className="bg-theme-primary border border-theme rounded-lg p-6 space-y-6 shadow-lg">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                <h2 className="text-lg font-semibold text-theme-primary">Filters</h2>
                 <div className="flex items-center space-x-2">
                   {getActiveFilterCount() > 0 && (
                     <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
@@ -397,7 +412,7 @@ const ProductsPage: React.FC = () => {
                     onChange={(e) => handleFilterChange('inStock', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-700">In Stock Only</span>
+                  <span className="ml-2 text-sm text-theme-primary">In Stock Only</span>
                 </label>
                 
                 <label className="flex items-center">
@@ -407,7 +422,7 @@ const ProductsPage: React.FC = () => {
                     onChange={(e) => handleFilterChange('featured', e.target.checked)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-700">Featured Products</span>
+                  <span className="ml-2 text-sm text-theme-primary">Featured Products</span>
                 </label>
               </div>
             </div>
@@ -432,7 +447,7 @@ const ProductsPage: React.FC = () => {
                   )}
                 </Button>
                 
-                <span className="text-sm text-gray-700">
+                <span className="text-sm ava-text-tertiary">
                   {state.totalProducts} product{state.totalProducts !== 1 ? 's' : ''}
                 </span>
               </div>
@@ -508,10 +523,10 @@ const ProductsPage: React.FC = () => {
             {!state.loading && !state.error && state.products.length === 0 && (
               <div className="text-center py-16">
                 <div className="max-w-md mx-auto">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <h3 className="text-lg font-medium text-theme-primary mb-2">
                     No products found
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-theme-secondary mb-6">
                     Try adjusting your filters or search terms to find what you&apos;re looking for.
                   </p>
                   <Button onClick={clearFilters}>Clear All Filters</Button>

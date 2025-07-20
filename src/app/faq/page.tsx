@@ -68,8 +68,8 @@ const FAQPage: React.FC = () => {
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-        <p className="text-lg text-gray-600">
+        <h1 className="text-4xl font-bold text-theme-primary mb-4">Frequently Asked Questions</h1>
+        <p className="text-lg text-theme-secondary">
           Find answers to common questions about our products, shipping, returns, and more.
         </p>
       </div>
@@ -82,16 +82,16 @@ const FAQPage: React.FC = () => {
               onClick={() => toggleItem(index)}
               className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
             >
-              <h3 className="text-lg font-medium text-gray-900">{item.question}</h3>
+              <h3 className="text-lg font-medium text-theme-primary">{item.question}</h3>
               {openItems.has(index) ? (
-                <ChevronUpIcon className="w-5 h-5 text-gray-500" />
+                <ChevronUpIcon className="w-5 h-5 text-theme-muted" />
               ) : (
-                <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+                <ChevronDownIcon className="w-5 h-5 text-theme-muted" />
               )}
             </button>
             {openItems.has(index) && (
               <div className="px-6 pb-4">
-                <p className="text-gray-600 leading-relaxed">{item.answer}</p>
+                <p className="text-theme-secondary leading-relaxed">{item.answer}</p>
               </div>
             )}
           </div>
@@ -100,20 +100,20 @@ const FAQPage: React.FC = () => {
 
       {/* Contact Section */}
       <div className="mt-12 bg-gray-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Still have questions?</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-bold text-theme-primary mb-4">Still have questions?</h2>
+        <p className="text-theme-secondary mb-6">
           Can&apos;t find what you&apos;re looking for? Our customer service team is here to help.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="/contact"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="bg-blue-600 text-theme-primary px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
           >
             Contact Us
           </a>
           <a
             href="/support"
-            className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+            className="border border-gray-300 ava-text-tertiary px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
           >
             Get Support
           </a>

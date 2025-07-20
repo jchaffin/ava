@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
+import { StarIcon } from '@heroicons/react/24/solid'
 
 interface Product {
   _id: string
@@ -21,10 +22,17 @@ export default function Home() {
   const router = useRouter()
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    fetchFeaturedProducts()
+    setIsClient(true)
   }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      fetchFeaturedProducts()
+    }
+  }, [isClient])
 
   const fetchFeaturedProducts = async () => {
     try {
@@ -49,15 +57,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-white py-20 px-4">
+      <section className="relative bg-theme-primary py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+              <h1 className="text-4xl lg:text-6xl font-bold text-theme-primary mb-6">
                 Discover Your Perfect
                 <span className="text-ava-accent block">Beauty Routine</span>
               </h1>
-              <p className="text-xl text-gray-700 mb-8 max-w-2xl">
+              <p className="text-xl text-theme-secondary mb-8 max-w-2xl">
                 Transform your skincare journey with our premium collection of 
                 scientifically-formulated products designed for radiant, healthy skin.
               </p>
@@ -94,13 +102,13 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-theme-secondary">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
               Why Choose AVA?
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
               Our commitment to quality, science, and your skin&apos;s health sets us apart
             </p>
           </div>
@@ -123,10 +131,10 @@ export default function Home() {
                 description: 'Thousands of satisfied customers with visible improvements in their skin'
               }
             ].map((feature, index) => (
-              <div key={index} className="text-center p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+              <div key={index} className="text-center p-6 rounded-xl bg-theme-primary shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-700">{feature.description}</p>
+                <h3 className="text-xl font-semibold text-theme-secondary mb-3">{feature.title}</h3>
+                <p className="text-theme-muted">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -134,13 +142,13 @@ export default function Home() {
       </section>
 
       {/* Products Preview */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-theme-primary">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
               Featured Products
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
               Discover our most popular skincare solutions
             </p>
           </div>
@@ -149,11 +157,11 @@ export default function Home() {
             {loading ? (
               // Loading skeletons
               Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
-                  <div className="relative h-48 bg-gray-200"></div>
+                <div key={index} className="bg-theme-primary rounded-xl shadow-lg overflow-hidden animate-pulse">
+                  <div className="relative h-48 bg-text-primary"></div>
                   <div className="p-4">
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-theme-secondary rounded mb-2"></div>
+                    <div className="h-4 bg-theme-secondary rounded w-1/2"></div>
                   </div>
                 </div>
               ))
@@ -161,7 +169,7 @@ export default function Home() {
               featuredProducts.map((product) => (
                 <div 
                   key={product._id} 
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
+                  className="bg-theme-primary rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
                   onClick={() => handleProductClick(product._id)}
                 >
                   <div className="relative h-48">
@@ -174,7 +182,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-black mb-2">{product.name}</h3>
+                    <h3 className="font-semibold text-theme-primary mb-2">{product.name}</h3>
                     <p className="text-ava-accent font-bold">${product.price.toFixed(2)}</p>
                   </div>
                 </div>
@@ -233,13 +241,13 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-theme-secondary">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
               What Our Customers Say
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
               Real results from real people
             </p>
           </div>
@@ -265,16 +273,19 @@ export default function Home() {
                 rating: 5
               }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-white shadow-lg p-6 rounded-xl">
-                <div className="flex mb-4">
+              <div key={index} className="bg-theme-primary shadow-lg p-6 rounded-xl">
+                <div className="flex mb-4 space-x-1">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">⭐</span>
+                    <StarIcon 
+                      key={i} 
+                      className="w-4 h-4 text-[var(--ava-primary)]" 
+                    />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4 italic">&quot;{testimonial.content}&quot;</p>
+                <p className="ava-text-tertiary mb-4 italic">&quot;{testimonial.content}&quot;</p>
                 <div>
-                  <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                  <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                  <p className="font-semibold text-theme-primary">{testimonial.name}</p>
+                  <p className="text-theme-secondary text-sm">{testimonial.role}</p>
                 </div>
               </div>
             ))}
@@ -283,35 +294,35 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 bg-white relative">
+      <section className="py-24 px-4 bg-theme-primary relative">
         
         <div className="max-w-5xl mx-auto text-center relative z-10">
           <div className="mb-8">
-            <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h2 className="text-4xl lg:text-6xl font-bold text-theme-primary mb-6 leading-tight">
               Ready to Transform
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
                 Your Skin?
               </span>
             </h2>
-            <p className="text-xl lg:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-theme-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
               Join thousands of customers who have discovered the power of premium skincare
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link href="/products">
-              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
                 Start Shopping
               </Button>
             </Link>
             <Link href="/register">
-              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
                 Create Account
               </Button>
             </Link>
           </div>
           
-          <div className="mt-12 flex justify-center items-center space-x-8 text-gray-600 text-sm">
+          <div className="mt-12 flex justify-center items-center space-x-8 text-theme-secondary text-sm">
             <div className="flex items-center">
               <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
               Free Shipping
@@ -329,19 +340,19 @@ export default function Home() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-theme-primary">
         <div className="max-w-2xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          <h3 className="text-2xl font-bold text-theme-primary mb-4">
             Stay Updated
           </h3>
-          <p className="text-gray-700 mb-6">
+          <p className="ava-text-tertiary mb-6">
             Get the latest skincare tips, product launches, and exclusive offers
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-3 bg-theme-tertiary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <Button className="px-6 py-3">
               Subscribe
