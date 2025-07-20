@@ -385,7 +385,7 @@ function isValidUrl(urlString: string): boolean {
 }
 
 // Advanced search functionality
-export async function searchProducts(searchTerm: string, filters?: ProductFilters): Promise<IProduct[]> {
+async function searchProducts(searchTerm: string, filters?: ProductFilters): Promise<IProduct[]> {
   await connectDB()
 
   const searchRegex = new RegExp(searchTerm, 'i')
@@ -412,7 +412,7 @@ export async function searchProducts(searchTerm: string, filters?: ProductFilter
 }
 
 // Bulk operations for admin
-export async function bulkUpdateProducts(updates: Array<{ id: string; updates: Partial<IProduct> }>): Promise<boolean> {
+async function bulkUpdateProducts(updates: Array<{ id: string; updates: Partial<IProduct> }>): Promise<boolean> {
   try {
     await connectDB()
 
@@ -433,7 +433,7 @@ export async function bulkUpdateProducts(updates: Array<{ id: string; updates: P
 }
 
 // Product analytics helper
-export async function getProductAnalytics(): Promise<{
+async function getProductAnalytics(): Promise<{
   totalProducts: number
   outOfStockProducts: number
   lowStockProducts: number

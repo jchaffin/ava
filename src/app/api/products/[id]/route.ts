@@ -6,12 +6,6 @@ import { Product, Order } from '@/models'
 import { ApiResponse, IProduct, CreateProductInput, ProductAnalytics } from '@/types'
 import { isValidObjectId } from 'mongoose'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
 interface ProductUpdateData extends Partial<CreateProductInput> {
   // Additional fields that might be updated
 }
@@ -19,10 +13,10 @@ interface ProductUpdateData extends Partial<CreateProductInput> {
 // GET /api/products/[id] - Get single product
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<IProduct & { analytics?: ProductAnalytics }>>> {
+  const { id } = await params
   try {
-    const { id } = params
 
     // Validate MongoDB ObjectId
     if (!isValidObjectId(id)) {
@@ -95,10 +89,10 @@ export async function GET(
 // PUT /api/products/[id] - Update product (Admin only)
 export async function PUT(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<IProduct> | ApiResponse<{ validationErrors: { field: string; message: string }[] }>>> {
+  const { id } = await params
   try {
-    const { id } = params
 
     // Check authentication and authorization
     const session = await getServerSession(authOptions)
@@ -286,10 +280,10 @@ export async function PUT(
 // DELETE /api/products/[id] - Delete product (Admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<{ deletedProductId: string }>>> {
+  const { id } = await params
   try {
-    const { id } = params
 
     // Check authentication and authorization
     const session = await getServerSession(authOptions)
@@ -620,7 +614,7 @@ async function cleanupProductData(productId: string): Promise<void> {
 }
 
 // Soft delete alternative (mark as deleted instead of removing)
-export async function softDeleteProduct(productId: string): Promise<boolean> {
+async function softDeleteProduct(productId: string): Promise<boolean> {
   try {
     await connectDB()
     

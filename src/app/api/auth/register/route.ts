@@ -343,49 +343,4 @@ function checkRateLimit(ip: string): boolean {
 
 
 
-// Enhanced version with additional features
-export async function POST_ENHANCED(request: NextRequest): Promise<NextResponse<ApiResponse>> {
-  try {
-    // Get client IP for rate limiting
-    const forwardedFor = request.headers.get('x-forwarded-for')
-    const ip = forwardedFor ? forwardedFor.split(',')[0] : 'unknown'
 
-    // Check rate limit
-    if (!checkRateLimit(ip)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Too many registration attempts. Please try again later.',
-          error: 'RATE_LIMIT_EXCEEDED',
-        },
-        { status: 429 }
-      )
-    }
-
-
-
-    // Continue with existing validation and user creation logic...
-    // (Same as the original POST function above)
-    
-    // For now, return a placeholder response
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Enhanced registration not yet implemented',
-        error: 'NOT_IMPLEMENTED',
-      },
-      { status: 501 }
-    )
-
-  } catch {
-    // Same error handling as above...
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Internal server error',
-        error: 'SERVER_ERROR',
-      },
-      { status: 500 }
-    )
-  }
-}

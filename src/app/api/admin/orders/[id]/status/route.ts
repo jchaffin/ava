@@ -6,22 +6,16 @@ import { Order } from '@/models'
 import { ApiResponse } from '@/types'
 import { isValidObjectId } from 'mongoose'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
 export async function PATCH(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ApiResponse<{
   orderId: string
   previousStatus: string
   newStatus: string
 }>>> {
+  const { id } = await params
   try {
-    const { id } = params
 
     // Check authentication and authorization
     const session = await getServerSession(authOptions)
