@@ -11,7 +11,7 @@ interface CheckWishlistResponse {
 // GET /api/wishlist/check/[productId] - Check if product is in user's wishlist
 export async function GET(
   request: NextRequest,
-  { params }: { params: { productId: string } }
+  { params }: { params: Promise<{ productId: string }> }
 ): Promise<NextResponse<ApiResponse<CheckWishlistResponse>>> {
   try {
     // Check authentication
@@ -27,7 +27,7 @@ export async function GET(
       )
     }
 
-    const { productId } = params
+    const { productId } = await params
 
     if (!productId) {
       return NextResponse.json(

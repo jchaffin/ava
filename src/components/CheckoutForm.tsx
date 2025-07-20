@@ -14,11 +14,10 @@ const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   : null
 
 interface CheckoutFormProps {
-  onSuccess?: () => void
   onCancel?: () => void
 }
 
-export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps) {
+export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
   const { items: cart, clearCart, getTotalPrice } = useCart()
   const { user } = useAuth()
   const router = useRouter()
@@ -173,39 +172,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
     }
   }
 
-  const handlePaymentIntent = async () => {
-    setIsLoading(true)
 
-    try {
-      // Create payment intent
-      const response = await fetch('/api/stripe/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: total,
-          currency: 'usd',
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create payment intent')
-      }
-
-      // Here you would integrate with Stripe Elements for custom checkout
-      // For now, we'll use the redirect checkout method
-      toast.success('Payment intent created successfully')
-
-    } catch (error) {
-      console.error('Payment intent error:', error)
-      toast.error(error instanceof Error ? error.message : 'Payment failed')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   if (!user) {
     return (
@@ -406,7 +373,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             <ApplePayButton
               amount={total}
               currency="usd"
-              onSuccess={(paymentIntent) => {
+              onSuccess={() => {
                 toast.success('Payment successful!')
                 clearCart()
                 router.push('/orders/success?success=true')
@@ -431,7 +398,7 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             <PayPalButton
               amount={total}
               currency="usd"
-              onSuccess={(paymentResult) => {
+              onSuccess={() => {
                 toast.success('Payment successful!')
                 clearCart()
                 router.push('/orders/success?success=true')

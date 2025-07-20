@@ -101,7 +101,7 @@ export default function Home() {
               Why Choose AVA?
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Our commitment to quality, science, and your skin's health sets us apart
+              Our commitment to quality, science, and your skin&apos;s health sets us apart
             </p>
           </div>
           
@@ -249,19 +249,19 @@ export default function Home() {
               {
                 name: 'Sarah Johnson',
                 role: 'Skincare Enthusiast',
-                content: 'The hydrating serum completely transformed my dry skin. I can\'t imagine my routine without it!',
+                content: 'The hydrating serum completely transformed my dry skin. I can&apos;t imagine my routine without it!',
                 rating: 5
               },
               {
                 name: 'Michael Chen',
                 role: 'Dermatologist',
-                content: 'As a dermatologist, I\'m impressed with the quality and effectiveness of AVA products.',
+                content: 'As a dermatologist, I&apos;m impressed with the quality and effectiveness of AVA products.',
                 rating: 5
               },
               {
                 name: 'Emma Davis',
                 role: 'Beauty Blogger',
-                content: 'I\'ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
+                content: 'I&apos;ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
                 rating: 5
               }
             ].map((testimonial, index) => (
