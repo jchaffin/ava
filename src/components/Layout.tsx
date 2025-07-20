@@ -442,28 +442,34 @@ const Layout: React.FC<LayoutProps> = ({
     <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Mobile menu button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
-          >
-            <Bars3Icon className="w-6 h-6" />
-          </button>
+          {/* Left side - Mobile menu button on mobile, hidden on desktop */}
+          <div className="lg:hidden">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+            >
+              <Bars3Icon className="w-6 h-6" />
+            </button>
+          </div>
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="AVA Logo"
-              width={120}
-              height={40}
-              className="h-8 w-auto"
-              priority
-            />
-          </Link>
+          {/* Center - Logo (centered on mobile, left on desktop) */}
+          <div className="flex-1 flex justify-center lg:justify-start">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/logo.png"
+                alt="AVA Logo"
+                width={120}
+                height={40}
+                className="h-8 w-auto"
+                priority
+              />
+            </Link>
+          </div>
 
-          {/* Desktop navigation */}
-          {renderDesktopNavigation()}
+          {/* Desktop navigation - hidden on mobile */}
+          <div className="hidden lg:block">
+            {renderDesktopNavigation()}
+          </div>
 
           {/* Right side actions */}
           <div className="flex items-center space-x-2">
@@ -562,7 +568,6 @@ const Layout: React.FC<LayoutProps> = ({
             <ul className="space-y-2">
               <li><Link href="/faq" className="text-gray-400 hover:text-white transition-colors duration-200">FAQ</Link></li>
               <li><Link href="/support" className="text-gray-400 hover:text-white transition-colors duration-200">Support</Link></li>
-              <li><Link href="/size-guide" className="text-gray-400 hover:text-white transition-colors duration-200">Size Guide</Link></li>
               <li><Link href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
             </ul>

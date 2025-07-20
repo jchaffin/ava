@@ -6,7 +6,7 @@
   --ava-secondary: #4A5568;    /* Medium gray - secondary text */
   --ava-accent: #E53E3E;       /* Warm red accent - call-to-action */
   --ava-gold: #D69E2E;         /* Premium gold - highlights */
-  --ava-cream: #F7FAFC;        /* Soft cream - backgrounds */
+  --ava-cream: #ECD9D2;        /* Soft cream - backgrounds */
   --ava-white: #FFFFFF;        /* Pure white */
   --ava-black: #1A202C;        /* Deep black */
   
@@ -29,7 +29,8 @@
   /* Border Colors */
   --ava-border-light: #E2E8F0;
   --ava-border-medium: #CBD5E0;
-  --ava-border-dark: #A0AEC0;
+  --ava-border-dark: rgb(160, 174, 192);
+
   
   /* Shadow Colors */
   --ava-shadow-light: rgba(45, 55, 72, 0.1);

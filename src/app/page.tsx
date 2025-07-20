@@ -1,9 +1,51 @@
-import React from 'react'
+'use client'
+
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button, LoadingSpinner } from '@/components/ui'
 
+interface Product {
+  _id: string
+  name: string
+  description: string
+  price: number
+  stock: number
+  image: string
+  featured: boolean
+  createdAt: string
+}
+
 export default function Home() {
+  const router = useRouter()
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFeaturedProducts()
+  }, [])
+
+  const fetchFeaturedProducts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/products?featured=true&limit=4')
+      const data = await response.json()
+      
+      if (data.success && data.data?.products) {
+        setFeaturedProducts(data.data.products)
+      }
+    } catch (error) {
+      console.error('Error fetching featured products:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleProductClick = (productId: string) => {
+    router.push(`/products/${productId}`)
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -104,47 +146,80 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {[
-              {
-                name: 'Hydrating Serum',
-                price: '$49.99',
-                image: '/images/products/hydserum/hydserum_main.jpg',
-            
-              },
-              {
-                name: 'Vitamin C Serum',
-                price: '$59.99',
-                image: '/images/products/vitcserum/vitcserum_main.jpg',
-            
-              },
-              {
-                name: 'Collagen Serum',
-                price: '$69.99',
-                image: '/images/products/collagenserum/collagenserum_main.jpg',
-              },
-              {
-                name: 'Anti-Age Serum',
-                price: '$79.99',
-                image: '/images/products/antiageserum/antiageserum_main.jpg',
-              }
-            ].map((product, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="relative h-48">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
-                    className="object-cover"
-                  />
-
+            {loading ? (
+              // Loading skeletons
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+                  <div className="relative h-48 bg-gray-200"></div>
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
-                  <p className="text-blue-600 font-bold">{product.price}</p>
+              ))
+            ) : featuredProducts.length > 0 ? (
+              featuredProducts.map((product) => (
+                <div 
+                  key={product._id} 
+                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
+                  onClick={() => handleProductClick(product._id)}
+                >
+                  <div className="relative h-48">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
+                    <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // Fallback to hardcoded products if no featured products found
+              [
+                {
+                  name: 'Hydrating Serum',
+                  price: '$49.99',
+                  image: '/images/products/hydserum/hydserum_main.jpg',
+                },
+                {
+                  name: 'Vitamin C Serum',
+                  price: '$59.99',
+                  image: '/images/products/vitcserum/vitcserum_main.jpg',
+                },
+                {
+                  name: 'Collagen Serum',
+                  price: '$69.99',
+                  image: '/images/products/collagenserum/collagenserum_main.jpg',
+                },
+                {
+                  name: 'Anti-Age Serum',
+                  price: '$79.99',
+                  image: '/images/products/antiageserum/antiageserum_main.jpg',
+                }
+              ].map((product, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="relative h-48">
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
+                    <p className="text-blue-600 font-bold">{product.price}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
           
           <div className="text-center">
@@ -208,7 +283,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-blue-600">
+      <section className="py-20 px-4 bg-(--ava-cream)">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
             Ready to Transform Your Skin?

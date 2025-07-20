@@ -40,8 +40,6 @@ const AdminProducts: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'low-stock' | 'featured'>('all')
   const [sortBy, setSortBy] = useState<'name' | 'price' | 'stock' | 'createdAt'>('createdAt')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
-  const [editing, setEditing] = useState<{ id: string; field: string } | null>(null)
-  const [editValue, setEditValue] = useState<string | number>('')
   const [imageModal, setImageModal] = useState<{ open: boolean; product: Product | null }>({ open: false, product: null })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -152,48 +150,6 @@ const AdminProducts: React.FC = () => {
       }
     })
 
-  const handleEdit = (product: Product, field: string) => {
-    setEditing({ id: product._id, field })
-    setEditValue(product[field as keyof Product] as string | number)
-  }
-
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setEditValue(e.target.value)
-  }
-
-  const handleEditSave = async (product: Product, field: string) => {
-    if (editValue === product[field as keyof Product]) {
-      setEditing(null)
-      return
-    }
-    try {
-      const response = await fetch(`/api/products/${product._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [field]: field === 'price' || field === 'stock' ? Number(editValue) : editValue }),
-      })
-      const data = await response.json()
-      if (data.success) {
-        toast.success('Product updated')
-        fetchProducts()
-      } else {
-        toast.error(data.message || 'Failed to update product')
-      }
-    } catch (error) {
-      toast.error('Failed to update product')
-    } finally {
-      setEditing(null)
-    }
-  }
-
-  const handleEditKeyDown = (e: React.KeyboardEvent, product: Product, field: string) => {
-    if (e.key === 'Enter') {
-      handleEditSave(product, field)
-    } else if (e.key === 'Escape') {
-      setEditing(null)
-    }
-  }
-
   // Image upload logic
   const handleImageClick = (product: Product) => {
     setImageModal({ open: true, product })
@@ -211,27 +167,34 @@ const AdminProducts: React.FC = () => {
 
   const handleImageUpload = async () => {
     if (!imageFile || !imageModal.product) return
-    const formData = new FormData()
-    formData.append('image', imageFile)
+
     try {
+      const formData = new FormData()
+      formData.append('image', imageFile)
+
       const response = await fetch(`/api/products/${imageModal.product._id}/image`, {
         method: 'POST',
         body: formData,
       })
+
       const data = await response.json()
+
       if (data.success) {
-        toast.success('Image updated')
-        fetchProducts()
+        toast.success('Image uploaded successfully')
         setImageModal({ open: false, product: null })
+        setImageFile(null)
+        setImagePreview(null)
+        fetchProducts()
       } else {
-        toast.error(data.message || 'Failed to update image')
+        toast.error(data.message || 'Failed to upload image')
       }
     } catch (error) {
-      toast.error('Failed to update image')
+      console.error('Error uploading image:', error)
+      toast.error('Failed to upload image')
     }
   }
 
-  if (isLoading || loading) {
+  if (isLoading) {
     return (
       <AdminLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -252,7 +215,7 @@ const AdminProducts: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Products Management</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Products</h1>
                 <p className="mt-1 text-sm text-gray-500">
                   Manage your product catalog
                 </p>
@@ -267,51 +230,60 @@ const AdminProducts: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Filters and Search */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
               </div>
-              
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value as any)}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Products</option>
-                <option value="low-stock">Low Stock</option>
-                <option value="featured">Featured</option>
-              </select>
 
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="createdAt">Date Created</option>
-                <option value="name">Name</option>
-                <option value="price">Price</option>
-                <option value="stock">Stock</option>
-              </select>
+              {/* Filter */}
+              <div className="flex items-center space-x-2">
+                <Filter className="w-4 h-4 text-gray-400" />
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value as 'all' | 'low-stock' | 'featured')}
+                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">All Products</option>
+                  <option value="low-stock">Low Stock</option>
+                  <option value="featured">Featured</option>
+                </select>
+              </div>
 
-              <Button
-                variant="ghost"
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="flex items-center justify-center"
-              >
-                {sortOrder === 'asc' ? (
-                  <TrendingUp className="w-4 h-4" />
-                ) : (
-                  <TrendingDown className="w-4 h-4" />
-                )}
-              </Button>
+              {/* Sort */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-500">Sort by:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'stock' | 'createdAt')}
+                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="name">Name</option>
+                  <option value="price">Price</option>
+                  <option value="stock">Stock</option>
+                  <option value="createdAt">Date Created</option>
+                </select>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                >
+                  {sortOrder === 'asc' ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -363,21 +335,9 @@ const AdminProducts: React.FC = () => {
                               />
                               <div>
                                 <div className="text-sm font-medium text-gray-900">
-                                  {editing?.id === product._id && editing.field === 'name' ? (
-                                    <input
-                                      type="text"
-                                      value={editValue}
-                                      onChange={handleEditChange}
-                                      onBlur={() => handleEditSave(product, 'name')}
-                                      onKeyDown={(e) => handleEditKeyDown(e, product, 'name')}
-                                      autoFocus
-                                      className="border border-gray-300 rounded px-2 py-1 text-sm"
-                                    />
-                                  ) : (
-                                    <span onDoubleClick={() => handleEdit(product, 'name')} className="cursor-pointer hover:underline">
-                                      {product.name}
-                                    </span>
-                                  )}
+                                  <span className="text-gray-900">
+                                    {product.name}
+                                  </span>
                                   {product.featured && (
                                     <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                                       Featured
@@ -391,58 +351,19 @@ const AdminProducts: React.FC = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {editing?.id === product._id && editing.field === 'price' ? (
-                              <input
-                                type="number"
-                                value={editValue}
-                                onChange={handleEditChange}
-                                onBlur={() => handleEditSave(product, 'price')}
-                                onKeyDown={(e) => handleEditKeyDown(e, product, 'price')}
-                                autoFocus
-                                className="border border-gray-300 rounded px-2 py-1 text-sm"
-                              />
-                            ) : (
-                              <span onDoubleClick={() => handleEdit(product, 'price')} className="cursor-pointer hover:underline">
-                                {formatCurrency(product.price)}
-                              </span>
-                            )}
+                            <span className="text-gray-900">
+                              {formatCurrency(product.price)}
+                            </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {editing?.id === product._id && editing.field === 'stock' ? (
-                              <input
-                                type="number"
-                                value={editValue}
-                                onChange={handleEditChange}
-                                onBlur={() => handleEditSave(product, 'stock')}
-                                onKeyDown={(e) => handleEditKeyDown(e, product, 'stock')}
-                                autoFocus
-                                className="border border-gray-300 rounded px-2 py-1 text-sm"
-                              />
-                            ) : (
-                              <span onDoubleClick={() => handleEdit(product, 'stock')} className="cursor-pointer hover:underline">
-                                {product.stock}
-                              </span>
-                            )}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <span className="text-gray-900">
+                              {product.stock}
+                            </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            {editing?.id === product._id && editing.field === 'status' ? (
-                              <select
-                                value={editValue}
-                                onChange={handleEditChange}
-                                onBlur={() => handleEditSave(product, 'status')}
-                                onKeyDown={(e) => handleEditKeyDown(e, product, 'status')}
-                                autoFocus
-                                className="border border-gray-300 rounded px-2 py-1 text-sm"
-                              >
-                                <option value="in-stock">In Stock</option>
-                                <option value="low-stock">Low Stock</option>
-                                <option value="out-of-stock">Out of Stock</option>
-                              </select>
-                            ) : (
-                              <span onDoubleClick={() => handleEdit(product, 'status')} className={`cursor-pointer hover:underline text-sm font-medium ${stockStatus.color}`}>
-                                {stockStatus.text}
-                              </span>
-                            )}
+                            <span className={`text-sm font-medium ${stockStatus.color}`}>
+                              {stockStatus.text}
+                            </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {formatDate(product.createdAt)}
@@ -488,7 +409,7 @@ const AdminProducts: React.FC = () => {
                     : 'No products found'
                   }
                 </p>
-                {searchTerm || filter !== 'all' && (
+                {(searchTerm || filter !== 'all') && (
                   <Button
                     variant="ghost"
                     onClick={() => {
@@ -508,7 +429,7 @@ const AdminProducts: React.FC = () => {
       {/* Image upload modal */}
       <Dialog open={imageModal.open} onClose={() => setImageModal({ open: false, product: null })} className="fixed z-50 inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-screen px-4">
-          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+          <div className="fixed inset-0 bg-black opacity-30" />
           <div className="bg-white rounded-lg shadow-lg p-6 z-10 max-w-md w-full">
             <Dialog.Title className="text-lg font-bold mb-4">Upload Product Image</Dialog.Title>
             {imagePreview ? (
