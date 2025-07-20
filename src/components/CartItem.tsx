@@ -8,17 +8,17 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
-
   description?: string;
 }
 
 interface CartItemProps {
   item: CartItem;
+  stock: number;
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove }) => {
+const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRemove }) => {
   const handleQuantityChange = (newQuantity: number) => {
     if (newQuantity <= 0) {
       onRemove(item.id);
@@ -52,12 +52,15 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
         )}
         <div className="flex items-center gap-2 mt-2">
           <span className="text-lg font-bold text-gray-900">
-            ${totalPrice.toFixed(2)}
-          </span>
-          <span className="text-sm text-gray-500">
-            (${item.price.toFixed(2)} each)
+            ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
           </span>
         </div>
+        {/* Stock Warning */}
+        {item.quantity >= stock && (
+          <p className="text-sm text-orange-600 mt-2">
+            ⚠️ Maximum available quantity reached
+          </p>
+        )}
       </div>
 
       {/* Quantity Controls */}
@@ -66,6 +69,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
           onClick={() => handleQuantityChange(item.quantity - 1)}
           className="p-1 rounded-md hover:bg-gray-100 transition-colors"
           aria-label="Decrease quantity"
+          disabled={item.quantity <= 1}
         >
           <Minus size={16} />
         </button>
@@ -76,6 +80,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
           onClick={() => handleQuantityChange(item.quantity + 1)}
           className="p-1 rounded-md hover:bg-gray-100 transition-colors"
           aria-label="Increase quantity"
+          disabled={item.quantity >= stock}
         >
           <Plus size={16} />
         </button>

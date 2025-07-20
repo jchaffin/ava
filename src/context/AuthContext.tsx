@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import React, { createContext, useContext, useEffect, ReactNode, useCallback } from 'react'
 import { useSession, signIn, signOut, SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { IUser } from '@/types'
@@ -83,7 +83,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
   const { data: session, status, update } = useSession()
   const router = useRouter()
   
-  console.log('AuthContext: useSession hook', { session, status })
+
 
   // Create user from session directly
   const user = session?.user ? createAuthUserFromSession(session.user) : null
@@ -109,12 +109,8 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       }
 
       if (result?.ok) {
-        console.log('AuthContext: Login successful, updating session')
-        
         // Force a session update
-        update().then(() => {
-          console.log('AuthContext: Session update completed')
-        }).catch(error => {
+        update().catch(error => {
           console.error('AuthContext: Session update failed', error)
         })
         

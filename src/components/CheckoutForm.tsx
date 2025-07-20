@@ -8,6 +8,8 @@ import { loadStripe } from '@stripe/stripe-js'
 import toast from 'react-hot-toast'
 import ApplePayButton from './ApplePayButton'
 import PayPalButton from './PayPalButton'
+import { Elements } from '@stripe/react-stripe-js'
+import StripeElementsForm from './StripeElementsForm'
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -42,6 +44,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
   })
 
   const total = getTotalPrice()
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -54,6 +57,33 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
       return
     }
   }, [user, cart, router])
+
+  useEffect(() => {
+    if (!user || cart.length === 0) return
+    // Fetch PaymentIntent client secret
+    const fetchClientSecret = async () => {
+      try {
+        const response = await fetch('/api/stripe/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: total,
+            currency: 'usd',
+            customerEmail: formData.email,
+          }),
+        })
+        const data = await response.json()
+        if (response.ok && data.clientSecret) {
+          setClientSecret(data.clientSecret)
+        } else {
+          toast.error(data.error || 'Failed to initialize payment')
+        }
+      } catch (error) {
+        toast.error('Failed to initialize payment')
+      }
+    }
+    fetchClientSecret()
+  }, [user, cart, total, formData.email])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -74,105 +104,6 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
       }))
     }
   }
-
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!user) {
-      toast.error('Please sign in to checkout')
-      return
-    }
-
-    if (cart.length === 0) {
-      toast.error('Your cart is empty')
-      return
-    }
-
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      toast.error('Stripe is not configured. Please contact support.')
-      return
-    }
-
-    // Validate form data
-    if (!formData.email || !formData.name || !formData.address.line1 || 
-        !formData.address.city || !formData.address.state || !formData.address.postal_code) {
-      toast.error('Please fill in all required fields')
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      // Create line items for Stripe with product IDs
-      const lineItems = cart.map((item: any) => ({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: item.name,
-            description: item.description,
-            images: item.image ? [item.image] : [],
-          },
-          unit_amount: Math.round(item.price * 100), // Convert to cents
-        },
-        quantity: item.quantity,
-        productId: item._id, // Add product ID for order creation
-      }))
-
-      // Create checkout session with shipping address
-      const response = await fetch('/api/stripe/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          lineItems,
-          mode: 'payment',
-          successUrl: `${window.location.origin}/orders/success?success=true`,
-          cancelUrl: `${window.location.origin}/cart`,
-          customerEmail: formData.email,
-          shippingAddress: {
-            street: formData.address.line1,
-            city: formData.address.city,
-            state: formData.address.state,
-            zipCode: formData.address.postal_code,
-            country: formData.address.country,
-          },
-          metadata: {
-            orderId: `order_${Date.now()}`,
-            userId: user.id,
-            customerName: formData.name,
-            customerPhone: formData.phone,
-          },
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session')
-      }
-
-      // Redirect to Stripe Checkout
-      const stripe = await stripePromise
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: data.sessionId,
-        })
-
-        if (error) {
-          throw new Error(error.message)
-        }
-      }
-
-    } catch (error) {
-      console.error('Checkout error:', error)
-      toast.error(error instanceof Error ? error.message : 'Checkout failed')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-
 
   if (!user) {
     return (
@@ -211,9 +142,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <div className="card p-6">
-        <h2 className="text-2xl font-semibold mb-6">Checkout</h2>
-        
-        <form onSubmit={handleCheckout} className="space-y-6">
+        <div className="space-y-6">
           {/* Contact Information */}
           <div>
             <h3 className="text-lg font-medium mb-4">Contact Information</h3>
@@ -390,11 +319,28 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-400 font-medium">or continue with</span>
+                <span className="px-4 bg-white text-gray-400 font-medium">or pay with card, Link, or more</span>
               </div>
             </div>
             
-            {/* PayPal Button */}
+            {/* Stripe Elements Form */}
+            {clientSecret && (
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <StripeElementsForm
+                  amount={total}
+                  email={formData.email}
+                  onSuccess={() => {
+                    toast.success('Payment successful!')
+                    clearCart()
+                    router.push('/orders/success?success=true')
+                  }}
+                  onError={(error) => toast.error(error)}
+                  disabled={isLoading}
+                />
+              </Elements>
+            )}
+            
+            {/* PayPal Button (optional, can be left as is) */}
             <PayPalButton
               amount={total}
               currency="usd"
@@ -409,28 +355,6 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
               disabled={isLoading}
               className="mb-4"
             />
-            
-            {/* Standard Checkout Button */}
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-lg">Processing Payment...</span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-3">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                  <span className="text-lg">Pay with Card</span>
-                  <span className="text-xl font-bold">${total.toFixed(2)}</span>
-                </div>
-              )}
-            </button>
           </div>
 
           {/* Cancel Button */}
@@ -445,7 +369,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
             </button>
           </div>
             </div>
-        </form>
+        </div>
       </div>
     </div>
   )

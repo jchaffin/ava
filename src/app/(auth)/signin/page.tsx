@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Button, Input } from '@/components/ui'
 import { useAuth } from '@/context'
 import toast from 'react-hot-toast'
+import { signIn } from 'next-auth/react'
 
 interface SignInFormData {
   email: string
@@ -240,35 +241,25 @@ const SignInPage: React.FC = () => {
               </Button>
             </form>
 
-            {/* Demo Login Section */}
+            {/* Google Sign In */}
             <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or try demo accounts</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button
-                  variant="secondary"
-                  onClick={() => handleDemoLogin('user')}
-                  disabled={loading}
-                  className="w-full"
-                >
-                  Demo User
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => handleDemoLogin('admin')}
-                  disabled={loading}
-                  className="w-full"
-                >
-                  Demo Admin
-                </Button>
-              </div>
+              <button
+                type="button"
+                onClick={() => signIn('google')}
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold shadow-sm transition-colors duration-150"
+                disabled={loading}
+              >
+                <svg className="w-5 h-5" viewBox="0 0 48 48">
+                  <g>
+                    <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.73 5.48 2.69 13.44l7.98 6.2C12.13 13.13 17.62 9.5 24 9.5z"/>
+                    <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.02l7.19 5.59C43.93 37.13 46.1 31.36 46.1 24.55z"/>
+                    <path fill="#FBBC05" d="M10.67 28.65c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.2C.7 17.1 0 20.46 0 24c0 3.54.7 6.9 1.96 10.1l8.71-5.45z"/>
+                    <path fill="#EA4335" d="M24 48c6.18 0 11.36-2.04 15.15-5.54l-7.19-5.59c-2.01 1.35-4.59 2.15-7.96 2.15-6.38 0-11.87-3.63-14.33-8.89l-8.71 5.45C6.73 42.52 14.82 48 24 48z"/>
+                    <path fill="none" d="M0 0h48v48H0z"/>
+                  </g>
+                </svg>
+                Sign in with Google
+              </button>
             </div>
 
 

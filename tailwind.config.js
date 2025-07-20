@@ -36,6 +36,7 @@ module.exports = {
         },
       },
       fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         'ava-primary': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         'ava-secondary': ['Playfair Display', 'Georgia', 'serif'],
       },

@@ -3,16 +3,13 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useCart } from '@/context'
 import { Button } from '@/components/ui'
 import ApplePayButton from '@/components/ApplePayButton'
+import CartItem from '@/components/CartItem'
 import { 
   ShoppingBagIcon,
-  TrashIcon,
-  PlusIcon,
-  MinusIcon,
   ArrowLeftIcon,
   LockClosedIcon,
   TruckIcon,
@@ -34,8 +31,6 @@ const CartPage: React.FC = () => {
     getTotalItems 
   } = useCart()
 
-  const [isUpdating, setIsUpdating] = useState<string | null>(null)
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -43,13 +38,8 @@ const CartPage: React.FC = () => {
     }).format(amount)
   }
 
-  const handleQuantityChange = async (productId: string, newQuantity: number) => {
-    setIsUpdating(productId)
-    try {
-      updateQuantity(productId, newQuantity)
-    } finally {
-      setIsUpdating(null)
-    }
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    updateQuantity(productId, newQuantity)
   }
 
   const handleRemoveItem = (productId: string) => {
@@ -165,90 +155,19 @@ const CartPage: React.FC = () => {
               <div className="divide-y divide-gray-200">
                 {items.map((item) => (
                   <div key={item._id} className="p-6">
-                    <div className="flex items-center space-x-4">
-                      {/* Product Image */}
-                      <div className="flex-shrink-0 w-20 h-20 relative">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          className="object-cover rounded-lg"
-                          sizes="80px"
-                        />
-                      </div>
-
-                      {/* Product Details */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-medium text-gray-900 truncate">
-                              {item.name}
-                            </h3>
-                            {item.description && (
-                              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                                {item.description}
-                              </p>
-                            )}
-                            <p className="text-lg font-semibold text-blue-600 mt-2">
-                              {formatCurrency(item.price)}
-                            </p>
-                          </div>
-                          
-                          {/* Remove Button */}
-                          <button
-                            onClick={() => handleRemoveItem(item._id)}
-                            className="ml-4 text-gray-400 hover:text-red-500 transition-colors"
-                            title="Remove item"
-                          >
-                            <TrashIcon className="w-5 h-5" />
-                          </button>
-                        </div>
-
-                        {/* Quantity Controls */}
-                        <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center space-x-3">
-                            <span className="text-sm font-medium text-gray-700">Quantity:</span>
-                            <div className="flex items-center border border-gray-300 rounded-lg">
-                              <button
-                                onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                                disabled={isUpdating === item._id || item.quantity <= 1}
-                                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <MinusIcon className="w-4 h-4" />
-                              </button>
-                              <span className="px-4 py-2 text-sm font-medium text-gray-900 min-w-[3rem] text-center">
-                                {isUpdating === item._id ? '...' : item.quantity}
-                              </span>
-                              <button
-                                onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                                disabled={isUpdating === item._id || item.quantity >= item.stock}
-                                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <PlusIcon className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <div className="text-right">
-                            <p className="text-lg font-semibold text-gray-900">
-                              {formatCurrency(item.price * item.quantity)}
-                            </p>
-                            {item.quantity > 1 && (
-                              <p className="text-sm text-gray-500">
-                                {item.quantity} × {formatCurrency(item.price)}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Stock Warning */}
-                        {item.quantity >= item.stock && (
-                          <p className="text-sm text-orange-600 mt-2">
-                            ⚠️ Maximum available quantity reached
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                    <CartItem
+                      item={{
+                        id: item._id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        image: item.image,
+                        description: item.description,
+                      }}
+                      stock={item.stock}
+                      onUpdateQuantity={(id, quantity) => handleQuantityChange(id, quantity)}
+                      onRemove={handleRemoveItem}
+                    />
                   </div>
                 ))}
               </div>
