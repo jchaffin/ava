@@ -542,7 +542,6 @@ async function trackProductView(productId: string, request: NextRequest): Promis
   try {
     // In a real app, you would track this in an analytics collection
     // Get user IP, user agent, etc. for analytics
-    const userAgent = request.headers.get('user-agent') || 'unknown'
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
     
     // Log view (in production, you'd store this in a database)

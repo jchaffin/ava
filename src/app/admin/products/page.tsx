@@ -13,7 +13,6 @@ import {
   Trash2,
   Eye,
   Package,
-  DollarSign,
   TrendingUp,
   TrendingDown,
 } from 'lucide-react'
@@ -35,7 +34,7 @@ const AdminProducts: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [filter, setFilter] = useState<'all' | 'low-stock' | 'featured'>('all')
   const [sortBy, setSortBy] = useState<'name' | 'price' | 'stock' | 'createdAt'>('createdAt')
@@ -63,7 +62,6 @@ const AdminProducts: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      setLoading(true)
       const response = await fetch('/api/admin/products')
       const data = await response.json()
       
@@ -75,8 +73,6 @@ const AdminProducts: React.FC = () => {
     } catch (error) {
       console.error('Error fetching products:', error)
       toast.error('Failed to fetch products')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -135,8 +131,8 @@ const AdminProducts: React.FC = () => {
       return matchesSearch && matchesFilter
     })
     .sort((a, b) => {
-      let aValue: any = a[sortBy]
-      let bValue: any = b[sortBy]
+      let aValue: string | number = a[sortBy]
+      let bValue: string | number = b[sortBy]
 
       if (sortBy === 'price' || sortBy === 'stock') {
         aValue = Number(aValue)

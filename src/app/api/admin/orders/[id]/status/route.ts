@@ -15,7 +15,11 @@ interface RouteParams {
 export async function PATCH(
   request: NextRequest,
   { params }: RouteParams
-): Promise<NextResponse<ApiResponse<any>>> {
+): Promise<NextResponse<ApiResponse<{
+  orderId: string
+  previousStatus: string
+  newStatus: string
+}>>> {
   try {
     const { id } = params
 

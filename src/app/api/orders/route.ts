@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import connectDB from '@/lib/mongoose'
 import { authOptions } from '@/lib/auth'
-import { Order, Product, User } from '@/models'
+import { Order, Product } from '@/models'
 import { CreateOrderInput, ApiResponse, IOrder, IOrderItem } from '@/types'
 
 interface OrderQueryParams {
@@ -453,51 +453,4 @@ async function updateProductStock(orderItems: IOrderItem[]): Promise<void> {
   }
 }
 
-// Email notification helper (placeholder)
-async function sendOrderConfirmationEmail(order: IOrder): Promise<void> {
-  try {
-    console.log(`Sending order confirmation email for order: ${order._id}`)
-    
-    // In a real application, integrate with email service
-    // await emailService.send({
-    //   to: order.user.email,
-    //   subject: `Order Confirmation - #${order._id.slice(-8)}`,
-    //   template: 'order-confirmation',
-    //   data: { order }
-    // })
 
-  } catch (error) {
-    console.error('Failed to send order confirmation email:', error)
-  }
-}
-
-// Payment processing helper (placeholder)
-async function processPayment(order: IOrder, paymentDetails: any): Promise<void> {
-  try {
-    console.log(`Processing payment for order: ${order._id}`)
-    
-    // In a real application, integrate with payment processor
-    // const paymentResult = await paymentProcessor.charge({
-    //   amount: order.totalPrice,
-    //   currency: 'USD',
-    //   source: paymentDetails.token,
-    //   description: `Order #${order._id.slice(-8)}`
-    // })
-
-    // if (paymentResult.success) {
-    //   await Order.findByIdAndUpdate(order._id, {
-    //     isPaid: true,
-    //     paidAt: new Date(),
-    //     paymentResult: {
-    //       id: paymentResult.id,
-    //       status: paymentResult.status,
-    //       email_address: paymentResult.email
-    //     }
-    //   })
-    // }
-
-  } catch (error) {
-    console.error('Payment processing failed:', error)
-    throw error
-  }
-}

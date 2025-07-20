@@ -85,7 +85,7 @@ const SupportPage: React.FC = () => {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Customer Support</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          We're here to help! Choose the best way to get in touch with our customer service team.
+          We&apos;re here to help! Choose the best way to get in touch with our customer service team.
         </p>
       </div>
 

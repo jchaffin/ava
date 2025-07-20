@@ -209,10 +209,10 @@ const ShippingPage: React.FC = () => {
         <div className="space-y-4">
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-gray-900 mb-2">When will my order ship?</h3>
-            <p className="text-gray-600">
-              Orders are typically processed and shipped within 1-2 business days. You'll receive 
-              a confirmation email with tracking information once your order ships.
-            </p>
+                          <p className="text-gray-600">
+                Orders are typically processed and shipped within 1-2 business days. You&apos;ll receive 
+                a confirmation email with tracking information once your order ships.
+              </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-gray-900 mb-2">Do you ship internationally?</h3>
@@ -225,7 +225,7 @@ const ShippingPage: React.FC = () => {
             <h3 className="font-semibold text-gray-900 mb-2">What if my package is lost or damaged?</h3>
             <p className="text-gray-600">
               All packages are insured. If your package is lost or damaged, please contact our 
-              customer service team immediately. We'll work with the carrier to resolve the issue.
+              customer service team immediately. We&apos;ll work with the carrier to resolve the issue.
             </p>
           </div>
         </div>

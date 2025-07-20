@@ -7,16 +7,11 @@ import { Button, Input } from '@/components/ui'
 import { useAuth } from '@/context'
 import {
   Search,
-  Filter,
   Eye,
-  Edit,
   Truck,
   CheckCircle,
   Clock,
   AlertCircle,
-  DollarSign,
-  Calendar,
-  User,
   Package,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -189,8 +184,8 @@ const AdminOrders: React.FC = () => {
       return matchesSearch && matchesFilter
     })
     .sort((a, b) => {
-      let aValue: any = a[sortBy]
-      let bValue: any = b[sortBy]
+      let aValue: string | number = a[sortBy]
+      let bValue: string | number = b[sortBy]
 
       if (sortBy === 'total') {
         aValue = Number(aValue)
@@ -251,7 +246,7 @@ const AdminOrders: React.FC = () => {
               
               <select
                 value={filter}
-                onChange={(e) => setFilter(e.target.value as any)}
+                onChange={(e) => setFilter(e.target.value as 'all' | 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled')}
                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Orders</option>
@@ -264,7 +259,7 @@ const AdminOrders: React.FC = () => {
 
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as 'createdAt' | 'total' | 'status')}
                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="createdAt">Date Created</option>

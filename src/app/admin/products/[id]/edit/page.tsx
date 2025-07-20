@@ -8,7 +8,6 @@ import { useAuth } from '@/context'
 import {
   ArrowLeft,
   Save,
-  Upload,
   X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -38,14 +37,13 @@ const EditProduct: React.FC = () => {
     stock: 0,
     featured: false,
   })
-  const [loading, setLoading] = useState(true)
+
   const [saving, setSaving] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const fetchProduct = async () => {
     try {
-      setLoading(true)
       const response = await fetch(`/api/products/${productId}`)
       const data = await response.json()
       
@@ -66,8 +64,6 @@ const EditProduct: React.FC = () => {
       console.error('Error fetching product:', error)
       toast.error('Failed to fetch product')
       router.push('/admin/products')
-    } finally {
-      setLoading(false)
     }
   }
 

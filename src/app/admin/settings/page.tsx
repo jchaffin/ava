@@ -13,10 +13,6 @@ import {
   Shield,
   Globe,
   CreditCard,
-  Mail,
-  Database,
-  Key,
-  User,
   Palette,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -141,7 +137,7 @@ const AdminSettings: React.FC = () => {
     }
   }
 
-  const updateSetting = (section: keyof SiteSettings, field: string, value: any) => {
+  const updateSetting = (section: keyof SiteSettings, field: string, value: string | number | boolean | object) => {
     if (!settings) return
 
     setSettings(prev => {
@@ -216,7 +212,7 @@ const AdminSettings: React.FC = () => {
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id as 'general' | 'appearance' | 'notifications' | 'security' | 'payment' | 'shipping')}
                         className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                           activeTab === tab.id
                             ? 'border-blue-500 text-blue-600'

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongoose'
 import { User } from '@/models'
 import { CreateUserInput, ApiResponse } from '@/types'
-import bcrypt from 'bcryptjs'
+
 
 interface RegisterRequestBody {
   name: string
@@ -104,12 +104,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       { status: 201 }
     )
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Registration error:', error)
 
     // Handle MongoDB validation errors
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors || {}).map((err: any) => ({
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'ValidationError') {
+      const errorObj = error as { errors?: Record<string, { path: string; message: string }> }
+      const validationErrors = Object.values(errorObj.errors || {}).map((err) => ({
         field: err.path,
         message: err.message,
       }))
@@ -126,8 +127,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // Handle MongoDB duplicate key error
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern || {})[0]
+    if (error && typeof error === 'object' && 'code' in error && (error as { code: number }).code === 11000) {
+      const errorObj = error as { keyPattern?: Record<string, unknown> }
+      const field = Object.keys(errorObj.keyPattern || {})[0]
       return NextResponse.json(
         {
           success: false,
@@ -337,35 +339,9 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-// Email verification helper (placeholder)
-async function sendWelcomeEmail(email: string, name: string): Promise<void> {
-  // In a real application, you would integrate with an email service
-  // like SendGrid, AWS SES, Nodemailer, etc.
-  
-  try {
-    console.log(`Sending welcome email to ${email}`)
-    
-    // Example email service integration:
-    // await emailService.send({
-    //   to: email,
-    //   subject: 'Welcome to EcomStore!',
-    //   template: 'welcome',
-    //   data: { name }
-    // })
-    
-  } catch (error) {
-    console.error('Failed to send welcome email:', error)
-    // Don't throw error - registration should succeed even if email fails
-  }
-}
 
-// Input sanitization helper
-function sanitizeInput(input: string): string {
-  return input
-    .trim()
-    .replace(/[<>]/g, '') // Remove potential HTML/script tags
-    .slice(0, 1000) // Limit length to prevent DoS
-}
+
+
 
 // Enhanced version with additional features
 export async function POST_ENHANCED(request: NextRequest): Promise<NextResponse<ApiResponse>> {
@@ -386,14 +362,7 @@ export async function POST_ENHANCED(request: NextRequest): Promise<NextResponse<
       )
     }
 
-    // Parse and sanitize request body
-    const body: RegisterRequestBody = await request.json()
-    const sanitizedBody = {
-      name: sanitizeInput(body.name || ''),
-      email: sanitizeInput(body.email || ''),
-      password: body.password || '',
-      role: body.role || 'user',
-    }
+
 
     // Continue with existing validation and user creation logic...
     // (Same as the original POST function above)
@@ -408,7 +377,7 @@ export async function POST_ENHANCED(request: NextRequest): Promise<NextResponse<
       { status: 501 }
     )
 
-  } catch (error: any) {
+  } catch {
     // Same error handling as above...
     return NextResponse.json(
       {

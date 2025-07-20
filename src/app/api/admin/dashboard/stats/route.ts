@@ -5,7 +5,19 @@ import { authOptions } from '@/lib/auth'
 import { Order, Product, User } from '@/models'
 import { ApiResponse } from '@/types'
 
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<any>>> {
+export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<{
+  totalSales: number
+  totalOrders: number
+  totalProducts: number
+  totalCustomers: number
+  averageOrderValue: number
+  conversionRate: number
+  growth: {
+    sales: number
+    orders: number
+    customers: number
+  }
+}>>> {
   try {
     // Check authentication and authorization
     const session = await getServerSession(authOptions)
