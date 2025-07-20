@@ -7,8 +7,11 @@ import { useAuth } from '@/context/AuthContext'
 import { loadStripe } from '@stripe/stripe-js'
 import toast from 'react-hot-toast'
 import ApplePayButton from './ApplePayButton'
+import PayPalButton from './PayPalButton'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null
 
 interface CheckoutFormProps {
   onSuccess?: () => void
@@ -19,6 +22,10 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
   const { items: cart, clearCart, getTotalPrice } = useCart()
   const { user } = useAuth()
   const router = useRouter()
+  
+  // Debug Stripe configuration
+  console.log('Stripe Publishable Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? 'Set' : 'Not set')
+  console.log('Stripe Promise:', stripePromise ? 'Available' : 'Not available')
   
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -82,10 +89,22 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
       return
     }
 
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      toast.error('Stripe is not configured. Please contact support.')
+      return
+    }
+
+    // Validate form data
+    if (!formData.email || !formData.name || !formData.address.line1 || 
+        !formData.address.city || !formData.address.state || !formData.address.postal_code) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
     setIsLoading(true)
 
     try {
-      // Create line items for Stripe
+      // Create line items for Stripe with product IDs
       const lineItems = cart.map((item: any) => ({
         price_data: {
           currency: 'usd',
@@ -97,9 +116,10 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
           unit_amount: Math.round(item.price * 100), // Convert to cents
         },
         quantity: item.quantity,
+        productId: item._id, // Add product ID for order creation
       }))
 
-      // Create checkout session
+      // Create checkout session with shipping address
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -108,12 +128,21 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
         body: JSON.stringify({
           lineItems,
           mode: 'payment',
-          successUrl: `${window.location.origin}/orders?success=true`,
+          successUrl: `${window.location.origin}/orders/success?success=true`,
           cancelUrl: `${window.location.origin}/cart`,
           customerEmail: formData.email,
+          shippingAddress: {
+            street: formData.address.line1,
+            city: formData.address.city,
+            state: formData.address.state,
+            zipCode: formData.address.postal_code,
+            country: formData.address.country,
+          },
           metadata: {
             orderId: `order_${Date.now()}`,
             userId: user.id,
+            customerName: formData.name,
+            customerPhone: formData.phone,
           },
         }),
       })
@@ -370,7 +399,8 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
 
           {/* Payment Options */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-medium mb-4">Payment Method</h3>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">Payment Method</h3>
+            <div className="bg-gray-50 rounded-lg p-6 space-y-4">
             
             {/* Apple Pay Button */}
             <ApplePayButton
@@ -390,26 +420,48 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or</span>
+                <span className="px-4 bg-white text-gray-400 font-medium">or continue with</span>
               </div>
             </div>
+            
+            {/* PayPal Button */}
+            <PayPalButton
+              amount={total}
+              currency="usd"
+              onSuccess={(paymentResult) => {
+                toast.success('Payment successful!')
+                clearCart()
+                router.push('/orders/success?success=true')
+              }}
+              onError={(error) => {
+                toast.error(error)
+              }}
+              disabled={isLoading}
+              className="mb-4"
+            />
             
             {/* Standard Checkout Button */}
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="loading-spinner"></div>
-                  Processing...
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-lg">Processing Payment...</span>
                 </div>
               ) : (
-                `Pay with Card $${total.toFixed(2)}`
+                <div className="flex items-center justify-center gap-3">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                  </svg>
+                  <span className="text-lg">Pay with Card</span>
+                  <span className="text-xl font-bold">${total.toFixed(2)}</span>
+                </div>
               )}
             </button>
           </div>
@@ -419,12 +471,13 @@ export default function CheckoutForm({ onSuccess, onCancel }: CheckoutFormProps)
             <button
               type="button"
               onClick={onCancel}
-              className="btn btn-secondary w-full"
+              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               Cancel
             </button>
           </div>
+            </div>
         </form>
       </div>
     </div>

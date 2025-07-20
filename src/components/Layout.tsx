@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { useCart, useAuth } from '@/context'
 import { Button } from './ui'
+
 import { 
   ShoppingCartIcon, 
   UserIcon, 
@@ -96,11 +97,6 @@ const Layout: React.FC<LayoutProps> = ({
     {
       name: 'Products',
       href: '/products',
-    },
-    {
-      name: 'Featured',
-      href: '/products?featured=true',
-      icon: StarIcon,
     },
     {
       name: 'About',
@@ -288,8 +284,8 @@ const Layout: React.FC<LayoutProps> = ({
       />
       
       {/* Mobile menu */}
-      <div className="fixed inset-y-0 left-0 w-80 bg-white shadow-xl">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="fixed inset-y-0 left-0 w-80 bg-white dark:bg-gray-900 shadow-xl">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <Link href="/" className="flex items-center" onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}>
             <Image
               src="/logo.png"
@@ -302,7 +298,7 @@ const Layout: React.FC<LayoutProps> = ({
           </Link>
           <button
             onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-            className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -328,10 +324,10 @@ const Layout: React.FC<LayoutProps> = ({
 
                  {/* User section */}
          {isAuthenticated ? (
-           <div className="px-4 py-6 border-t border-gray-200">
+           <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
              <div className="mb-4">
-               <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
-               <p className="text-sm text-gray-500">{user?.email || ''}</p>
+               <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'User'}</p>
+               <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
              </div>
             <div className="space-y-2">
               {(hasRole('admin') ? adminMenuItems : userMenuItems)
@@ -343,7 +339,7 @@ const Layout: React.FC<LayoutProps> = ({
                     key={item.name}
                     href={item.href}
                     onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 transition-colors duration-200"
                   >
                     {item.icon && <item.icon className="w-5 h-5" />}
                     <span>{item.name}</span>
@@ -362,11 +358,11 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           </div>
         ) : (
-          <div className="px-4 py-6 border-t border-gray-200 space-y-3">
+          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
             <Link
               href="/signin"
               onClick={() => setMobileMenu({ isOpen: false, activeSubmenu: null })}
-              className="block w-full px-4 py-3 text-center text-base font-medium text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200"
+              className="block w-full px-4 py-3 text-center text-base font-medium text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             >
               Sign In
             </Link>
@@ -397,10 +393,10 @@ const Layout: React.FC<LayoutProps> = ({
       </button>
 
       {userMenu.isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-          <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
-            <p className="text-sm text-gray-500">{user?.email || ''}</p>
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || 'User'}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
           </div>
           
           <div className="py-2">
@@ -413,7 +409,7 @@ const Layout: React.FC<LayoutProps> = ({
                   key={item.name}
                   href={item.href}
                   onClick={() => setUserMenu({ isOpen: false })}
-                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+                  className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-700 transition-colors duration-200"
                 >
                   {item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.name}</span>
@@ -421,13 +417,13 @@ const Layout: React.FC<LayoutProps> = ({
               ))}
           </div>
           
-          <div className="border-t border-gray-200 pt-2">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
             <button
               onClick={() => {
                 handleSignOut()
                 setUserMenu({ isOpen: false })
               }}
-              className="flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full transition-colors duration-200"
+              className="flex items-center space-x-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 w-full transition-colors duration-200"
             >
               <ArrowRightOnRectangleIcon className="w-4 h-4" />
               <span>Sign Out</span>
@@ -439,14 +435,14 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   const renderHeader = () => (
-    <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-40">
+    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Mobile menu button on mobile, hidden on desktop */}
           <div className="lg:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary transition-colors duration-200"
+              className="p-2 rounded-lg text-gray-600 hover:text-ava-accent hover:bg-gray-100 transition-colors duration-200"
             >
               <Bars3Icon className="w-6 h-6" />
             </button>
@@ -474,15 +470,17 @@ const Layout: React.FC<LayoutProps> = ({
           {/* Right side actions */}
           <div className="flex items-center space-x-2">
 
+
+
             {/* Wishlist - only show for regular users */}
             {isAuthenticated && !hasRole('admin') && (
-              <Link href="/wishlist" className="p-2 text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200">
+              <Link href="/wishlist" className="p-2 text-gray-600 hover:text-ava-accent hover:bg-gray-100 rounded-lg transition-colors duration-200">
                 <HeartIcon className="w-5 h-5" />
               </Link>
             )}
 
             {/* Shopping cart */}
-            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-ava-accent hover:bg-ava-bg-secondary rounded-lg transition-colors duration-200">
+            <Link href="/cart" className="relative p-2 text-gray-600 hover:text-ava-accent hover:bg-gray-100 rounded-lg transition-colors duration-200">
               {getTotalItems() > 0 ? (
                 <ShoppingCartSolidIcon className="w-5 h-5 text-ava-accent" />
               ) : (
@@ -617,10 +615,10 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   return (
-    <div className={`min-h-screen flex flex-col bg-gray-50 ${className}`}>
+    <div className={`min-h-screen flex flex-col bg-white ${className}`}>
       {shouldShowNavigation && renderHeader()}
       
-      <main className="flex-1">
+      <main className="flex-1 bg-white">
         {children}
       </main>
       

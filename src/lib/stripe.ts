@@ -9,7 +9,11 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 // Initialize Stripe client-side
 export const getStripe = () => {
-  return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+  if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    console.warn('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined')
+    return null
+  }
+  return loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 }
 
 // Create payment intent

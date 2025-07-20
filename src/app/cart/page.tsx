@@ -85,7 +85,7 @@ const CartPage: React.FC = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -100,7 +100,7 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Empty Cart */}
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white rounded-lg shadow-lg border p-12 text-center">
             <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
               <ShoppingBagIcon className="w-12 h-12 text-gray-400" />
             </div>
@@ -112,7 +112,7 @@ const CartPage: React.FC = () => {
             </p>
             <div className="space-y-4">
               <Link href="/products">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3">
                   <ShoppingBagIcon className="w-5 h-5 mr-2" />
                   Start Shopping
                 </Button>
@@ -129,7 +129,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -157,7 +157,7 @@ const CartPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border">
+            <div className="bg-white rounded-lg shadow-lg border">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Cart Items</h2>
               </div>
@@ -257,7 +257,7 @@ const CartPage: React.FC = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border sticky top-8">
+            <div className="bg-white rounded-lg shadow-lg border sticky top-8">
               <div className="p-6 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900">Order Summary</h2>
               </div>
@@ -369,7 +369,7 @@ const CartPage: React.FC = () => {
             </div>
 
             {/* Save for Later */}
-            <div className="mt-6 bg-white rounded-lg shadow-sm border p-6">
+            <div className="mt-6 bg-white rounded-lg shadow-lg border p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Save for Later</h3>
               <p className="text-sm text-gray-600 mb-4">
                 Create an account to save items for future purchases

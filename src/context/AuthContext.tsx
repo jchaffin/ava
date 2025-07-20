@@ -82,43 +82,16 @@ const createAuthUserFromSession = (sessionUser: any): AuthUser => {
 const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) => {
   const { data: session, status, update } = useSession()
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [user, setUser] = useState<AuthUser | null>(null)
   
   console.log('AuthContext: useSession hook', { session, status })
 
-  // Update user state when session changes
-  useEffect(() => {
-    console.log('AuthContext: Session changed', { 
-      session: session ? { user: session.user, expires: session.expires } : null, 
-      status, 
-      user: user ? { id: user.id, name: user.name, email: user.email } : null 
-    })
-    
-    if (status === 'loading') {
-      setIsLoading(true)
-      return
-    }
-
-    setIsLoading(false)
-
-    if (session?.user) {
-      const authUser = createAuthUserFromSession(session.user)
-      console.log('AuthContext: Setting user', authUser)
-      setUser(authUser)
-    } else {
-      console.log('AuthContext: Clearing user')
-      setUser(null)
-    }
-  }, [session, status, user])
-
-  // Add computed properties for better reactivity
+  // Create user from session directly
+  const user = session?.user ? createAuthUserFromSession(session.user) : null
+  const isLoading = status === 'loading'
   const isAuthenticated = !!user
 
   const login = async (credentials: LoginCredentials): Promise<AuthResult> => {
     try {
-      setIsLoading(true)
-
       const result = await signIn('credentials', {
         email: credentials.email.trim().toLowerCase(),
         password: credentials.password,
@@ -138,27 +111,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       if (result?.ok) {
         console.log('AuthContext: Login successful, updating session')
         
-        // Determine role based on email
-        const isAdmin = credentials.email === 'admin@ava.com'
-        const role = isAdmin ? 'admin' as const : 'user' as const
-        
-        // Create user object from credentials for immediate UI update
-        const immediateUser = {
-          id: credentials.email, // Temporary ID
-          _id: credentials.email,
-          name: isAdmin ? 'Admin User' : 'Demo User',
-          email: credentials.email,
-          role: role,
-          image: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        } as AuthUser
-        
-        // Set user immediately for UI responsiveness
-        setUser(immediateUser)
-        setIsLoading(false)
-        
-        // Force a session update in the background
+        // Force a session update
         update().then(() => {
           console.log('AuthContext: Session update completed')
         }).catch(error => {
@@ -169,6 +122,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         
         // Handle redirection based on role
         setTimeout(() => {
+          const isAdmin = credentials.email === 'admin@ava.com'
           if (isAdmin) {
             window.location.href = '/admin/dashboard'
           } else {
@@ -198,24 +152,17 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         message: errorMessage,
         error: 'NETWORK_ERROR',
       }
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const logout = async (): Promise<void> => {
     try {
-      setIsLoading(true)
-      
       // Clear any local storage or additional cleanup
       if (typeof window !== 'undefined') {
         localStorage.removeItem('ava-cart')
         localStorage.removeItem('wishlist')
         sessionStorage.clear()
       }
-      
-      // Clear user state immediately
-      setUser(null)
       
       // Sign out from NextAuth
       await signOut({ redirect: false })
@@ -231,15 +178,11 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
     } catch (error) {
       console.error('Logout error:', error)
       toast.error('Error during logout')
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const register = async (userData: RegisterData): Promise<AuthResult> => {
     try {
-      setIsLoading(true)
-
       // Validate passwords match
       if (userData.password !== userData.confirmPassword) {
         const errorMessage = 'Passwords do not match'
@@ -319,15 +262,11 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         message: errorMessage,
         error: 'NETWORK_ERROR',
       }
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const updateProfile = async (userData: Partial<AuthUser>): Promise<boolean> => {
     try {
-      setIsLoading(true)
-
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
@@ -344,9 +283,6 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
 
       const result = await response.json()
       
-      // Update local user state
-      setUser(prev => prev ? { ...prev, ...result.data } : null)
-      
       // Update session
       await update()
       
@@ -357,8 +293,6 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       console.error('Profile update error:', error)
       toast.error('Failed to update profile')
       return false
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -369,9 +303,6 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
       const response = await fetch('/api/user/profile')
       if (!response.ok) return
 
-      const result = await response.json()
-      setUser(prev => prev ? { ...prev, ...result.data } : null)
-      
       // Update session with fresh data
       await update()
 

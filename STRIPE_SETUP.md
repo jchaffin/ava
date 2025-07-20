@@ -1,241 +1,156 @@
-# Stripe Integration Setup Guide
+# Stripe Integration Setup
 
-This guide will help you set up Stripe payment processing for your AVA skincare e-commerce application.
+This guide will help you set up Stripe payments in your application.
 
 ## Prerequisites
 
-1. A Stripe account (sign up at [stripe.com](https://stripe.com))
-2. Node.js and npm installed
-3. Your AVA application running
+1. A Stripe account (free to create)
+2. Access to Stripe Dashboard
 
-## Step 1: Install Dependencies
+## Setup Steps
 
-The required packages have already been installed:
-- `stripe` - Server-side Stripe SDK
-- `@stripe/stripe-js` - Client-side Stripe SDK
+### 1. Create Stripe Account
 
-## Step 2: Configure Environment Variables
+1. Go to [Stripe Dashboard](https://dashboard.stripe.com/)
+2. Sign up for a free account
+3. Complete your business profile
+4. Get your API keys
 
-Add the following environment variables to your `.env.local` file:
+### 2. Get API Keys
+
+In your Stripe Dashboard:
+1. Navigate to "Developers" → "API keys"
+2. Copy your **Publishable key** and **Secret key**
+3. For testing, use the test keys (start with `pk_test_` and `sk_test_`)
+4. For production, use the live keys (start with `pk_live_` and `sk_live_`)
+
+### 3. Environment Variables
+
+Add these environment variables to your `.env.local` file:
 
 ```bash
 # Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+STRIPE_SECRET_KEY=sk_test_your_secret_key_here
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 
-# Apple Pay Configuration
-NEXT_PUBLIC_DOMAIN=localhost:3000
+# For production, use:
+# STRIPE_SECRET_KEY=sk_live_your_live_secret_key
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_your_live_publishable_key
+# STRIPE_WEBHOOK_SECRET=whsec_your_live_webhook_secret
 ```
 
-### Getting Your Stripe Keys
+### 4. Webhook Setup
 
-1. **Log into your Stripe Dashboard**
-2. **Go to Developers → API Keys**
-3. **Copy your publishable key and secret key**
-4. **For webhook secret, go to Developers → Webhooks**
-
-## Step 3: Set Up Webhooks
-
-### Create Webhook Endpoint
-
-1. In your Stripe Dashboard, go to **Developers → Webhooks**
-2. Click **Add endpoint**
+1. In Stripe Dashboard, go to "Developers" → "Webhooks"
+2. Click "Add endpoint"
 3. Set the endpoint URL to: `https://yourdomain.com/api/stripe/webhook`
-4. Select the following events:
+4. Select these events:
+   - `checkout.session.completed`
    - `payment_intent.succeeded`
    - `payment_intent.payment_failed`
-   - `checkout.session.completed`
-   - `checkout.session.expired`
-   - `customer.subscription.created`
-   - `customer.subscription.updated`
-   - `customer.subscription.deleted`
+5. Copy the webhook signing secret to your environment variables
 
-## Step 4: Set Up Apple Pay
+### 5. Testing
 
-### Enable Apple Pay in Stripe
+For testing, use Stripe's test card numbers:
+- **Success**: `4242 4242 4242 4242`
+- **Decline**: `4000 0000 0000 0002`
+- **Requires Authentication**: `4000 0025 0000 3155`
 
-1. In your Stripe Dashboard, go to **Settings → Payment methods**
-2. Enable **Apple Pay**
-3. Add your domain to the allowed domains list
-4. Download your Apple Pay merchant identity certificate
+## Features
 
-### Configure Apple Pay Domain
+The Stripe integration includes:
 
-1. In your Stripe Dashboard, go to **Settings → Apple Pay**
-2. Add your domain: `yourdomain.com`
-3. Download the `.well-known/apple-developer-merchantid-domain-association` file
-4. Place this file in your `public/.well-known/` directory
-
-### Update Environment Variables
-
-Add your domain to the environment variables:
-```bash
-NEXT_PUBLIC_DOMAIN=yourdomain.com
-```
-
-### Get Webhook Secret
-
-1. After creating the webhook, click on it
-2. Copy the **Signing secret** (starts with `whsec_`)
-3. Add it to your `.env.local` as `STRIPE_WEBHOOK_SECRET`
-
-## Step 4: Test the Integration
-
-### Test Mode
-
-1. **Use test keys** for development
-2. **Test card numbers** you can use:
-   - Success: `4242 4242 4242 4242`
-   - Decline: `4000 0000 0000 0002`
-   - 3D Secure: `4000 0025 0000 3155`
-
-### Testing Flow
-
-1. Add products to cart
-2. Go to checkout
-3. Fill in test card details
-4. Complete payment
-5. Check webhook events in Stripe Dashboard
-
-## Step 5: Production Deployment
-
-### Switch to Live Keys
-
-1. **Replace test keys with live keys** in production
-2. **Update webhook endpoint** to production URL
-3. **Test with real cards** (small amounts)
-
-### Security Considerations
-
-- **Never commit API keys** to version control
-- **Use environment variables** for all sensitive data
-- **Enable webhook signature verification**
-- **Monitor webhook events** for failures
-
-## Features Implemented
-
-### ✅ Payment Processing
-- **Stripe Checkout** - Redirect-based checkout
-- **Payment Intents** - Server-side payment processing
-- **Apple Pay** - Native Apple Pay integration
-- **Webhook Handling** - Real-time payment status updates
-
-### ✅ Order Management
-- **Order Creation** - Automatic order creation on payment
-- **Status Updates** - Real-time order status tracking
-- **Customer Management** - Stripe customer creation
-
-### ✅ User Experience
-- **Seamless Checkout** - Branded checkout experience
-- **Success Pages** - Payment confirmation
-- **Error Handling** - Graceful error management
-- **Loading States** - User feedback during processing
-
-### ✅ Security
-- **Webhook Verification** - Signature validation
-- **Authentication** - User verification required
-- **Input Validation** - Server-side validation
-- **Error Logging** - Comprehensive error tracking
+- **Card Payments**: Secure credit/debit card processing
+- **Apple Pay**: Native Apple Pay support
+- **Order Management**: Automatic order creation and status updates
+- **Stock Management**: Automatic inventory updates
+- **Webhook Processing**: Real-time payment status updates
+- **Error Handling**: Comprehensive error handling and user feedback
 
 ## API Endpoints
 
-### `/api/stripe/create-payment-intent`
-- **Method**: POST
-- **Purpose**: Create payment intent for custom checkout
-- **Body**: `{ amount: number, currency: string }`
+- `POST /api/stripe/create-checkout-session`: Creates Stripe checkout session
+- `POST /api/stripe/webhook`: Processes Stripe webhooks
+- `POST /api/stripe/create-payment-intent`: Creates payment intents (for Apple Pay)
 
-### `/api/stripe/create-checkout-session`
-- **Method**: POST
-- **Purpose**: Create Stripe Checkout session
-- **Body**: `{ lineItems, mode, successUrl, cancelUrl, metadata }`
+## Payment Flow
 
-### `/api/stripe/webhook`
-- **Method**: POST
-- **Purpose**: Handle Stripe webhook events
-- **Headers**: `stripe-signature` required
+1. **User fills checkout form** with shipping information
+2. **Order is created** in database (pending payment)
+3. **Stripe checkout session** is created with order details
+4. **User is redirected** to Stripe's hosted checkout page
+5. **Payment is processed** securely by Stripe
+6. **Webhook updates** order status and inventory
+7. **User is redirected** to success page
 
-### `/api/stripe/validate-merchant`
-- **Method**: POST
-- **Purpose**: Validate Apple Pay merchant session
-- **Body**: `{ validationURL: string }`
+## Security Features
 
-### `/api/stripe/process-apple-pay`
-- **Method**: POST
-- **Purpose**: Process Apple Pay payments
-- **Body**: `{ paymentIntentId: string, token: object }`
+- **Server-side validation**: All payments validated on server
+- **Webhook verification**: Ensures webhook authenticity
+- **Order validation**: Checks stock and pricing on server
+- **HTTPS required**: All communications encrypted
+- **PCI compliance**: Stripe handles sensitive card data
 
-## File Structure
+## Testing Checklist
 
-```
-src/
-├── lib/
-│   └── stripe.ts              # Stripe configuration and utilities
-├── app/
-│   ├── api/stripe/
-│   │   ├── create-payment-intent/
-│   │   │   └── route.ts       # Payment intent API
-│   │   ├── create-checkout-session/
-│   │   │   └── route.ts       # Checkout session API
-│   │   ├── validate-merchant/
-│   │   │   └── route.ts       # Apple Pay merchant validation
-│   │   ├── process-apple-pay/
-│   │   │   └── route.ts       # Apple Pay payment processing
-│   │   └── webhook/
-│   │       └── route.ts       # Webhook handler
-│   ├── checkout/
-│   │   └── page.tsx           # Checkout page
-│   └── orders/success/
-│       └── page.tsx           # Payment success page
-└── components/
-    ├── CheckoutForm.tsx       # Checkout form component
-    └── ApplePayButton.tsx     # Apple Pay button component
-```
+- [ ] Test successful payment flow
+- [ ] Test payment decline scenarios
+- [ ] Test webhook processing
+- [ ] Test order status updates
+- [ ] Test inventory updates
+- [ ] Test error handling
+- [ ] Test mobile responsiveness
 
-## Troubleshooting
+## Common Issues
 
-### Common Issues
+### "Stripe is not configured"
+- Check your environment variables
+- Ensure keys are correct for your environment (test/live)
 
-1. **Webhook Not Receiving Events**
-   - Check webhook endpoint URL
-   - Verify webhook secret
-   - Check server logs for errors
+### "Webhook signature verification failed"
+- Verify webhook secret in environment variables
+- Check webhook endpoint URL in Stripe dashboard
 
-2. **Payment Intent Creation Fails**
-   - Verify Stripe secret key
-   - Check amount format (must be in cents)
-   - Ensure user is authenticated
+### "Order not found"
+- Check webhook processing
+- Verify order creation in checkout session
 
-3. **Checkout Session Not Redirecting**
-   - Verify publishable key
-   - Check success/cancel URLs
-   - Ensure line items are valid
+### "Payment failed"
+- Check Stripe dashboard for payment details
+- Verify card details and billing information
 
-### Debug Mode
+## Production Checklist
 
-Enable Stripe debug mode by adding to your environment:
-```bash
-STRIPE_DEBUG=true
-```
-
-### Logs
-
-Check your server logs for detailed error messages and webhook events.
+- [ ] Switch to live Stripe keys
+- [ ] Update webhook endpoint to production URL
+- [ ] Test with real payment methods
+- [ ] Set up monitoring and alerts
+- [ ] Configure proper error logging
+- [ ] Test webhook reliability
 
 ## Support
 
-- **Stripe Documentation**: [stripe.com/docs](https://stripe.com/docs)
-- **Stripe Support**: [support.stripe.com](https://support.stripe.com)
-- **Webhook Testing**: Use Stripe CLI for local testing
+For Stripe-specific issues:
+- [Stripe Documentation](https://stripe.com/docs)
+- [Stripe Support](https://support.stripe.com/)
 
-## Next Steps
+For application-specific issues, check:
+- Server logs for webhook processing
+- Browser console for frontend errors
+- Stripe dashboard for payment details
 
-1. **Customize checkout styling** to match your brand
-2. **Add subscription support** for recurring payments
-3. **Implement saved payment methods**
-4. **Add payment analytics** and reporting
-5. **Set up email notifications** for order confirmations
+## Monitoring
 
----
+Monitor these key metrics:
+- Payment success rate
+- Webhook delivery success
+- Order processing time
+- Error rates and types
 
-**Note**: Always test thoroughly in Stripe's test mode before going live with real payments. 
+Set up alerts for:
+- Failed payments
+- Webhook failures
+- High error rates
+- Unusual payment patterns 

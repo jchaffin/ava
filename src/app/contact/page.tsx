@@ -87,7 +87,7 @@ const ContactPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 bg-white min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
@@ -99,7 +99,7 @@ const ContactPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact Form */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <div className="bg-white border border-gray-200 rounded-lg p-8 shadow-lg">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -194,7 +194,7 @@ const ContactPage: React.FC = () => {
         {/* Contact Information */}
         <div className="space-y-6">
           {/* Contact Details */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Get in Touch</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
@@ -233,7 +233,7 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
             <div className="space-y-3">
               <a
@@ -261,7 +261,7 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Response Time */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-white border border-blue-200 rounded-lg p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-blue-900 mb-2">Response Time</h3>
             <p className="text-blue-700 text-sm">
               We typically respond to inquiries within 24 hours during business days. 

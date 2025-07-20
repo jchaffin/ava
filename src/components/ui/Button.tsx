@@ -19,19 +19,19 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props 
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
   
   const variants = {
-    primary: 'bg-[#2D3748] text-white hover:bg-[#4A5568] focus:ring-[#2D3748]',
-    secondary: 'bg-[#4A5568] text-white hover:bg-[#2D3748] focus:ring-[#4A5568]',
-    danger: 'bg-[#E53E3E] text-white hover:bg-[#C53030] focus:ring-[#E53E3E]',
-    ghost: 'bg-transparent text-[#2D3748] hover:bg-[#F7FAFC] focus:ring-[#2D3748] border border-[#E2E8F0]',
+    primary: 'bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-900 shadow-sm',
+    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-600 shadow-sm',
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-600 shadow-sm',
+    ghost: 'bg-transparent text-gray-900 hover:bg-gray-100 focus:ring-gray-900 border border-gray-300 hover:border-gray-400',
   }
   
   const sizes = {
-    sm: 'px-3 py-1 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
+    sm: 'px-3 py-1.5 text-sm font-medium',
+    md: 'px-4 py-2.5 text-base font-semibold',
+    lg: 'px-6 py-3 text-lg font-semibold',
   }
   
   const disabledClasses = (disabled || loading) ? 'opacity-50 cursor-not-allowed' : ''

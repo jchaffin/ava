@@ -52,7 +52,7 @@ const AboutPage: React.FC = () => {
   ]
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 bg-white min-h-screen">
       {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className="text-5xl font-bold text-gray-900 mb-6">About AVA Skincare</h1>
@@ -63,7 +63,7 @@ const AboutPage: React.FC = () => {
       </div>
 
       {/* Mission Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-12 mb-16">
+      <div className="bg-gray-50 rounded-2xl p-12 mb-16">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
           <p className="text-lg text-gray-700 max-w-4xl mx-auto leading-relaxed">
@@ -80,8 +80,8 @@ const AboutPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {values.map((value, index) => (
             <div key={index} className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <value.icon className="w-8 h-8 text-blue-600" />
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <value.icon className="w-8 h-8 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">{value.title}</h3>
               <p className="text-gray-600">{value.description}</p>
@@ -124,14 +124,14 @@ const AboutPage: React.FC = () => {
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Meet Our Team</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {team.map((member, index) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6 text-center shadow-lg">
               <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <span className="text-2xl font-bold text-gray-400">
                   {member.name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">{member.name}</h3>
-              <p className="text-blue-600 font-medium mb-3">{member.role}</p>
+              <p className="text-gray-600 font-medium mb-3">{member.role}</p>
               <p className="text-gray-600 text-sm">{member.bio}</p>
             </div>
           ))}
@@ -161,7 +161,7 @@ const AboutPage: React.FC = () => {
       </div>
 
       {/* Commitment Section */}
-      <div className="bg-green-50 rounded-2xl p-12 mb-16">
+      <div className="bg-gray-50 rounded-2xl p-12 mb-16">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Commitment to You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -193,7 +193,7 @@ const AboutPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/products"
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            className="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 font-medium"
           >
             Shop Products
           </Link>

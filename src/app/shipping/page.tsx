@@ -82,7 +82,7 @@ const ShippingPage: React.FC = () => {
       </div>
 
       {/* Processing Information */}
-      <div className="bg-blue-50 rounded-lg p-8 mb-12">
+      <div className="bg-gray-50 rounded-lg p-8 mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Processing & Delivery</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -125,7 +125,7 @@ const ShippingPage: React.FC = () => {
       {/* Shipping Restrictions */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Restrictions</h2>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
           <ul className="space-y-2">
             {restrictions.map((restriction, index) => (
               <li key={index} className="flex items-start">

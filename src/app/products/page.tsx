@@ -331,7 +331,7 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 bg-white min-h-screen">
         {/* Prominent Logo Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
@@ -369,7 +369,7 @@ const ProductsPage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <div className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6 shadow-lg">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
                 <div className="flex items-center space-x-2">

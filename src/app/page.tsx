@@ -49,15 +49,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20 px-4">
+      <section className="relative bg-white py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
                 Discover Your Perfect
-                <span className="text-blue-600 block">Beauty Routine</span>
+                <span className="text-ava-accent block">Beauty Routine</span>
               </h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl">
+              <p className="text-xl text-gray-700 mb-8 max-w-2xl">
                 Transform your skincare journey with our premium collection of 
                 scientifically-formulated products designed for radiant, healthy skin.
               </p>
@@ -94,14 +94,14 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Why Choose AVA?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our commitment to quality, science, and your skin&apos;s health sets us apart
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+              Our commitment to quality, science, and your skin's health sets us apart
             </p>
           </div>
           
@@ -123,10 +123,10 @@ export default function Home() {
                 description: 'Thousands of satisfied customers with visible improvements in their skin'
               }
             ].map((feature, index) => (
-              <div key={index} className="text-center p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+              <div key={index} className="text-center p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <p className="text-gray-700">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -134,13 +134,13 @@ export default function Home() {
       </section>
 
       {/* Products Preview */}
-      <section className="py-20 px-4 bg-gray-50">
+      <section className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Featured Products
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Discover our most popular skincare solutions
             </p>
           </div>
@@ -174,8 +174,8 @@ export default function Home() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
-                    <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
+                    <h3 className="font-semibold text-black mb-2">{product.name}</h3>
+                    <p className="text-ava-accent font-bold">${product.price.toFixed(2)}</p>
                   </div>
                 </div>
               ))
@@ -202,20 +202,20 @@ export default function Home() {
                   price: '$79.99',
                   image: '/images/products/antiageserum/antiageserum_main.jpg',
                 }
-              ].map((product, index) => (
+              ].map((fallbackProduct, index) => (
                 <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                   <div className="relative h-48">
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={fallbackProduct.image}
+                      alt={fallbackProduct.name}
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
                       className="object-cover"
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2">{product.name}</h3>
-                    <p className="text-blue-600 font-bold">{product.price}</p>
+                    <h3 className="font-semibold text-black mb-2">{fallbackProduct.name}</h3>
+                    <p className="text-ava-accent font-bold">{fallbackProduct.price}</p>
                   </div>
                 </div>
               ))
@@ -233,13 +233,13 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-gray-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               What Our Customers Say
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Real results from real people
             </p>
           </div>
@@ -249,23 +249,23 @@ export default function Home() {
               {
                 name: 'Sarah Johnson',
                 role: 'Skincare Enthusiast',
-                content: 'The hydrating serum completely transformed my dry skin. I can&apos;t imagine my routine without it!',
+                content: 'The hydrating serum completely transformed my dry skin. I can\'t imagine my routine without it!',
                 rating: 5
               },
               {
                 name: 'Michael Chen',
                 role: 'Dermatologist',
-                content: 'As a dermatologist, I&apos;m impressed with the quality and effectiveness of AVA products.',
+                content: 'As a dermatologist, I\'m impressed with the quality and effectiveness of AVA products.',
                 rating: 5
               },
               {
                 name: 'Emma Davis',
                 role: 'Beauty Blogger',
-                content: 'I&apos;ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
+                content: 'I\'ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
                 rating: 5
               }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-xl">
+              <div key={index} className="bg-white shadow-lg p-6 rounded-xl">
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <span key={i} className="text-yellow-400">⭐</span>
@@ -283,25 +283,47 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-(--ava-cream)">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Skin?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Join thousands of customers who have discovered the power of premium skincare
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="py-24 px-4 bg-white relative">
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="mb-8">
+            <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Ready to Transform
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
+                Your Skin?
+              </span>
+            </h2>
+            <p className="text-xl lg:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Join thousands of customers who have discovered the power of premium skincare
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link href="/products">
-              <Button variant="secondary" className="px-8 py-3 text-lg">
+              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
                 Start Shopping
               </Button>
             </Link>
-                         <Link href="/register">
-               <Button variant="ghost" className="border border-white text-white hover:bg-white hover:text-[#2D3748] px-8 py-3 text-lg">
-                 Create Account
-               </Button>
-             </Link>
+            <Link href="/register">
+              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+                Create Account
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="mt-12 flex justify-center items-center space-x-8 text-gray-600 text-sm">
+            <div className="flex items-center">
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              Free Shipping
+            </div>
+            <div className="flex items-center">
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              30-Day Returns
+            </div>
+            <div className="flex items-center">
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              Secure Checkout
+            </div>
           </div>
         </div>
       </section>
@@ -312,7 +334,7 @@ export default function Home() {
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             Stay Updated
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-700 mb-6">
             Get the latest skincare tips, product launches, and exclusive offers
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">

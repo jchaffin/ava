@@ -72,14 +72,14 @@ export default function PaymentSuccessPage() {
           {/* Action Buttons */}
           <div className="space-y-4">
             <Link href="/orders">
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium flex items-center justify-center">
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-bold flex items-center justify-center">
                 <ArrowRightIcon className="w-5 h-5 mr-2" />
                 View My Orders
               </button>
             </Link>
             
             <Link href="/">
-              <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 px-6 rounded-lg font-medium flex items-center justify-center">
+              <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 py-3 px-6 rounded-lg font-bold flex items-center justify-center">
                 <HomeIcon className="w-5 h-5 mr-2" />
                 Continue Shopping
               </button>
