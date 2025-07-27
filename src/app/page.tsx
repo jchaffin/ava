@@ -120,6 +120,10 @@ export default function Home() {
                     className="rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg lg:max-w-xl"
                     style={{ width: 'auto', height: 'auto' }}
                     priority
+                    onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      // Fallback to a different image if needed
+                    }}
                   />
                 )}
               </div>
@@ -367,7 +371,7 @@ export default function Home() {
               <ShieldCheckIcon className="w-4 h-4 text-theme-primary mr-2" />
               Secure Checkout
             </div>
-          </div>
+          </div>``
         </div>
       </section>
 

@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: 'AVA',
     images: [
       {
-        url: '/images/logo.png',
+        url: '/images/logos/logo.png',
         width: 1200,
         height: 630,
         alt: 'AVA Premium Skincare Products',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AVA - Premium Skincare Products',
     description: 'Transform your skincare journey with our premium collection of scientifically-formulated products.',
-    images: ['/images/main.png'],
+    images: ['/images/logos/logo.png'],
   },
   robots: {
     index: true,

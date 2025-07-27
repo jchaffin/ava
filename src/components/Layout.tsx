@@ -325,7 +325,7 @@ const Layout: React.FC<LayoutProps> = ({
           <Link href="/" className="flex items-center justify-center flex-1" onClick={() => setIsMobileMenuOpen(false)}>
             {mounted && (
               <Image
-                src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                 alt="AVA Logo"
                 width={400}
                 height={134}
@@ -539,7 +539,7 @@ const Layout: React.FC<LayoutProps> = ({
             <Link href="/" className="hidden md:flex items-center">
               {mounted && (
                 <Image
-                  src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                  src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                   alt="AVA Logo"
                   width={240}
                   height={80}

@@ -376,7 +376,7 @@ const ProductsPage: React.FC = () => {
           <div className="flex justify-center mb-6">
             {mounted && (
               <Image
-                src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                 alt="AVA Premium Skincare"
                 width={400}
                 height={133}

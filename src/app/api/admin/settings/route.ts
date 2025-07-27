@@ -15,7 +15,7 @@ let siteSettings = {
   },
   appearance: {
     primaryColor: '#3B82F6',
-    logoUrl: '/logo.png',
+    logoUrl: '/images/logos/logo.png',
     faviconUrl: '/favicon.ico',
     theme: 'light' as 'light' | 'dark' | 'auto'
   },
