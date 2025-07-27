@@ -60,7 +60,7 @@ const PayPalTutorialPage: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-theme-secondary">
-            First, you'll need a PayPal Business account to get your API credentials.
+            First, you&apos;ll need a PayPal Business account to get your API credentials.
           </p>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
@@ -132,7 +132,7 @@ const PayPalTutorialPage: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-theme-secondary">
-            After creating your app, you'll get the API credentials needed for integration.
+            After creating your app, you&apos;ll get the API credentials needed for integration.
           </p>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
@@ -216,7 +216,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
                 <div>
                   <h4 className="font-medium text-blue-800">Sandbox Testing</h4>
                   <p className="text-sm text-blue-700 mt-1">
-                    Use PayPal's Sandbox environment for testing. No real money will be charged.
+                    Use PayPal&apos;s Sandbox environment for testing. No real money will be charged.
                   </p>
                 </div>
               </div>
@@ -250,7 +250,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
       content: (
         <div className="space-y-4">
           <p className="text-theme-secondary">
-            Switch to production when you're ready to accept real payments.
+            Switch to production when you&apos;re ready to accept real payments.
           </p>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">

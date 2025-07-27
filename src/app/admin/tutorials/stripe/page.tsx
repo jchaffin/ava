@@ -59,7 +59,7 @@ const StripeTutorialPage: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-theme-secondary">
-            First, you'll need to create a Stripe account to get your API keys.
+            First, you&apos;ll need to create a Stripe account to get your API keys.
           </p>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
