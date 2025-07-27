@@ -124,6 +124,9 @@ export default function Home() {
                       console.error('Image failed to load:', e);
                       // Fallback to a different image if needed
                     }}
+                    onLoad={() => {
+                      console.log('Image loaded successfully');
+                    }}
                   />
                 )}
               </div>

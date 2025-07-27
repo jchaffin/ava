@@ -94,7 +94,7 @@ const StripeTutorialPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Go to "Developers" → "API keys"</span>
+                             <span>Go to &quot;Developers&quot; → &quot;API keys&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
@@ -169,11 +169,11 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>In Stripe Dashboard, go to "Developers" → "Webhooks"</span>
+              <span>In Stripe Dashboard, go to &quot;Developers&quot; → &quot;Webhooks&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Click "Add endpoint"</span>
+              <span>Click &quot;Add endpoint&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
@@ -244,7 +244,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Navigate to the "Payment" tab</span>
+              <span>Navigate to the &quot;Payment&quot; tab</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />

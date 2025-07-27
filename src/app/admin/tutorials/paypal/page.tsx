@@ -6,7 +6,6 @@ import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
 import { useRouter } from 'next/navigation'
 import {
-  CreditCard,
   CheckCircle,
   ExternalLink,
   Copy,
@@ -104,23 +103,23 @@ const PayPalTutorialPage: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Navigate to "Apps & Credentials"</span>
+              <span>Navigate to &quot;Apps &amp; Credentials&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Click "Create App"</span>
+              <span>Click &quot;Create App&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Choose "Business" app type</span>
+              <span>Choose &quot;Business&quot; app type</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Give your app a name (e.g., "Ava Store")</span>
+              <span>Give your app a name (e.g., &quot;Ava Store&quot;)</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Click "Create App"</span>
+              <span>Click &quot;Create App&quot;</span>
             </div>
           </div>
         </div>
@@ -138,7 +137,7 @@ const PayPalTutorialPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Find your app in the "Apps & Credentials" section</span>
+              <span>Find your app in the &quot;Apps &amp; Credentials&quot; section</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
@@ -301,7 +300,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Navigate to the "Payment" tab</span>
+              <span>Navigate to the &quot;Payment&quot; tab</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
