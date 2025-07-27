@@ -190,7 +190,7 @@ const ShippingPage: React.FC = () => {
                   <span className="ava-text-tertiary">Processing</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                  <div className="w-3 h-3 bg-theme-primary rounded-full mr-3"></div>
                   <span className="ava-text-tertiary">Shipped</span>
                 </div>
                 <div className="flex items-center">

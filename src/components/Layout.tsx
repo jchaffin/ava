@@ -20,7 +20,7 @@ import {
   UserCircleIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-
+  SparklesIcon,
   CubeIcon,
 } from '@heroicons/react/24/outline'
 import { ShoppingCartIcon as ShoppingCartSolidIcon } from '@heroicons/react/24/solid'
@@ -73,6 +73,30 @@ const Layout: React.FC<LayoutProps> = ({
     isOpen: false,
   })
 
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Check for dark mode on mount and when theme changes
+  useEffect(() => {
+    setMounted(true)
+    
+    const checkTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark')
+      setIsDarkMode(isDark)
+    }
+
+    checkTheme()
+
+    // Listen for theme changes
+    const observer = new MutationObserver(checkTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
 
 
   // Navigation items configuration - Updated for AVA skincare
@@ -85,6 +109,10 @@ const Layout: React.FC<LayoutProps> = ({
     {
       name: 'Products',
       href: '/products',
+    },
+    {
+      name: 'Skin Analysis',
+      href: '/skin-analysis',
     },
     {
       name: 'About',
@@ -102,6 +130,13 @@ const Layout: React.FC<LayoutProps> = ({
       name: 'Dashboard',
       href: '/dashboard',
       icon: ChartBarIcon,
+      requireAuth: true,
+      userOnly: true, // Only show for regular users
+    },
+    {
+      name: 'Skin Analysis History',
+      href: '/dashboard/skin-analysis',
+      icon: SparklesIcon,
       requireAuth: true,
       userOnly: true, // Only show for regular users
     },
@@ -204,8 +239,8 @@ const Layout: React.FC<LayoutProps> = ({
   // Show loading state while authentication is being established
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-theme-primary">
-        <header className="bg-theme-primary shadow-sm border-b border-theme sticky top-0 z-40">
+      <div className="min-h-screen flex flex-col bg-theme-primary" suppressHydrationWarning>
+        <header className="bg-theme-secondary shadow-sm border-b border-theme sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
@@ -251,123 +286,179 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const renderDesktopNavigation = () => (
-    <nav className="hidden lg:flex items-center space-x-8">
+    <nav className="hidden lg:flex items-center space-x-24">
       {navigationItems.map((item) => (
         <Link
           key={item.name}
           href={item.href}
-          className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center space-x-1 px-3 py-2 text-theme-primary rounded-md text-sm font-medium transition-colors duration-200 whitespace-nowrap focus:outline-none focus:ring-0 focus:border-0 ${
             isActiveLink(item.href)
-              ? 'text-ava-accent bg-ava-cream'
-              : 'text-ava-text-secondary hover:text-ava-accent hover:bg-ava-bg-secondary'
+              ? 'text-theme-primary bg-ava-accent'
+              : 'text-theme-primary hover:text-ava-accent hover:bg-theme-secondary'
           }`}
         >
-          {item.icon && <item.icon className="w-4 h-4" />}
-          <span>{item.name}</span>
+          {item.icon && <item.icon className="w-4 h-4 flex-shrink-0" />}
+          <span className="flex-shrink-0">{item.name}</span>
         </Link>
       ))}
     </nav>
   )
 
   const renderMobileNavigation = () => (
-    <div className="lg:hidden fixed inset-0" data-menu="mobile">
-      <div className="fixed inset-y-0 left-0 w-80 bg-white dark:bg-gray-900 shadow-xl z-[9999]">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex-1"></div>
-          <Link href="/" className="flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-            <Image
-              src="/logo.png"
-              alt="AVA Logo"
-              width={100}
-              height={32}
-              className="h-8 w-auto"
-              priority
-            />
-          </Link>
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex-1 flex justify-end p-2 rounded-md text-theme-secondary dark:text-gray-300 hover:text-theme-primary dark:hover:text-theme-primary hover:bg-gray-100 dark:hover:bg-gray-800"
-            aria-label="Close menu"
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="px-4 py-6 space-y-2">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors duration-200 ${
-                isActiveLink(item.href)
-                  ? 'text-ava-accent bg-theme-secondary'
-                  : 'text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary'
-              }`}
-            >
-              {item.icon && <item.icon className="w-5 h-5" />}
-              <span>{item.name}</span>
-            </Link>
-          ))}
-        </div>
-        {isAuthenticated ? (
-          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="mb-4">
-              <p className="text-sm font-medium text-theme-primary dark:text-theme-primary">{user?.name || 'User'}</p>
-              <p className="text-sm text-theme-muted dark:text-gray-400">{user?.email || ''}</p>
-            </div>
-            <div className="space-y-2">
-              {(hasRole('admin') ? adminMenuItems : userMenuItems)
-                .filter(item => !item.requireAuth || isAuthenticated)
-                .filter(item => !item.adminOnly || hasRole('admin'))
-                .filter(item => !item.userOnly || !hasRole('admin'))
-                .map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200"
-                  >
-                    {item.icon && <item.icon className="w-5 h-5" />}
-                    <span>{item.name}</span>
-                  </Link>
-                ))}
-              <button
-                onClick={() => {
-                  handleSignOut()
-                  setIsMobileMenuOpen(false)
-                }}
-                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 w-full transition-colors duration-200"
-              >
-                <ArrowRightOnRectangleIcon className="w-5 h-5" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
-            <Link
-              href="/signin"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full px-4 py-3 text-center text-base font-medium ava-text-tertiary dark:text-gray-300 hover:text-ava-accent hover:bg-ava-bg-secondary dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full px-4 py-3 text-center text-base font-medium text-theme-primary bg-ava-accent hover:bg-red-700 rounded-lg transition-colors duration-200"
-            >
-              Sign Up
-            </Link>
-          </div>
-        )}
-      </div>
+    <>
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-[9998]"
+        className={`lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 z-[9998] ${
+          isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={() => setIsMobileMenuOpen(false)}
       />
-    </div>
+      
+      {/* Sidebar */}
+      <div className={`lg:hidden fixed inset-y-0 left-0 w-80 bg-theme-secondary shadow-2xl transform transition-all duration-300 ease-out z-[9999] ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b-2 border-theme">
+          <div className="flex-1"></div>
+          <Link href="/" className="flex items-center justify-center flex-1" onClick={() => setIsMobileMenuOpen(false)}>
+            {mounted && (
+              <Image
+                src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                alt="AVA Logo"
+                width={400}
+                height={134}
+                className="h-16 w-auto"
+                priority
+              />
+            )}
+          </Link>
+          <div className="flex-1 flex justify-end">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 rounded-full bg-theme-secondary text-theme-primary hover:bg-theme-tertiary hover:text-theme-primary transition-all duration-200 cursor-pointer"
+              aria-label="Close menu"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Items */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-4 py-6">
+            <div className="space-y-1">
+              {navigationItems.map((item, index) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center space-x-4 px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 transform hover:scale-[1.02] cursor-pointer focus:outline-none focus:ring-0 focus:border-0 ${
+                    isActiveLink(item.href)
+                      ? 'text-theme-tertiary bg-ava-accent'
+                      : 'text-theme-primary hover:text-ava-accent hover:bg-theme-secondary'
+                  }`}
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {item.icon && <item.icon className="w-5 h-5 flex-shrink-0" />}
+                  <span className="flex-1">{item.name}</span>
+                  {isActiveLink(item.href) && (
+                    <div className="w-2 h-2 bg-ava-accent rounded-full"></div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* User Section */}
+          {isAuthenticated ? (
+            <div className="px-4 py-6 border-t border-theme">
+              {/* User Info */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-ava-accent to-red-600 rounded-full flex items-center justify-center">
+                    <span className="text-theme-primary font-semibold text-sm">
+                      {user?.name?.charAt(0) || 'U'}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-theme-primary truncate">
+                      {user?.name || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {user?.email || ''}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Menu Items */}
+              <div className="space-y-1">
+                {(hasRole('admin') ? adminMenuItems : userMenuItems)
+                  .filter(item => !item.requireAuth || isAuthenticated)
+                  .filter(item => !item.adminOnly || hasRole('admin'))
+                  .filter(item => !item.userOnly || !hasRole('admin'))
+                  .map((item, index) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-ava-accent hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                    >
+                      {item.icon && <item.icon className="w-4 h-4 flex-shrink-0" />}
+                      <span className="flex-1">{item.name}</span>
+                    </Link>
+                  ))}
+                
+                {/* Sign Out Button */}
+                <button
+                  onClick={() => {
+                    handleSignOut()
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className="flex items-center space-x-4 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 w-full transition-all duration-200 mt-4"
+                >
+                  <ArrowRightOnRectangleIcon className="w-4 h-4 flex-shrink-0" />
+                  <span className="flex-1 text-left">Sign Out</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="px-4 py-6 border-t border-gray-200/50 dark:border-gray-700/50">
+              <div className="space-y-3">
+                <Link
+                  href="/signin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200/50 dark:border-gray-700/50">
+          <div className="text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              AVA Premium Skincare
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              Transform your skin journey
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   )
 
   const renderUserMenu = () => (
@@ -384,7 +475,7 @@ const Layout: React.FC<LayoutProps> = ({
       </button>
 
       {userMenu.isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-56 bg-theme-secondary rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
             <p className="text-sm font-medium text-theme-primary dark:text-theme-primary">{user?.name || 'User'}</p>
             <p className="text-sm text-theme-muted dark:text-gray-400">{user?.email || ''}</p>
@@ -426,10 +517,10 @@ const Layout: React.FC<LayoutProps> = ({
   )
 
   const renderHeader = () => (
-    <header className="bg-theme-primary shadow-sm border-b border-theme sticky top-0 z-40">
+    <header className="bg-theme-secondary shadow-sm border-b border-theme sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Mobile menu button on mobile, Logo on desktop */}
+          {/* Left side - Mobile menu button */}
           <div className="lg:hidden" data-mobile-menu-button>
             <button
               onClick={() => {
@@ -443,57 +534,42 @@ const Layout: React.FC<LayoutProps> = ({
             </button>
           </div>
 
-          {/* Logo - hidden on mobile (shown in center), visible on desktop */}
-          <div className="hidden lg:flex lg:flex-1">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/logo.png"
-                alt="AVA Logo"
-                width={120}
-                height={40}
-                className="h-8 w-auto"
-                priority
-              />
+          {/* Center - Logo (larger and centered) */}
+          <div className="flex-1 flex justify-center">
+            <Link href="/" className="hidden md:flex items-center">
+              {mounted && (
+                <Image
+                  src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                  alt="AVA Logo"
+                  width={240}
+                  height={80}
+                  className="h-16 w-auto"
+                  priority
+                />
+              )}
             </Link>
           </div>
 
-          {/* Center - Logo on mobile, Desktop navigation on desktop */}
-          <div className="flex-1 flex justify-center lg:justify-center">
-            {/* Mobile: Logo */}
-            <div className="lg:hidden">
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/logo.png"
-                  alt="AVA Logo"
-                  width={120}
-                  height={40}
-                  className="h-8 w-auto"
-                  priority
-                />
-              </Link>
-            </div>
-            
-            {/* Desktop: Navigation */}
-            <div className="hidden lg:block">
-              {renderDesktopNavigation()}
-            </div>
+          {/* Right side - Desktop navigation and actions */}
+          <div className="hidden lg:flex items-center space-x-8">
+            {renderDesktopNavigation()}
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-6">
             {/* Theme toggle button */}
             <ThemeToggle />
             {/* Wishlist - only show for regular users */}
             {isAuthenticated && !hasRole('admin') && (
-              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200">
+              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
                 <HeartIcon className="w-5 h-5" />
               </Link>
             )}
 
             {/* Shopping cart */}
-            <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200">
+            <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
               {getTotalItems() > 0 ? (
-                <ShoppingCartSolidIcon className="w-5 h-5 text-ava-accent" />
+                <ShoppingCartSolidIcon className="w-5 h-5" />
               ) : (
                 <ShoppingCartIcon className="w-5 h-5" />
               )}
@@ -508,16 +584,16 @@ const Layout: React.FC<LayoutProps> = ({
             {isAuthenticated ? (
               renderUserMenu()
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
                 <Link
                   href="/signin"
-                  className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-ava-accent text-theme-primary hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="bg-ava-accent text-theme-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0"
                 >
                   Sign Up
                 </Link>
@@ -556,6 +632,12 @@ const Layout: React.FC<LayoutProps> = ({
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </a>
+              <a href="#" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">
+                <span className="sr-only">TikTok</span>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
@@ -592,11 +674,12 @@ const Layout: React.FC<LayoutProps> = ({
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-3 py-2 bg-gray-800 text-theme-primary placeholder-gray-400 border border-gray-700 rounded-l-md focus:outline-none focus:ring-1 focus:ring-ava-accent"
+                className="flex-1 px-4 py-3 bg-theme-tertiary text-theme-primary placeholder-theme-muted rounded-l-md focus:outline-none focus:ring-1 focus:ring-theme-primary border border-theme"
               />
               <Button
                 type="submit"
-                className="rounded-l-none bg-ava-accent hover:bg-red-700"
+                variant="primary"
+                className="rounded-l-none"
                 size="md"
               >
                 Subscribe

@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: 'AVA',
     images: [
       {
-        url: '/images/home/home_main.png',
+        url: '/images/logo.png',
         width: 1200,
         height: 630,
         alt: 'AVA Premium Skincare Products',
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AVA - Premium Skincare Products',
     description: 'Transform your skincare journey with our premium collection of scientifically-formulated products.',
-    images: ['/images/home/home_main2.png'],
+    images: ['/images/main.png'],
   },
   robots: {
     index: true,
@@ -90,18 +90,20 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  
-                  if (theme === 'dark' || (!theme && prefersDark)) {
-                    document.documentElement.classList.add('dark');
-                  } else {
+                if (typeof window !== 'undefined') {
+                  try {
+                    var theme = localStorage.getItem('theme');
+                    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    
+                    if (theme === 'dark' || (!theme && prefersDark)) {
+                      document.documentElement.classList.add('dark');
+                    } else {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  } catch (e) {
+                    // Fallback to light theme if localStorage is not available
                     document.documentElement.classList.remove('dark');
                   }
-                } catch (e) {
-                  // Fallback to light theme if localStorage is not available
-                  document.documentElement.classList.remove('dark');
                 }
               })();
             `,

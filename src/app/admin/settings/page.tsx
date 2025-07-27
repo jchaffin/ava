@@ -14,6 +14,8 @@ import {
   Globe,
   CreditCard,
   Palette,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -40,6 +42,8 @@ interface SiteSettings {
   security: {
     twoFactorAuth: boolean
     sessionTimeout: number
+    adminEmail: string
+    adminName: string
     passwordPolicy: {
       minLength: number
       requireUppercase: boolean
@@ -49,8 +53,13 @@ interface SiteSettings {
   }
   payment: {
     stripeEnabled: boolean
+    stripePublishableKey: string
+    stripeSecretKey: string
     paypalEnabled: boolean
+    paypalClientId: string
+    paypalSecret: string
     applePayEnabled: boolean
+    applePayMerchantId: string
     currency: string
     taxRate: number
   }
@@ -72,6 +81,16 @@ const AdminSettings: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'notifications' | 'security' | 'payment' | 'shipping'>('general')
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [showStripeKeys, setShowStripeKeys] = useState({
+    publishable: false,
+    secret: false
+  })
 
   useEffect(() => {
     if (isLoading) return
@@ -134,6 +153,50 @@ const AdminSettings: React.FC = () => {
       toast.error('Failed to save settings')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const changePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error('New passwords do not match')
+      return
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      toast.error('New password must be at least 8 characters long')
+      return
+    }
+
+    try {
+      setChangingPassword(true)
+      const response = await fetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success('Password changed successfully')
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        })
+      } else {
+        toast.error(data.message || 'Failed to change password')
+      }
+    } catch (error) {
+      console.error('Error changing password:', error)
+      toast.error('Failed to change password')
+    } finally {
+      setChangingPassword(false)
     }
   }
 
@@ -371,6 +434,65 @@ const AdminSettings: React.FC = () => {
                   <div className="space-y-6">
                     <h3 className="text-lg font-medium text-theme-primary">Security Settings</h3>
                     <div className="space-y-6">
+                      {/* Admin Account Settings */}
+                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                        <h4 className="text-sm font-medium text-theme-primary">Admin Account</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input
+                            label="Admin Name"
+                            type="text"
+                            value={settings.security.adminName || ''}
+                            onChange={(e) => updateSetting('security', 'adminName', e.target.value)}
+                            placeholder="Enter admin name"
+                          />
+                          <Input
+                            label="Admin Email"
+                            type="email"
+                            value={settings.security.adminEmail || ''}
+                            onChange={(e) => updateSetting('security', 'adminEmail', e.target.value)}
+                            placeholder="admin@example.com"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Password Change Form */}
+                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                        <h4 className="text-sm font-medium text-theme-primary">Change Password</h4>
+                        <div className="space-y-4">
+                          <Input
+                            label="Current Password"
+                            type="password"
+                            value={passwordForm.currentPassword}
+                            onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                            placeholder="Enter current password"
+                          />
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Input
+                              label="New Password"
+                              type="password"
+                              value={passwordForm.newPassword}
+                              onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                              placeholder="Enter new password"
+                            />
+                            <Input
+                              label="Confirm New Password"
+                              type="password"
+                              value={passwordForm.confirmPassword}
+                              onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                              placeholder="Confirm new password"
+                            />
+                          </div>
+                          <Button
+                            onClick={changePassword}
+                            loading={changingPassword}
+                            disabled={changingPassword || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword}
+                            variant="secondary"
+                          >
+                            Change Password
+                          </Button>
+                        </div>
+                      </div>
+
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-medium text-theme-primary">Two-Factor Authentication</h4>
@@ -473,6 +595,57 @@ const AdminSettings: React.FC = () => {
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
                       </div>
+                      {settings.payment.stripeEnabled && (
+                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                          <h5 className="text-sm font-medium text-theme-primary">Stripe Configuration</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="relative">
+                              <Input
+                                label="Stripe Publishable Key"
+                                type={showStripeKeys.publishable ? "text" : "password"}
+                                value={settings.payment.stripePublishableKey || ''}
+                                onChange={(e) => updateSetting('payment', 'stripePublishableKey', e.target.value)}
+                                placeholder="pk_test_..."
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowStripeKeys(prev => ({ ...prev, publishable: !prev.publishable }))}
+                                className="absolute right-3 top-8 text-gray-400 hover:text-gray-600 focus:outline-none"
+                              >
+                                {showStripeKeys.publishable ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                            <div className="relative">
+                              <Input
+                                label="Stripe Secret Key"
+                                type={showStripeKeys.secret ? "text" : "password"}
+                                value={settings.payment.stripeSecretKey || ''}
+                                onChange={(e) => updateSetting('payment', 'stripeSecretKey', e.target.value)}
+                                placeholder="sk_test_..."
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowStripeKeys(prev => ({ ...prev, secret: !prev.secret }))}
+                                className="absolute right-3 top-8 text-gray-400 hover:text-gray-600 focus:outline-none"
+                              >
+                                {showStripeKeys.secret ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-xs text-theme-muted">
+                            Enter your Stripe API keys here. You can find these in your Stripe Dashboard under Developers &gt; API keys. 
+                            For security, these values are stored securely and masked in the interface.
+                          </p>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-medium text-theme-primary">PayPal Payments</h4>
@@ -485,6 +658,30 @@ const AdminSettings: React.FC = () => {
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
                       </div>
+                      {settings.payment.paypalEnabled && (
+                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                          <h5 className="text-sm font-medium text-theme-primary">PayPal Configuration</h5>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Input
+                              label="PayPal Client ID"
+                              type="password"
+                              value={settings.payment.paypalClientId || ''}
+                              onChange={(e) => updateSetting('payment', 'paypalClientId', e.target.value)}
+                              placeholder="Client ID from PayPal Developer Dashboard"
+                            />
+                            <Input
+                              label="PayPal Secret"
+                              type="password"
+                              value={settings.payment.paypalSecret || ''}
+                              onChange={(e) => updateSetting('payment', 'paypalSecret', e.target.value)}
+                              placeholder="Secret from PayPal Developer Dashboard"
+                            />
+                          </div>
+                          <p className="text-xs text-theme-muted">
+                            Your PayPal credentials can be found in your PayPal Developer Dashboard under Apps &gt; My Apps.
+                          </p>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-medium text-theme-primary">Apple Pay</h4>
@@ -497,6 +694,23 @@ const AdminSettings: React.FC = () => {
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
                       </div>
+                      {settings.payment.applePayEnabled && (
+                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                          <h5 className="text-sm font-medium text-theme-primary">Apple Pay Configuration</h5>
+                          <div className="grid grid-cols-1 gap-4">
+                            <Input
+                              label="Apple Pay Merchant ID"
+                              type="password"
+                              value={settings.payment.applePayMerchantId || ''}
+                              onChange={(e) => updateSetting('payment', 'applePayMerchantId', e.target.value)}
+                              placeholder="merchant.com.yourcompany.applepay"
+                            />
+                          </div>
+                          <p className="text-xs text-theme-muted">
+                            Your Apple Pay Merchant ID can be found in your Apple Developer account under Certificates, Identifiers &amp; Profiles &gt; Identifiers.
+                          </p>
+                        </div>
+                      )}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                           <label className="block text-sm font-medium ava-text-tertiary mb-2">

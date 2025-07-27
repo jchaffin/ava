@@ -5,7 +5,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
-import { StarIcon } from '@heroicons/react/24/solid'
+import { 
+  StarIcon,
+  BeakerIcon,
+  SparklesIcon,
+  TruckIcon,
+  ShieldCheckIcon,
+  ArrowPathIcon,
+  EnvelopeIcon
+} from '@heroicons/react/24/solid'
+import { 
+  CheckCircleIcon
+} from '@heroicons/react/24/outline'
 
 interface Product {
   _id: string
@@ -23,9 +34,30 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [isClient, setIsClient] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
+    setMounted(true)
+    
+    // Check for dark mode
+    const checkTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark')
+      setIsDarkMode(isDark)
+    }
+    
+    // Initial check
+    checkTheme()
+    
+    // Watch for theme changes
+    const observer = new MutationObserver(checkTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+    
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -69,29 +101,27 @@ export default function Home() {
                 Transform your skincare journey with our premium collection of 
                 scientifically-formulated products designed for radiant, healthy skin.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex justify-center lg:justify-start">
                 <Link href="/products">
-                  <Button className="px-8 py-3 text-lg">
+                  <Button variant="primary" className="px-8 py-3 text-lg">
                     Shop Now
                   </Button>
                 </Link>
-                                 <Link href="/products">
-                   <Button variant="secondary" className="px-8 py-3 text-lg">
-                     Learn More
-                   </Button>
-                 </Link>
               </div>
             </div>
             <div className="relative">
               <div className="relative z-10">
-                <Image
-                  src="/images/home/home_main.png"
-                  alt="Premium skincare products"
-                  width={600}
-                  height={400}
-                  className="rounded-2xl shadow-2xl"
-                  priority
-                />
+                {mounted && (
+                  <Image
+                    src={isDarkMode ? "/images/home/main_dark.png" : "/images/home/main_light.png"}
+                    alt="Premium skincare products"
+                    width={600}
+                    height={400}
+                    className="rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg lg:max-w-xl"
+                    style={{ width: 'auto', height: 'auto' }}
+                    priority
+                  />
+                )}
               </div>
               {/* Floating elements */}
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-200 rounded-full opacity-80 animate-bounce" />
@@ -116,23 +146,25 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: '🧪',
+                icon: BeakerIcon,
                 title: 'Scientifically Formulated',
-                description: 'Every product is backed by dermatological research and clinical testing'
+                description: 'Every product is backed by dermatological research and clinical testing',
               },
               {
-                icon: '🌿',
+                icon: SparklesIcon,
                 title: 'Natural Ingredients',
-                description: 'Premium natural ingredients sourced from the finest suppliers worldwide'
+                description: 'Premium natural ingredients sourced from the finest suppliers worldwide',
               },
               {
-                icon: '✨',
+                icon: StarIcon,
                 title: 'Proven Results',
-                description: 'Thousands of satisfied customers with visible improvements in their skin'
+                description: 'Thousands of satisfied customers with visible improvements in their skin',
               }
             ].map((feature, index) => (
               <div key={index} className="text-center p-6 rounded-xl bg-theme-primary shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="text-4xl mb-4">{feature.icon}</div>
+                <div className="flex justify-center mb-4">
+                  <feature.icon className={`w-12 h-12 text-theme-secondary`} />
+                </div>
                 <h3 className="text-xl font-semibold text-theme-secondary mb-3">{feature.title}</h3>
                 <p className="text-theme-muted">{feature.description}</p>
               </div>
@@ -257,19 +289,19 @@ export default function Home() {
               {
                 name: 'Sarah Johnson',
                 role: 'Skincare Enthusiast',
-                content: 'The hydrating serum completely transformed my dry skin. I can&apos;t imagine my routine without it!',
+                content: 'The hydrating serum completely transformed my dry skin. I can\'t imagine my routine without it!',
                 rating: 5
               },
               {
                 name: 'Michael Chen',
                 role: 'Dermatologist',
-                content: 'As a dermatologist, I&apos;m impressed with the quality and effectiveness of AVA products.',
+                content: 'As a dermatologist, I\'m impressed with the quality and effectiveness of AVA products.',
                 rating: 5
               },
               {
                 name: 'Emma Davis',
                 role: 'Beauty Blogger',
-                content: 'I&apos;ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
+                content: 'I\'ve tried many brands, but AVA consistently delivers results. My skin has never looked better!',
                 rating: 5
               }
             ].map((testimonial, index) => (
@@ -300,8 +332,8 @@ export default function Home() {
           <div className="mb-8">
             <h2 className="text-4xl lg:text-6xl font-bold text-theme-primary mb-6 leading-tight">
               Ready to Transform
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
-                Your Skin?
+              <span className="block text-gradient">
+                Your Skin
               </span>
             </h2>
             <p className="text-xl lg:text-2xl text-theme-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
@@ -311,12 +343,12 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link href="/products">
-              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+              <Button className="px-10 py-4 text-lg theme-bg-primary text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
                 Start Shopping
               </Button>
             </Link>
             <Link href="/register">
-              <Button className="px-10 py-4 text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+              <Button className="px-10 py-4 text-lg bg-theme-primary text-theme-primary font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105">
                 Create Account
               </Button>
             </Link>
@@ -324,15 +356,15 @@ export default function Home() {
           
           <div className="mt-12 flex justify-center items-center space-x-8 text-theme-secondary text-sm">
             <div className="flex items-center">
-              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              <TruckIcon className="w-4 h-4 text-theme-primary mr-2" />
               Free Shipping
             </div>
             <div className="flex items-center">
-              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              <ArrowPathIcon className="w-4 h-4 text-theme-primary mr-2" />
               30-Day Returns
             </div>
             <div className="flex items-center">
-              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              <ShieldCheckIcon className="w-4 h-4 text-theme-primary mr-2" />
               Secure Checkout
             </div>
           </div>
@@ -349,12 +381,15 @@ export default function Home() {
             Get the latest skincare tips, product launches, and exclusive offers
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-theme-tertiary border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Button className="px-6 py-3">
+            <div className="flex-1 flex items-center rounded-lg border border-theme bg-theme-tertiary">
+              <EnvelopeIcon className="w-5 h-5 text-theme-muted ml-3 mr-2" />
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-3 py-3 outline-none focus:ring-0 focus:border-0 focus:shadow-none border-0 bg-transparent text-theme-primary placeholder-theme-muted"
+              />
+            </div>
+            <Button variant="primary" className="px-6 py-3 whitespace-nowrap">
               Subscribe
             </Button>
           </div>

@@ -5,6 +5,7 @@ export interface IProductDocument {
   description: string
   price: number
   image: string
+  imageDir?: string
   sizes?: string
   stock: number
   featured: boolean

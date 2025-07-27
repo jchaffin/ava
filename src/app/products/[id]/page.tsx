@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui'
 import { useCart } from '@/context'
 import { IProduct } from '@/types'
-import { formatPrice } from '@/utils/helpers'
+import { formatPrice, getSubDir } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import { 
   HeartIcon, 
@@ -65,6 +65,13 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
     reviews: [],
     loadingReviews: false,
   })
+
+  const [reviewForm, setReviewForm] = useState({
+    rating: 5,
+    comment: '',
+    showForm: false
+  })
+  const [submittingReview, setSubmittingReview] = useState(false)
 
   // Handle params on client side to prevent hydration issues
   useEffect(() => {
@@ -285,6 +292,56 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
     }
   }
 
+  const handleSubmitReview = async () => {
+    if (!reviewForm.comment.trim()) {
+      toast.error('Please enter a review comment')
+      return
+    }
+
+    try {
+      setSubmittingReview(true)
+      
+      // In a real app, this would make an API call
+      // const response = await fetch(`/api/products/${id}/reviews`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     rating: reviewForm.rating,
+      //     comment: reviewForm.comment
+      //   })
+      // })
+
+      // Mock successful review submission
+      const newReview: ProductReview = {
+        id: Date.now().toString(),
+        userId: 'current-user',
+        userName: 'You',
+        rating: reviewForm.rating,
+        comment: reviewForm.comment,
+        createdAt: new Date().toISOString(),
+        verified: true
+      }
+
+      setState(prev => ({
+        ...prev,
+        reviews: [newReview, ...prev.reviews]
+      }))
+
+      setReviewForm({
+        rating: 5,
+        comment: '',
+        showForm: false
+      })
+
+      toast.success('Review submitted successfully!')
+    } catch (error) {
+      console.error('Error submitting review:', error)
+      toast.error('Failed to submit review')
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
   const calculateAverageRating = (): number => {
     if (state.reviews.length === 0) return 0
     const sum = state.reviews.reduce((acc, review) => acc + review.rating, 0)
@@ -385,11 +442,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                 className="object-cover"
                 priority
               />
-              {product.featured && (
-                <div className="absolute top-4 left-4 bg-blue-500 text-theme-primary px-2 py-1 rounded text-sm font-medium">
-                  Featured
-                </div>
-              )}
+
               {isOutOfStock && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <span className="text-theme-primary text-lg font-semibold">Out of Stock</span>
@@ -407,7 +460,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                   onClick={() => setState(prev => ({ ...prev, selectedImageIndex: index }))}
                 >
                   <Image
-                    src={product.image}
+                    src={product.image.replace('main', index.toString())}
                     alt={`${product.name} view ${index}`}
                     width={100}
                     height={100}
@@ -443,7 +496,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                     {state.isWishlisted ? (
                       <HeartSolidIcon className="w-6 h-6 text-red-500" />
                     ) : (
-                      <HeartIcon className="w-6 h-6 text-gray-400" />
+                      <HeartIcon className="w-6 h-6 text-theme-secondary" />
                     )}
                   </button>
                   
@@ -451,12 +504,12 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                     onClick={handleShare}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                   >
-                    <ShareIcon className="w-6 h-6 text-gray-400" />
+                    <ShareIcon className="w-6 h-6 text-theme-secondary" />
                   </button>
                 </div>
               </div>
 
-              <div className="text-3xl font-bold text-green-600 mb-4">
+              <div className="text-3xl font-bold text-theme-primary mb-4">
                 {formatPrice(product.price)}
               </div>
 
@@ -469,7 +522,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                     Only {product.stock} left in stock
                   </span>
                 ) : (
-                  <span className="text-green-600 font-medium">In Stock</span>
+                  <span className="text-theme-primary font-medium">In Stock</span>
                 )}
               </div>
             </div>
@@ -563,7 +616,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
             {/* Shipping and Returns */}
             <div className="border-t border-gray-200 pt-6 space-y-4">
               <div className="flex items-center space-x-3">
-                <TruckIcon className="w-6 h-6 text-gray-400" />
+                <TruckIcon className="w-6 h-6 text-theme-secondary" />
                 <div>
                   <h4 className="font-medium text-theme-primary">Free Shipping</h4>
                   <p className="text-sm text-theme-secondary">On orders over $100</p>
@@ -571,7 +624,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
               </div>
               
               <div className="flex items-center space-x-3">
-                <ShieldCheckIcon className="w-6 h-6 text-gray-400" />
+                <ShieldCheckIcon className="w-6 h-6 text-theme-secondary" />
                 <div>
                   <h4 className="font-medium text-theme-primary">30-Day Returns</h4>
                   <p className="text-sm text-theme-secondary">Easy returns and exchanges</p>
@@ -583,7 +636,78 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
         {/* Reviews Section */}
         <div className="mt-16 border-t border-gray-200 pt-16 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-theme-primary mb-8">Customer Reviews</h2>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-theme-primary">Customer Reviews</h2>
+            <Button
+              onClick={() => setReviewForm(prev => ({ ...prev, showForm: !prev.showForm }))}
+              variant="secondary"
+              size="sm"
+            >
+              {reviewForm.showForm ? 'Cancel' : 'Write a Review'}
+            </Button>
+          </div>
+
+          {/* Review Form */}
+          {reviewForm.showForm && (
+            <div className="mb-8 bg-white rounded-lg p-6 shadow-sm border">
+              <h3 className="text-lg font-medium text-theme-primary mb-4">Write Your Review</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-theme-primary mb-2">Rating</label>
+                  <div className="flex items-center space-x-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
+                        className="focus:outline-none"
+                      >
+                        <StarIcon
+                          className={`w-6 h-6 ${
+                            star <= reviewForm.rating
+                              ? 'text-yellow-400 fill-current'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                    <span className="ml-2 text-sm text-theme-secondary">
+                      {reviewForm.rating} star{reviewForm.rating !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-theme-primary mb-2">Your Review</label>
+                  <textarea
+                    value={reviewForm.comment}
+                    onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                    placeholder="Share your experience with this product..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    rows={4}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    onClick={() => setReviewForm(prev => ({ ...prev, showForm: false }))}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSubmitReview}
+                    loading={submittingReview}
+                    disabled={submittingReview || !reviewForm.comment.trim()}
+                    size="sm"
+                  >
+                    Submit Review
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
           
           {state.loadingReviews ? (
             <div className="space-y-4">

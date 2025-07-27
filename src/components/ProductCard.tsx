@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Variant-specific styling
   const getCardClasses = (): string => {
-    const baseClasses = 'bg-theme-primary rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
+    const baseClasses = 'bg-theme-secondary rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
     
     switch (variant) {
       case 'compact':
@@ -91,6 +91,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const getImageClasses = (): string => {
     if (variant === 'list') {
       return 'w-24 h-24 object-cover rounded-lg flex-shrink-0'
+    }
+    if (variant === 'compact') {
+      return 'w-full h-32 sm:h-40 object-cover'
     }
     return 'w-full h-48 object-cover'
   }
@@ -222,7 +225,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const renderBadges = () => (
     <div className="absolute top-3 left-3 flex flex-col space-y-2">
       {product.featured && (
-        <span className="bg-blue-500 text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
+        <span className="bg-theme-secondary text-theme-primary text-xs px-2 py-1 rounded-full font-medium">
           Featured
         </span>
       )}
@@ -253,7 +256,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <button
             onClick={handleWishlistToggle}
             disabled={state.isLoading}
-            className="p-2 bg-theme-primary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-50"
+            className="p-2 bg-theme-secondary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-50"
             aria-label={state.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             {state.isWishlisted ? (
@@ -266,7 +269,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         
         <button
           onClick={handleQuickView}
-                      className="p-2 bg-theme-primary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
+                      className="p-2 bg-theme-secondary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
           aria-label="Quick view product"
         >
           <EyeIcon className="w-5 h-5 text-theme-secondary hover:text-blue-500" />
@@ -276,13 +279,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   const renderProductInfo = () => (
-    <div className={`p-4 ${variant === 'list' ? 'flex-1 ml-4' : ''}`}>
+    <div className={`${variant === 'compact' ? 'p-2 sm:p-4' : 'p-4'} ${variant === 'list' ? 'flex-1 ml-4' : ''}`}>
 
 
       {/* Product Name */}
       <Link href={`/products/${product._id}`}>
         <h3 className={`font-semibold text-theme-primary hover:text-blue-600 transition-colors line-clamp-2 ${
-          variant === 'compact' ? 'text-sm' : 'text-lg'
+          variant === 'compact' ? 'text-xs sm:text-sm' : 'text-lg'
         }`}>
           {product.name}
         </h3>
@@ -305,8 +308,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Price */}
       <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className={`font-bold text-green-600 ${
-            variant === 'compact' ? 'text-lg' : 'text-xl'
+          <span className={`font-bold text-theme-primary ${
+            variant === 'compact' ? 'text-sm sm:text-lg' : 'text-xl'
           }`}>
             {formatPrice(product.price)}
           </span>
@@ -319,7 +322,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Free shipping indicator */}
         {product.price >= 100 && (
-          <div className="flex items-center text-green-600 text-xs">
+          <div className="flex items-center text-theme-secondary text-xs">
             <TruckIcon className="w-4 h-4 mr-1" />
             <span>Free Shipping</span>
           </div>
@@ -335,9 +338,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <span className="text-orange-600 text-sm font-medium">
               Only {product.stock} left
             </span>
-          ) : (
-            <span className="text-green-600 text-sm font-medium">In Stock</span>
-          )}
+          ) : null}
         </div>
       )}
 
@@ -347,6 +348,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           onClick={handleAddToCart}
           disabled={isOutOfStock || state.isLoading}
           loading={state.isLoading}
+          variant="secondary"
           className={`${variant === 'list' ? 'flex-1' : 'w-full'}`}
           size={variant === 'compact' ? 'sm' : 'md'}
         >

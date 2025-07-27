@@ -9,18 +9,16 @@ export default function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-      
-      setDark(isDark);
-      
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    
+    setDark(isDark);
+    
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -40,14 +38,14 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setDark(d => !d)}
-      className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none"
+      className="w-9 h-9 flex items-center justify-center rounded-full theme-toggle-btn focus:outline-none cursor-pointer"
       aria-label="Toggle dark mode"
       type="button"
       disabled={!mounted}
     >
       {/* Always render both icons but only show the appropriate one after mounting */}
-      <SunIcon className={`w-5 h-5 text-ava-primary dark:text-ava-cream transition-opacity ${mounted && !dark ? 'opacity-100' : 'opacity-0'}`} />
-      <MoonIcon className={`w-5 h-5 text-ava-primary dark:text-ava-cream transition-opacity absolute ${mounted && dark ? 'opacity-100' : 'opacity-0'}`} />
+      <SunIcon className={`w-5 h-5 text-theme-primary transition-opacity ${mounted && !dark ? 'opacity-100' : 'opacity-0'}`} />
+      <MoonIcon className={`w-5 h-5 text-theme-primary transition-opacity absolute ${mounted && dark ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
 } 

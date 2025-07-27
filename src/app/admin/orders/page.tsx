@@ -145,7 +145,7 @@ const AdminOrders: React.FC = () => {
       case 'shipped':
         return <Truck className="w-4 h-4 text-purple-500" />
       case 'delivered':
-        return <CheckCircle className="w-4 h-4 text-green-500" />
+        return <CheckCircle className="w-4 h-4 text-theme-primary" />
       case 'cancelled':
         return <AlertCircle className="w-4 h-4 text-red-500" />
       default:
@@ -234,20 +234,20 @@ const AdminOrders: React.FC = () => {
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                 <Input
                   type="text"
                   placeholder="Search orders..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 relative"
                 />
               </div>
               
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as 'all' | 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled')}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none"
               >
                 <option value="all">All Orders</option>
                 <option value="pending">Pending</option>

@@ -51,6 +51,9 @@ module.exports = {
           default: 'var(--ava-border)',
           dark: 'var(--ava-border-dark)',
         },
+        'theme-gradient': {
+          default: 'var(--ava-gradient)',
+        },
       },
       fontFamily: {
         sans: ['ui-sans-serif', 'system-ui', 'sans-serif'],

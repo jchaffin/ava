@@ -151,7 +151,7 @@ const AdminDashboard: React.FC = () => {
 
   const getGrowthIcon = (value: number) => {
     return value >= 0 ? (
-      <TrendingUp className="w-4 h-4 text-green-500" />
+      <TrendingUp className="w-4 h-4 text-theme-primary" />
     ) : (
       <TrendingDown className="w-4 h-4 text-red-500" />
     )

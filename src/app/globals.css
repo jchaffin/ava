@@ -5,37 +5,43 @@
   /* Primary Brand Colors - Based on Logo */
   --ava-primary: #1a202c;      /* Deep charcoal */
   --ava-secondary: #4a5568;    /* Medium gray */
-  --ava-accent: #e53e3e;       /* Warm red */
+  --ava-accent: #cdd5e0;       /* Warm red */
   --ava-gold: #d69e2e;         /* Premium gold */
   --ava-cream: #ECD9D2;        /* Light cream */
   
   /* Light Mode Colors (default) */
-  --ava-bg-primary: #FAF8F7;
-  --ava-bg-secondary: #f7fafc;
+  --ava-bg-primary: #faf8f7 ;
+  --ava-bg-secondary: #ecd9d2;
   --ava-bg-tertiary: #edf2f7;
-  --ava-text-primary: #1a202c;
-  --ava-text-secondary: #4a5568;
+ 
+  --ava-text-primary: #864e39;;
+  --ava-text-secondary: #6e625e;
   --ava-text-tertiary: #7F8088;
   --ava-text-muted: #718096;
   --ava-border: #e2e8f0;
   --ava-border-dark: #cbd5e0;
+
+  --ava-gradient: linear-gradient(45deg, #d69e2e, #e53e3e);
 }
 
 .dark {
-  --ava-primary: #FAF8F7;
+  --ava-primary: #faf8f7;
   --ava-secondary: #cbd5e1;
-  --ava-accent: #e53e3e;
+  --ava-accent: #1b202b;
   --ava-gold: #d69e2e;
   --ava-cream: #1a202c;
+
   --ava-bg-primary: #1a202c;
   --ava-bg-secondary: #2d3748;
   --ava-bg-tertiary: #4a5568;
-  --ava-text-primary: #ECD9D2;
-  --ava-text-secondary: #cbd5e1;
-  --ava-text-tertiary: CBD5E1;
+  
+  --ava-text-primary: #cdd5e0;
+  --ava-text-secondary: #faf8f7;
+  --ava-text-tertiary: #DCE1E7;
   --ava-text-muted: #a0aec0;
   --ava-border: #2d3748;
   --ava-border-dark: #4a5568;
+  --ava-gradient: linear-gradient(to bottom, #403a3e, #be5869); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 /* Base Styles */
@@ -98,9 +104,66 @@ body {
 }
 
 /* Focus styles */
-*:focus {
+*:focus:not(nav *):not(nav a):not(nav button):not(nav div) {
   outline: 2px solid var(--ava-accent);
   outline-offset: 2px;
+}
+
+/* Ensure navigation elements never get focus outlines */
+nav,
+nav *,
+nav a,
+nav button,
+nav div,
+nav a:focus,
+nav button:focus,
+nav div:focus,
+nav *:focus,
+nav *:focus-visible,
+nav a:focus-visible,
+nav button:focus-visible,
+nav div:focus-visible,
+nav *:focus-within,
+nav a:focus-within,
+nav button:focus-within,
+nav div:focus-within {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Target navigation elements by attribute selectors */
+[class*="lg:flex"][class*="items-center"][class*="space-x-24"] *,
+[class*="lg:flex"][class*="items-center"][class*="space-x-24"] a,
+[class*="lg:flex"][class*="items-center"][class*="space-x-24"] button,
+[class*="lg:hidden"][class*="fixed"][class*="inset-y-0"] *,
+[class*="lg:hidden"][class*="fixed"][class*="inset-y-0"] a,
+[class*="lg:hidden"][class*="fixed"][class*="inset-y-0"] button {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus outline from logo links */
+a[href="/"]:focus,
+a[href="/"] img:focus {
+  outline: none;
+}
+
+
+
+/* Remove focus outline from buttons */
+button:focus,
+button:focus-visible,
+.btn:focus,
+.btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button,
+.btn {
+  cursor: pointer;
 }
 
 /* Selection styles */
@@ -122,6 +185,54 @@ body {
   background-color: var(--ava-bg-tertiary);
 }
 
+/* Button hover states with mathematical color calculations */
+.btn-primary {
+  background-color: var(--ava-bg-secondary);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: --alpha(var(--ava-bg-secondary) / 80%);
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: var(--ava-bg-tertiary);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color:  --alpha(var(--ava-bg-tertiary) / 70%);
+  opacity: 0.9;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  border: 1px solid var(--ava-border);
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background-color: var(--ava-bg-tertiary);
+  opacity: 0.9;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--ava-border);
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  background-color: var(--ava-bg-tertiary);
+  opacity: 0.9;
+}
+
+.btn-solid {
+  background-color: var(--ava-accent);
+  transition: all 0.2s ease;
+}
+
 .text-theme-primary {
   color: var(--ava-text-primary);
 }
@@ -140,6 +251,29 @@ body {
 
 .border-theme-dark {
   border-color: var(--ava-border-dark);
+}
+
+/* Theme toggle specific hover styles */
+.theme-toggle-btn {
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--ava-bg-tertiary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Shopping cart hover styles */
+.shopping-cart-btn {
+  background-color: var(--ava-bg-tertiary);
+  transition: all 0.2s ease;
+}
+
+.shopping-cart-btn:hover {
+  background-color: #f8fafc !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Typography - Remove conflicting base styles */
@@ -201,7 +335,7 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+  box-shadow: none;
 }
 
 /* Navigation - Remove conflicting base styles */
@@ -272,22 +406,23 @@ input:focus, textarea:focus, select:focus {
 
 /* Utility Classes - Remove conflicting gradient definitions */
 .text-gradient {
-  background: linear-gradient(135deg, var(--ava-primary) 0%, var(--ava-secondary) 100%);
+  background: var(--ava-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
 }
 
 .bg-gradient-primary {
-  background: linear-gradient(135deg, var(--ava-primary) 0%, var(--ava-secondary) 100%);
+  background: var(--ava-gradient);
 }
 
 .bg-gradient-accent {
-  background: linear-gradient(135deg, var(--ava-accent) 0%, #c53030 100%);
+  background: var(--ava-gradient);
 }
 
 .bg-gradient-cream {
-  background: linear-gradient(135deg, var(--ava-cream) 0%, #edf2f7 100%);
+  background: var(--ava-gradient);
 }
 
 .shadow-ava {

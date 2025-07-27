@@ -1,4 +1,6 @@
 import { CURRENCY, DATE_FORMATS, REGEX_PATTERNS } from './constants'
+import path from 'path';
+
 
 // Price Formatting
 export const formatPrice = (
@@ -12,6 +14,10 @@ export const formatPrice = (
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(price)
+}
+
+export const getSubDir = (image: string): string => {
+  return path.basename(path.dirname(image));
 }
 
 // Number Formatting

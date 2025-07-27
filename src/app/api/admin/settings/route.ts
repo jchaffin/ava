@@ -28,6 +28,8 @@ let siteSettings = {
   security: {
     twoFactorAuth: false,
     sessionTimeout: 30,
+    adminEmail: 'admin@ava.com',
+    adminName: 'Admin User',
     passwordPolicy: {
       minLength: 8,
       requireUppercase: true,
@@ -37,8 +39,13 @@ let siteSettings = {
   },
   payment: {
     stripeEnabled: true,
+    stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
     paypalEnabled: true,
+    paypalClientId: process.env.PAYPAL_CLIENT_ID || '',
+    paypalSecret: process.env.PAYPAL_SECRET || '',
     applePayEnabled: true,
+    applePayMerchantId: process.env.APPLE_PAY_MERCHANT_ID || '',
     currency: 'USD',
     taxRate: 8.5
   },

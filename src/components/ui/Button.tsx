@@ -19,15 +19,15 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props 
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
   
   const variants = {
-    primary: 'bg-theme-tertiary text-theme-primary hover:bg-theme-secondary focus:ring-theme-primary shadow-sm',
-    secondary: 'bg-theme-secondary text-theme-primary hover:bg-theme-tertiary focus:ring-theme-primary border border-theme shadow-sm',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
-    ghost: 'bg-transparent text-theme-primary hover:bg-theme-secondary focus:ring-theme-primary border border-theme hover:border-theme-dark',
-    outline: 'bg-transparent text-theme-primary border border-theme hover:bg-theme-secondary focus:ring-theme-primary shadow-sm',
-    solid: 'bg-[var(--ava-accent)] text-theme-primary hover:bg-red-700 focus:ring-[var(--ava-accent)] shadow-sm',
+    primary: 'btn-primary text-theme-primary focus:ring-theme-primary',
+    secondary: 'btn-secondary focus:ring-theme-secondary',
+    danger: 'btn-danger text-theme-primary focus:ring-red-500',
+    ghost: 'btn-ghost text-gray-800 focus:ring-theme-primary',
+    outline: 'btn-outline text-gray-800 focus:ring-theme-primary',
+    solid: 'btn-solid text-theme-primary focus:ring-[var(--ava-accent)]',
   }
   
   const sizes = {

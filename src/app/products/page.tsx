@@ -32,13 +32,14 @@ interface FilterState {
   sortOrder: 'asc' | 'desc'
   searchTerm: string
   inStock: boolean
-  featured: boolean
 }
 
 const ProductsPage: React.FC = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const [state, setState] = useState<ProductsPageState>({
     products: [],
@@ -56,7 +57,6 @@ const ProductsPage: React.FC = () => {
     sortOrder: 'desc',
     searchTerm: '',
     inStock: false,
-    featured: false,
   })
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -66,14 +66,42 @@ const ProductsPage: React.FC = () => {
   // Initialize filters from search params on client side
   useEffect(() => {
     setIsClient(true)
+    setMounted(true)
     setFilters({
       sortBy: searchParams.get('sortBy') || 'createdAt',
       sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
       searchTerm: searchParams.get('search') || '',
       inStock: searchParams.get('inStock') === 'true',
-      featured: searchParams.get('featured') === 'true',
     })
   }, [searchParams])
+
+  // Dark mode detection
+  useEffect(() => {
+    const checkTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark')
+      setIsDarkMode(isDark)
+    }
+
+    // Check initial theme
+    checkTheme()
+
+    // Create observer to watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          checkTheme()
+        }
+      })
+    })
+
+    // Start observing
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   const sortOptions = [
     { value: 'createdAt-desc', label: 'Newest First' },
@@ -90,11 +118,11 @@ const ProductsPage: React.FC = () => {
     if (isClient) {
       fetchProducts()
     }
-  }, [filters.searchTerm, filters.inStock, filters.featured, filters.sortBy, filters.sortOrder, state.currentPage, isClient])
+  }, [filters.searchTerm, filters.inStock, filters.sortBy, filters.sortOrder, state.currentPage, isClient])
 
   useEffect(() => {
     updateURLParams()
-  }, [filters.searchTerm, filters.sortBy, filters.sortOrder, filters.inStock, filters.featured])
+  }, [filters.searchTerm, filters.sortBy, filters.sortOrder, filters.inStock])
 
   const fetchProducts = async () => {
     try {
@@ -138,7 +166,6 @@ const ProductsPage: React.FC = () => {
 
     if (filters.searchTerm) params.append('search', filters.searchTerm)
     if (filters.inStock) params.append('inStock', 'true')
-    if (filters.featured) params.append('featured', 'true')
     
     params.append('sortBy', filters.sortBy)
     params.append('sortOrder', filters.sortOrder)
@@ -155,7 +182,6 @@ const ProductsPage: React.FC = () => {
     if (filters.sortBy !== 'createdAt') params.set('sortBy', filters.sortBy)
     if (filters.sortOrder !== 'desc') params.set('sortOrder', filters.sortOrder)
     if (filters.inStock) params.set('inStock', 'true')
-    if (filters.featured) params.set('featured', 'true')
 
     const newURL = params.toString() ? `?${params.toString()}` : '/products'
     router.replace(newURL, { scroll: false })
@@ -194,7 +220,6 @@ const ProductsPage: React.FC = () => {
       sortOrder: 'desc',
       searchTerm: '',
       inStock: false,
-      featured: false,
     })
     setState(prev => ({ ...prev, currentPage: 1 }))
   }
@@ -203,7 +228,6 @@ const ProductsPage: React.FC = () => {
     let count = 0
     if (filters.searchTerm) count++
     if (filters.inStock) count++
-    if (filters.featured) count++
     return count
   }
 
@@ -289,9 +313,9 @@ const ProductsPage: React.FC = () => {
   const renderProductGrid = () => {
     if (viewMode === 'grid') {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 gap-4 sm:gap-6">
           {state.products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product._id} product={product} variant="compact" />
           ))}
         </div>
       )
@@ -322,14 +346,14 @@ const ProductsPage: React.FC = () => {
                 {product.description}
               </p>
               <div className="mt-2 flex items-center space-x-4">
-                <span className="text-lg font-bold text-green-600">
+                <span className="text-lg font-bold text-theme-primary">
                   ${product.price.toFixed(2)}
                 </span>
 
                 {product.stock === 0 ? (
                   <span className="text-sm text-red-600">Out of Stock</span>
                 ) : (
-                  <span className="text-sm text-green-600">In Stock</span>
+                  <span className="text-sm text-theme-primary">In Stock</span>
                 )}
               </div>
             </div>
@@ -350,14 +374,16 @@ const ProductsPage: React.FC = () => {
         {/* Prominent Logo Section */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <Image
-              src="/logo.png"
-              alt="AVA Premium Skincare"
-              width={300}
-              height={100}
-              className="h-20 w-auto"
-              priority
-            />
+            {mounted && (
+              <Image
+                src={isDarkMode ? "/images/logos/logo_dark.png" : "/logo.png"}
+                alt="AVA Premium Skincare"
+                width={400}
+                height={133}
+                className="h-28 w-auto"
+                priority
+              />
+            )}
           </div>
           <h1 className="text-4xl font-bold text-theme-primary mb-4">Premium Skincare Collection</h1>
           <p className="text-xl text-theme-secondary max-w-2xl mx-auto">
@@ -368,15 +394,15 @@ const ProductsPage: React.FC = () => {
         {/* Search Bar */}
         <div className="mb-8">
           <form onSubmit={handleSearchSubmit} className="relative max-w-md mx-auto">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+              <MagnifyingGlassIcon className="h-5 w-5 text-theme-muted" />
             </div>
             <input
               type="text"
               value={filters.searchTerm}
               onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
               placeholder="Search products..."
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-[#2D3748] focus:border-[#2D3748] text-lg"
+              className="block w-full pl-12 pr-3 py-3 border border-theme rounded-lg leading-5 bg-theme-secondary text-theme-primary placeholder-theme-muted focus:outline-none focus:placeholder-theme-secondary focus:ring-2 focus:ring-theme-primary focus:border-theme-primary text-lg relative"
             />
           </form>
         </div>
@@ -389,7 +415,7 @@ const ProductsPage: React.FC = () => {
                 <h2 className="text-lg font-semibold text-theme-primary">Filters</h2>
                 <div className="flex items-center space-x-2">
                   {getActiveFilterCount() > 0 && (
-                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    <span className="bg-theme-secondary text-theme-primary text-xs px-2 py-1 rounded-full">
                       {getActiveFilterCount()}
                     </span>
                   )}
@@ -415,15 +441,7 @@ const ProductsPage: React.FC = () => {
                   <span className="ml-2 text-sm text-theme-primary">In Stock Only</span>
                 </label>
                 
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={filters.featured}
-                    onChange={(e) => handleFilterChange('featured', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-sm text-theme-primary">Featured Products</span>
-                </label>
+
               </div>
             </div>
           </div>
@@ -441,7 +459,7 @@ const ProductsPage: React.FC = () => {
                   <FunnelIcon className="h-4 w-4 mr-2" />
                   Filters
                   {getActiveFilterCount() > 0 && (
-                    <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    <span className="ml-2 bg-theme-secondary text-theme-primary text-xs px-2 py-1 rounded-full">
                       {getActiveFilterCount()}
                     </span>
                   )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, User, Mail, Lock, ShoppingBag } from 'lucide-react';
 import { useAuth } from '@/context';
+import { signIn } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 const Register: React.FC = () => {
@@ -63,12 +64,12 @@ const Register: React.FC = () => {
   const isFormValid = formData.name && formData.email && formData.password && formData.confirmPassword;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-theme-primary flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-[#2D3748] p-3 rounded-full">
+            <div className="bg-theme-secondary p-3 rounded-full">
               <ShoppingBag className="h-8 w-8 text-theme-primary" />
             </div>
           </div>
@@ -84,12 +85,12 @@ const Register: React.FC = () => {
             <div className="space-y-4">
               {/* Name Field */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium ava-text-tertiary mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-theme-primary mb-1">
                   Full Name
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                  <div className="pl-3 pr-2">
+                    <User className="h-5 w-5 text-theme-muted" />
                   </div>
                   <input
                     id="name"
@@ -98,7 +99,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -106,12 +107,12 @@ const Register: React.FC = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium ava-text-tertiary mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-theme-primary mb-1">
                   Email Address
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                  <div className="pl-3 pr-2">
+                    <Mail className="h-5 w-5 text-theme-muted" />
                   </div>
                   <input
                     id="email"
@@ -120,7 +121,7 @@ const Register: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -128,12 +129,12 @@ const Register: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium ava-text-tertiary mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-theme-primary mb-1">
                   Password
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                  <div className="pl-3 pr-2">
+                    <Lock className="h-5 w-5 text-theme-muted" />
                   </div>
                   <input
                     id="password"
@@ -142,18 +143,18 @@ const Register: React.FC = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-[#2D3748] focus:border-[#2D3748] focus:z-10 sm:text-sm"
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
                     placeholder="Create a password"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5 text-theme-muted" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5 text-theme-muted" />
                     )}
                   </button>
                 </div>
@@ -164,12 +165,12 @@ const Register: React.FC = () => {
 
               {/* Confirm Password Field */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium ava-text-tertiary mb-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-theme-primary mb-1">
                   Confirm Password
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
+                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                  <div className="pl-3 pr-2">
+                    <Lock className="h-5 w-5 text-theme-muted" />
                   </div>
                   <input
                     id="confirmPassword"
@@ -178,18 +179,18 @@ const Register: React.FC = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="appearance-none relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-theme-primary rounded-md focus:outline-none focus:ring-theme-primary focus:border-theme-primary focus:z-10 sm:text-sm"
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
                     placeholder="Confirm your password"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5 text-theme-muted" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5 text-theme-muted" />
                     )}
                   </button>
                 </div>
@@ -198,8 +199,8 @@ const Register: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="mt-4 p-3 bg-theme-secondary border border-theme rounded-md">
+                <p className="text-sm text-theme-primary">{error}</p>
               </div>
             )}
 
@@ -208,7 +209,7 @@ const Register: React.FC = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-theme-primary bg-theme-primary hover:bg-theme-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-theme-primary bg-theme-secondary hover:bg-theme-tertiary focus:outline-none focus:ring-0 disabled:bg-theme-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -221,6 +222,27 @@ const Register: React.FC = () => {
                 ) : (
                   'Create Account'
                 )}
+              </button>
+            </div>
+
+            {/* Google Sign Up */}
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => signIn('google')}
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150 cursor-pointer"
+                disabled={loading}
+              >
+                <svg className="w-5 h-5" viewBox="0 0 48 48">
+                  <g>
+                    <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.73 5.48 2.69 13.44l7.98 6.2C12.13 13.13 17.62 9.5 24 9.5z"/>
+                    <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.02l7.19 5.59C43.93 37.13 46.1 31.36 46.1 24.55z"/>
+                    <path fill="#FBBC05" d="M10.67 28.65c-1.01-2.99-1.01-6.21 0-9.2l-7.98-6.2C.7 17.1 0 20.46 0 24c0 3.54.7 6.9 1.96 10.1l8.71-5.45z"/>
+                    <path fill="#EA4335" d="M24 48c6.18 0 11.36-2.04 15.15-5.54l-7.19-5.59c-2.01 1.35-4.59 2.15-7.96 2.15-6.38 0-11.87-3.63-14.33-8.89l-8.71 5.45C6.73 42.52 14.82 48 24 48z"/>
+                    <path fill="none" d="M0 0h48v48H0z"/>
+                  </g>
+                </svg>
+                Sign up with Google
               </button>
             </div>
 

@@ -150,7 +150,7 @@ const SignInPage: React.FC = () => {
               Or&nbsp;
               <Link
                 href="/register"
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-theme-primary hover:text-theme-secondary"
               >
                 create a new account
               </Link>
@@ -160,11 +160,11 @@ const SignInPage: React.FC = () => {
           <div className="bg-theme-primary shadow-md rounded-lg p-8 border border-theme">
             {/* General Error Message */}
             {errors.general && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+              <div className="mb-4 bg-theme-secondary border border-theme text-theme-primary px-4 py-3 rounded-md">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg
-                      className="h-5 w-5 text-red-400"
+                      className="h-5 w-5 text-theme-secondary"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -213,7 +213,7 @@ const SignInPage: React.FC = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-theme-primary focus:ring-theme-secondary border-theme rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-theme-primary">
                     Remember me
@@ -246,7 +246,7 @@ const SignInPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => signIn('google')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150"
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150 cursor-pointer"
                 disabled={loading}
               >
                 <svg className="w-5 h-5" viewBox="0 0 48 48">

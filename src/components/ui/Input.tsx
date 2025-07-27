@@ -13,20 +13,20 @@ const Input: React.FC<InputProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClasses = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500'
-  const errorClasses = error ? 'border-red-500' : ''
+  const baseClasses = 'w-full px-3 py-2 bg-theme-secondary border-0 rounded-lg focus:outline-none focus:ring-0 focus:border-0 text-theme-primary placeholder:text-theme-muted'
+  const errorClasses = ''
   const classes = `${baseClasses} ${errorClasses} ${className}`.trim()
 
   return (
     <div className="mb-4">
       {label && (
-        <label className="block ava-text-tertiary text-sm font-bold mb-2">
+        <label className="block text-theme-primary text-sm font-bold mb-2">
           {label}
         </label>
       )}
       <input className={classes} {...props} />
       {error && (
-        <p className="text-red-500 text-sm mt-1">{error}</p>
+        <p className="text-theme-secondary text-sm mt-1">{error}</p>
       )}
     </div>
   )

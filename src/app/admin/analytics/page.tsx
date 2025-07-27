@@ -190,7 +190,7 @@ const AdminAnalytics: React.FC = () => {
                 <div className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <DollarSign className="w-8 h-8 text-green-500" />
+                      <DollarSign className="w-8 h-8 text-theme-primary" />
                     </div>
                     <div className="ml-4">
                       <p className="text-sm font-medium text-theme-muted">Total Revenue</p>

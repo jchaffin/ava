@@ -80,7 +80,7 @@ const AboutPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {values.map((value, index) => (
             <div key={index} className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className=" w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <value.icon className="w-8 h-8 text-theme-secondary" />
               </div>
               <h3 className="text-xl font-semibold text-theme-primary mb-3">{value.title}</h3>
@@ -111,9 +111,9 @@ const AboutPage: React.FC = () => {
             </p>
           </div>
         </div>
-        <div className="bg-gray-100 rounded-lg p-8 flex items-center justify-center">
+        <div className="bg-theme-secondary rounded-lg p-8 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-6xl font-bold text-gray-300 mb-4">2020</div>
+            <div className="text-6xl font-bold text-theme-tertiary mb-4">2020</div>
             <p className="text-theme-secondary">The year AVA Skincare was founded</p>
           </div>
         </div>
@@ -139,29 +139,29 @@ const AboutPage: React.FC = () => {
       </div>
 
       {/* Stats Section */}
-      <div className="bg-gray-900 text-theme-primary rounded-2xl p-12 mb-16">
+      <div className="bg-theme-secondary text-theme-primary rounded-2xl p-12 mb-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
           <div>
             <div className="text-4xl font-bold mb-2">50K+</div>
-            <p className="text-gray-300">Happy Customers</p>
+            <p className="text-theme-secondary">Happy Customers</p>
           </div>
           <div>
             <div className="text-4xl font-bold mb-2">25+</div>
-            <p className="text-gray-300">Products</p>
+            <p className="text-theme-secondary">Products</p>
           </div>
           <div>
             <div className="text-4xl font-bold mb-2">98%</div>
-            <p className="text-gray-300">Satisfaction Rate</p>
+            <p className="text-theme-secondary">Satisfaction Rate</p>
           </div>
           <div>
             <div className="text-4xl font-bold mb-2">3</div>
-            <p className="text-gray-300">Years of Excellence</p>
+            <p className="text-theme-secondary">Years of Excellence</p>
           </div>
         </div>
       </div>
 
       {/* Commitment Section */}
-      <div className="bg-gray-50 rounded-2xl p-12 mb-16">
+      <div className="bg-theme-secondary rounded-2xl p-12 mb-16">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-theme-primary mb-6">Our Commitment to You</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -193,13 +193,13 @@ const AboutPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/products"
-            className="bg-theme-primary text-theme-secondary px-8 py-3 rounded-lg hover:bg-theme-secondary transition-colors duration-200 font-medium"
+            className="bg-theme-secondary px-8 py-3 rounded-lg hover:bg-theme-secondary transition-colors duration-200 font-medium"
           >
             Shop Products
           </Link>
           <Link
             href="/contact"
-            className="border border-theme text-theme-primary px-8 py-3 rounded-lg hover:bg-theme-secondary transition-colors duration-200 font-medium"
+            className="border border-theme bg-theme-secondary px-8 py-3 rounded-lg hover:bg-theme-secondary transition-colors duration-200 font-medium"
           >
             Contact Us
           </Link>

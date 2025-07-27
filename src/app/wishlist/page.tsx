@@ -297,7 +297,7 @@ const WishlistPage: React.FC = () => {
                 </p>
 
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-lg font-bold text-theme-primary">
                     ${item.product.price.toFixed(2)}
                   </span>
                   
@@ -315,7 +315,7 @@ const WishlistPage: React.FC = () => {
                       Only {item.product.stock} left
                     </span>
                   ) : (
-                    <span className="text-sm text-green-600 font-medium">In Stock</span>
+                    <span className="text-sm text-theme-primary font-medium">In Stock</span>
                   )}
                 </div>
 
