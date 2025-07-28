@@ -54,7 +54,7 @@ html {
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   background-color: var(--ava-bg-primary);
   color: var(--ava-text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -73,7 +73,7 @@ html {
 
 /* Ensure body has proper transitions */
 body {
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   background-color: var(--ava-bg-primary);
   color: var(--ava-text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;

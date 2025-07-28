@@ -7,11 +7,13 @@ import Layout from "@/components/Layout";
 const geistSans = Geist({
   subsets: ["latin"],
   display: 'swap',
+  variable: '--font-geist-sans',
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: 'swap',
+  variable: '--font-geist-mono',
 });
 
 export const metadata: Metadata = {
@@ -77,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.className} ${geistMono.className}`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -86,31 +88,9 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3b82f6" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* Theme initialization script to prevent flash */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  var isDark = theme === 'dark' || (!theme && prefersDark);
-                  
-                  if (isDark) {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {
-                  // Fallback to light theme if localStorage is not available
-                  document.documentElement.classList.remove('dark');
-                }
-              })();
-            `,
-          }}
-        />
+
       </head>
-      <body className="antialiased bg-theme-primary text-theme-primary" suppressHydrationWarning>
+      <body className="antialiased bg-theme-primary text-theme-primary">
         <Providers>
           <Layout>
             {children}

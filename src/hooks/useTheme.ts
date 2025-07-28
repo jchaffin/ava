@@ -7,19 +7,35 @@ export const useTheme = () => {
   useEffect(() => {
     setMounted(true);
     
-    // Check initial theme state
-    const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      setIsDarkMode(isDark);
+    // Initialize theme on first load
+    const initializeTheme = () => {
+      try {
+        const theme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = theme === 'dark' || (!theme && prefersDark);
+        
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+          setIsDarkMode(true);
+        } else {
+          document.documentElement.classList.remove('dark');
+          setIsDarkMode(false);
+        }
+      } catch (e) {
+        // Fallback to light theme if localStorage is not available
+        document.documentElement.classList.remove('dark');
+        setIsDarkMode(false);
+      }
     };
     
-    checkTheme();
+    initializeTheme();
 
     // Listen for theme changes from the initialization script
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          checkTheme();
+          const isDark = document.documentElement.classList.contains('dark');
+          setIsDarkMode(isDark);
         }
       });
     });
@@ -32,7 +48,8 @@ export const useTheme = () => {
     // Listen for theme changes from other tabs/windows
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'theme') {
-        checkTheme();
+        const isDark = document.documentElement.classList.contains('dark');
+        setIsDarkMode(isDark);
       }
     };
 
