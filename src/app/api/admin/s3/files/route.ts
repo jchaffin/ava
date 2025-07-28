@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get folder from query params
-    const { searchParams } = new URL(request.url)
+    const url = new URL(request.url)
+    const { searchParams } = url
     const folder = searchParams.get('folder') || ''
 
     // List local files

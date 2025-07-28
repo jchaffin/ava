@@ -91,7 +91,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get query parameters
-    const { searchParams } = new URL(request.url);
+    const url = new URL(request.url)
+    const { searchParams } = url
     const analysisId = searchParams.get('analysisId');
     const limit = parseInt(searchParams.get('limit') || '10');
 

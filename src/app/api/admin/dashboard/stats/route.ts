@@ -45,7 +45,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Get period from query params
-    const { searchParams } = new URL(request.url)
+    const url = new URL(request.url)
+    const { searchParams } = url
     const period = searchParams.get('period') || 'month'
 
     // Connect to database

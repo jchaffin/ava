@@ -34,7 +34,8 @@ interface ProductsResponse {
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<ProductsResponse>>> {
   try {
     // Parse query parameters
-    const { searchParams } = new URL(request.url)
+    const url = new URL(request.url)
+    const { searchParams } = url
     const queryParams: ProductQueryParams = {
       page: searchParams.get('page') || '1',
       limit: searchParams.get('limit') || '12',
