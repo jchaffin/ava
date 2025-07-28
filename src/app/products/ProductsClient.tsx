@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductCard } from '@/components';
@@ -42,6 +42,7 @@ interface FilterState {
 const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const { isDarkMode, mounted } = useTheme();
 
@@ -49,7 +50,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
     products: initialProducts || [],
     loading: false,
     error: null,
-    totalProducts: initialProducts.length,
+    totalProducts: initialProducts?.length || 0,
     currentPage: 1,
     totalPages: 1,
     hasNextPage: false,
@@ -70,13 +71,24 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
   // Initialize filters from search params on client side
   useEffect(() => {
     setIsClient(true);
-    setFilters({
+    const newFilters = {
       sortBy: searchParams.get('sortBy') || 'createdAt',
       sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
       searchTerm: searchParams.get('search') || '',
       inStock: searchParams.get('inStock') === 'true',
-    });
+    };
+    setFilters(newFilters);
+    
+    const page = parseInt(searchParams.get('page') || '1');
+    setState((prev) => ({ ...prev, currentPage: page, loading: true }));
   }, [searchParams]);
+
+  // Fetch products when filters or page changes
+  useEffect(() => {
+    if (isClient && mounted) {
+      fetchProducts();
+    }
+  }, [filters, state.currentPage, isClient, mounted]);
 
   const sortOptions = [
     { value: 'createdAt-desc', label: 'Newest First' },
@@ -88,30 +100,92 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
     { value: 'featured-desc', label: 'Featured First' },
   ];
 
-  // Only fetch if filters/search/page are different from initial load
-  useEffect(() => {
-    const isInitial =
-      filters.sortBy === 'createdAt' &&
-      filters.sortOrder === 'desc' &&
-      !filters.searchTerm &&
-      !filters.inStock &&
-      state.currentPage === 1;
-
-    if (!isInitial) {
-      setState((prev) => ({ ...prev, loading: true })); // Only show loading on user action
-      fetchProducts();
+  // Update URL when filters change
+  const updateURL = (newFilters: FilterState, newPage: number = 1) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    // Update or remove search parameter
+    if (newFilters.searchTerm) {
+      params.set('search', newFilters.searchTerm);
+    } else {
+      params.delete('search');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.searchTerm, filters.inStock, filters.sortBy, filters.sortOrder, state.currentPage]);
+    
+    // Update or remove inStock parameter
+    if (newFilters.inStock) {
+      params.set('inStock', 'true');
+    } else {
+      params.delete('inStock');
+    }
+    
+    // Update sort parameters
+    params.set('sortBy', newFilters.sortBy);
+    params.set('sortOrder', newFilters.sortOrder);
+    
+    // Update or remove page parameter
+    if (newPage > 1) {
+      params.set('page', newPage.toString());
+    } else {
+      params.delete('page');
+    }
+    
+    const newURL = params.toString() ? `?${params.toString()}` : '';
+    router.push(`${pathname}${newURL}`, { scroll: false });
+  };
 
-  useEffect(() => {
-    updateURLParams();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.searchTerm, filters.sortBy, filters.sortOrder, filters.inStock]);
+  // Only fetch when user explicitly changes filters
+  const handleFilterChange = (key: keyof FilterState, value: any) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    setState((prev) => ({ ...prev, currentPage: 1, loading: true }));
+    updateURL(newFilters, 1);
+  };
+
+  const handleSortChange = (sortValue: string) => {
+    const [sortBy, sortOrder] = sortValue.split('-');
+    const newFilters = {
+      ...filters,
+      sortBy,
+      sortOrder: sortOrder as 'asc' | 'desc',
+    };
+    setFilters(newFilters);
+    setState((prev) => ({ ...prev, currentPage: 1, loading: true }));
+    updateURL(newFilters, 1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setState((prev) => ({ ...prev, currentPage: page, loading: true }));
+    updateURL(filters, page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setState((prev) => ({ ...prev, loading: true }));
+    updateURL(filters, 1);
+  };
+
+  const clearFilters = () => {
+    const newFilters: FilterState = {
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+      searchTerm: '',
+      inStock: false,
+    };
+    setFilters(newFilters);
+    setState((prev) => ({ ...prev, currentPage: 1, loading: true }));
+    updateURL(newFilters, 1);
+  };
+
+  const getActiveFilterCount = (): number => {
+    let count = 0;
+    if (filters.searchTerm) count++;
+    if (filters.inStock) count++;
+    return count;
+  };
 
   const fetchProducts = async () => {
     try {
-      // Do not clear products here, just set loading above
       const queryParams = buildQueryParams();
       const response = await fetch(`/api/products?${queryParams}`);
       if (!response.ok) {
@@ -150,60 +224,6 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
     params.append('page', state.currentPage.toString());
     params.append('limit', productsPerPage.toString());
     return params.toString();
-  };
-
-  const updateURLParams = () => {
-    const params = new URLSearchParams();
-    if (filters.searchTerm) params.set('search', filters.searchTerm);
-    if (filters.sortBy !== 'createdAt') params.set('sortBy', filters.sortBy);
-    if (filters.sortOrder !== 'desc') params.set('sortOrder', filters.sortOrder);
-    if (filters.inStock) params.set('inStock', 'true');
-    const newURL = params.toString() ? `?${params.toString()}` : '/products';
-    router.replace(newURL, { scroll: false });
-  };
-
-  const handleFilterChange = (key: keyof FilterState, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-    setState((prev) => ({ ...prev, currentPage: 1 }));
-  };
-
-  const handleSortChange = (sortValue: string) => {
-    const [sortBy, sortOrder] = sortValue.split('-');
-    setFilters((prev) => ({
-      ...prev,
-      sortBy,
-      sortOrder: sortOrder as 'asc' | 'desc',
-    }));
-  };
-
-  const handlePageChange = (page: number) => {
-    setState((prev) => ({ ...prev, currentPage: page }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchProducts();
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      sortBy: 'createdAt',
-      sortOrder: 'desc',
-      searchTerm: '',
-      inStock: false,
-    });
-    setState((prev) => ({ ...prev, currentPage: 1 }));
-  };
-
-  const getActiveFilterCount = (): number => {
-    let count = 0;
-    if (filters.searchTerm) count++;
-    if (filters.inStock) count++;
-    return count;
   };
 
   const renderPagination = () => {
@@ -363,7 +383,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
             <input
               type="text"
               value={filters.searchTerm}
-              onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+              onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
               placeholder="Search products..."
               className="flex-1 px-3 py-3 bg-transparent text-theme-primary placeholder-gray-400 focus:outline-none focus:placeholder-gray-500 focus:ring-0 focus:border-0 text-base sm:text-lg"
             />
