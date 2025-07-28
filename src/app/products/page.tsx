@@ -2,25 +2,20 @@ import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
 
 async function fetchInitialProducts() {
-  // Use absolute URL that works in all environments
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3000';
+  try {
+    const res = await fetch('/api/products?limit=12', { 
+      cache: 'no-store'
+    });
     
-  const res = await fetch(`${baseUrl}/api/products?limit=12`, { 
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json',
+    if (!res.ok) {
+      return [];
     }
-  });
-  
-  if (!res.ok) {
-    console.error('Failed to fetch initial products:', res.status, res.statusText);
+    
+    const data = await res.json();
+    return data.data?.products || [];
+  } catch (error) {
     return [];
   }
-  
-  const data = await res.json();
-  return data.data?.products || [];
 }
 
 const ProductsPage = async () => {
