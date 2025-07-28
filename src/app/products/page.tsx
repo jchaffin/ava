@@ -2,9 +2,19 @@ import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
 
 async function fetchInitialProducts() {
-  // Always use an absolute URL for SSR fetch
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/products?limit=12`, { cache: 'no-store' });
+  // Use relative URL for SSR fetch to avoid connection issues
+  const res = await fetch('/api/products?limit=12', { 
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  
+  if (!res.ok) {
+    console.error('Failed to fetch initial products:', res.status, res.statusText);
+    return [];
+  }
+  
   const data = await res.json();
   return data.data?.products || [];
 }

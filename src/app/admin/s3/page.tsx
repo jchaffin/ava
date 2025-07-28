@@ -470,7 +470,7 @@ const AdminS3Management: React.FC = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <p className="text-sm font-medium text-theme-primary">Storage Type</p>
-                    <p className="text-sm text-theme-muted">{config.bucketName}</p>
+                    <p className="text-sm text-theme-muted">{config?.bucketName || 'Local Storage'}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -479,7 +479,7 @@ const AdminS3Management: React.FC = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <p className="text-sm font-medium text-theme-primary">Location</p>
-                    <p className="text-sm text-theme-muted">{config.region}</p>
+                    <p className="text-sm text-theme-muted">{config?.region || 'Local'}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -488,7 +488,7 @@ const AdminS3Management: React.FC = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <p className="text-sm font-medium text-theme-primary">Upload Directory</p>
-                    <p className="text-sm text-theme-muted">{config.uploadDir || 'public/uploads'}</p>
+                    <p className="text-sm text-theme-muted">{config?.uploadDir || 'public/uploads'}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -497,7 +497,7 @@ const AdminS3Management: React.FC = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <p className="text-sm font-medium text-theme-primary">Product Images</p>
-                    <p className="text-sm text-theme-muted">{config.productImagesDir || 'public/images/products'}</p>
+                    <p className="text-sm text-theme-muted">{config?.productImagesDir || 'public/images/products'}</p>
                   </div>
                 </div>
               </div>
@@ -538,7 +538,7 @@ const AdminS3Management: React.FC = () => {
                   </div>
                   <div className="ml-4 flex-1">
                     <p className="text-sm font-medium text-theme-secondary">Storage Type</p>
-                    <p className="text-lg font-bold text-theme-primary">{stats.bucketName}</p>
+                    <p className="text-lg font-bold text-theme-primary">{stats?.bucketName || 'Local Storage'}</p>
                   </div>
                 </div>
               </div>
