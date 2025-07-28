@@ -188,8 +188,7 @@ export async function DELETE(
     }
 
     // Get product ID from query parameters
-    const url = new URL(request.url)
-    const { searchParams } = url
+    const { searchParams } = request.nextUrl
     const productId = searchParams.get('productId')
 
     if (!productId) {

@@ -20,8 +20,7 @@ export async function GET(request: NextRequest) {
     await connectDB()
 
     // Get period from query params
-    const url = new URL(request.url)
-    const { searchParams } = url
+    const { searchParams } = request.nextUrl
     const period = searchParams.get('period') || '30d'
 
     // Calculate date range

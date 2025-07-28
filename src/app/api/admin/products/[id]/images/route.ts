@@ -265,8 +265,7 @@ export async function DELETE(
     }
 
     // Get image key from URL if provided
-    const url = new URL(request.url)
-    const { searchParams } = url
+    const { searchParams } = request.nextUrl
     const imageUrl = searchParams.get('imageUrl')
     
     if (imageUrl) {

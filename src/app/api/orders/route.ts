@@ -34,8 +34,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<{ success:
     }
 
     // Parse query parameters
-    const url = new URL(request.url)
-    const { searchParams } = url
+    const { searchParams } = request.nextUrl
     const queryParams: OrderQueryParams = {
       page: searchParams.get('page') || '1',
       limit: searchParams.get('limit') || '10',
