@@ -1,5 +1,6 @@
 import { CURRENCY, DATE_FORMATS, REGEX_PATTERNS } from './constants'
 import path from 'path';
+import crypto from 'crypto';
 
 
 // Price Formatting
@@ -678,5 +679,38 @@ export function getProductImageUrl(image: string, productId?: string): string {
   }
   
   return url
+}
+
+// Gravatar utility functions
+export const generateGravatarUrl = (email: string, size: number = 200, defaultImage: string = 'mp'): string => {
+  if (!email) return ''
+  
+  const emailHash = crypto.createHash('md5').update(email.toLowerCase().trim()).digest('hex')
+  return `https://www.gravatar.com/avatar/${emailHash}?s=${size}&d=${defaultImage}`
+}
+
+export const getAvatarUrl = (user: { email: string; role: string; image?: string | null }): string => {
+  // If user has a custom image, use it
+  if (user.image) {
+    return user.image
+  }
+  
+  // For admin users, return empty string (will show "A" in component)
+  if (user.role === 'admin') {
+    return ''
+  }
+  
+  // For regular users, generate Gravatar URL
+  return generateGravatarUrl(user.email)
+}
+
+export const getAvatarFallback = (user: { name?: string; role: string }): string => {
+  // For admin users, show "A"
+  if (user.role === 'admin') {
+    return 'A'
+  }
+  
+  // For regular users, show first letter of name
+  return user.name?.charAt(0)?.toUpperCase() || 'U'
 }
 

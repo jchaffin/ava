@@ -1,9 +1,11 @@
 import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
+import { API } from '@/utils/constants';
 
 async function fetchInitialProducts() {
-  // Use relative URL for SSR fetch to avoid connection issues
-  const res = await fetch('/api/products?limit=12', { 
+  // Use absolute URL for SSR fetch to avoid URL parsing issues
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/products?limit=12`, { 
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',

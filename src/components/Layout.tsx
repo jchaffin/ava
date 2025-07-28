@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useCart, useAuth } from '@/context'
-import { Button } from './ui'
+import { Button, Avatar } from './ui'
 import { useTheme } from '@/hooks/useTheme'
 
 import { 
@@ -388,10 +388,13 @@ const Layout: React.FC<LayoutProps> = ({
               {/* User Info */}
                <div className="mb-6 p-4 bg-theme-primary text-theme-secondary rounded-xl border border-theme">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-theme-secondary rounded-full flex items-center justify-center">                   <span className="text-theme-primary font-semibold text-sm">
-                      {user?.name?.charAt(0) || 'U'}
-                    </span>
-                  </div>
+                  {user && (
+                    <Avatar 
+                      user={user} 
+                      size={40} 
+                      className="flex-shrink-0"
+                    />
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-theme-primary truncate">
                       {user?.name || 'User'}
@@ -477,9 +480,13 @@ const Layout: React.FC<LayoutProps> = ({
         onClick={() => setUserMenu(prev => ({ isOpen: !prev.isOpen }))}
         className="flex items-center space-x-2 p-2 rounded-lg text-theme-primary hover:text-theme-primary hover:bg-theme-tertiary transition-colors duration-200"
       >
-        <div className="w-8 h-8 bg-theme-primary rounded-full flex items-center justify-center">
-          <UserIcon className="w-4 h-4 text-theme-secondary" />
-        </div>
+        {user && (
+          <Avatar 
+            user={user} 
+            size={32} 
+            className="flex-shrink-0"
+          />
+        )}
         <span className="hidden md:block text-sm font-medium text-theme-primary">{user?.name || 'User'}</span>
         <ChevronDownIcon className="w-4 h-4 text-theme-primary" />
       </button>
