@@ -33,8 +33,6 @@ interface ProductsResponse {
 // GET /api/products - Fetch products with filtering, sorting, and pagination
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<ProductsResponse>>> {
   try {
-    console.log('API: Starting products fetch...');
-    
     // Parse query parameters
     const { searchParams } = request.nextUrl
     const queryParams: ProductQueryParams = {
@@ -49,26 +47,20 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
     }
 
-    console.log('API: Query params:', queryParams);
-
     // Validate and sanitize parameters
     const page = Math.max(1, parseInt(queryParams.page || '1'))
     const limit = Math.min(50, Math.max(1, parseInt(queryParams.limit || '10'))) // Max 50 products per page
     const skip = (page - 1) * limit
 
-    console.log('API: Connecting to database...');
     // Connect to database
     await connectDB()
 
     // Build query filter
     const filter = buildProductFilter(queryParams)
-    console.log('API: Filter:', filter);
 
     // Build sort object
     const sort = buildSortObject(queryParams.sortBy, queryParams.sortOrder)
-    console.log('API: Sort:', sort);
 
-    console.log('API: Executing database queries...');
     // Execute queries in parallel for better performance
     const [products, totalProducts] = await Promise.all([
       Product.find(filter)
@@ -78,10 +70,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         .lean(), // Use lean() for better performance when we don't need Mongoose document methods
       Product.countDocuments(filter),
     ])
-
-    console.log('API: Found products:', products.length);
-    console.log('API: Total products in DB:', totalProducts);
-    console.log('API: Sample product:', products[0]);
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(totalProducts / limit)
@@ -101,7 +89,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       },
     }
 
-    console.log('API: Returning response with', response.products.length, 'products');
     return NextResponse.json(
       {
         success: true,
