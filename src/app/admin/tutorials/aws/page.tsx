@@ -55,7 +55,7 @@ const AWSTutorial: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="text-theme-secondary">
-            Sign up for an AWS account if you don't have one.
+            Sign up for an AWS account if you don&apos;t have one.
           </p>
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
@@ -64,7 +64,7 @@ const AWSTutorial: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Click "Create an AWS Account"</span>
+              <span>Click &quot;Create an AWS Account&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
@@ -102,7 +102,7 @@ const AWSTutorial: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Click "Create bucket"</span>
+              <span>Click &quot;Create bucket&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
@@ -136,11 +136,11 @@ const AWSTutorial: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Under "Block public access", uncheck all options</span>
+              <span>Under &quot;Block public access&quot;, uncheck all options</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Go to "Bucket policy" and add a policy for public read access</span>
+              <span>Go to &quot;Bucket policy&quot; and add a policy for public read access</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
@@ -205,7 +205,7 @@ const AWSTutorial: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Click "Users" then "Add user"</span>
+              <span>Click &quot;Users&quot; then &quot;Add user&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
@@ -213,11 +213,11 @@ const AWSTutorial: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Select "Programmatic access"</span>
+              <span>Select &quot;Programmatic access&quot;</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
-              <span>Attach the "AmazonS3FullAccess" policy</span>
+              <span>Attach the &quot;AmazonS3FullAccess&quot; policy</span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-theme-primary" />
