@@ -1,11 +1,14 @@
 import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
-import { API } from '@/utils/constants';
+import { headers } from 'next/headers';
 
 async function fetchInitialProducts() {
-  // Use absolute URL for SSR fetch to avoid URL parsing issues
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.VERCEL_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/products?limit=12`, { 
+  // Get the host from request headers for server-side fetch
+  const headersList = await headers();
+  const host = headersList.get('host') || 'localhost:3000';
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  
+  const res = await fetch(`${protocol}://${host}/api/products?limit=12`, { 
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
