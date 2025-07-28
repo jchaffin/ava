@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
+import ThemeToggle from '@/components/ThemeToggle'
 import {
   ShoppingBag,
   Package,
@@ -172,9 +173,9 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -185,11 +186,11 @@ const AdminDashboard: React.FC = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <Calendar className="w-4 h-4 text-theme-muted" />
                   <select
                     value={selectedPeriod}
                     onChange={(e) => setSelectedPeriod(e.target.value as 'day' | 'week' | 'month' | 'year')}
-                    className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                   >
                     <option value="day">Today</option>
                     <option value="week">This Week</option>
@@ -197,8 +198,8 @@ const AdminDashboard: React.FC = () => {
                     <option value="year">This Year</option>
                   </select>
                 </div>
-                <Button onClick={() => router.push('/admin/products/new')}>
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button variant="secondary" onClick={() => router.push('/admin/products/new')}>
+                  <Plus className="w-4 h-4 mr-2 text-theme-primary" />
                   Add Product
                 </Button>
               </div>
@@ -210,10 +211,10 @@ const AdminDashboard: React.FC = () => {
           {/* Stats Cards */}
           {stats && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <DollarSign className="w-6 h-6 text-blue-600" />
+                  <div className="p-2 bg-theme-tertiary rounded-lg">
+                    <DollarSign className="w-6 h-6 text-theme-primary" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-theme-secondary">Total Sales</p>
@@ -228,10 +229,10 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <ShoppingBag className="w-6 h-6 text-green-600" />
+                  <div className="p-2 bg-theme-tertiary rounded-lg">
+                    <ShoppingBag className="w-6 h-6 text-theme-primary" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-theme-secondary">Total Orders</p>
@@ -246,12 +247,10 @@ const AdminDashboard: React.FC = () => {
                 </div>
               </div>
 
-
-
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
-                    <Package className="w-6 h-6 text-yellow-600" />
+                  <div className="p-2 bg-theme-tertiary rounded-lg">
+                    <Package className="w-6 h-6 text-theme-primary" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-theme-secondary">Total Products</p>
@@ -259,7 +258,7 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="mt-4 flex items-center">
-                  <Eye className="w-4 h-4 text-gray-400" />
+                  <Eye className="w-4 h-4 text-theme-muted" />
                   <span className="ml-2 text-sm text-theme-secondary">
                     {stats.conversionRate}% conversion rate
                   </span>
@@ -270,11 +269,15 @@ const AdminDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Recent Orders */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-theme-secondary rounded-lg shadow border border-theme">
+              <div className="px-6 py-4 border-b border-theme">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-theme-primary">Recent Orders</h3>
-                  <Button variant="ghost" onClick={() => router.push('/admin/orders')}>
+                  <Button 
+                    variant="secondary" 
+                    className="bg-theme-secondary"
+                    onClick={() => router.push('/admin/orders')}
+                  >
                     View All
                   </Button>
                 </div>
@@ -283,7 +286,7 @@ const AdminDashboard: React.FC = () => {
                 {recentOrders.length > 0 ? (
                   <div className="space-y-4">
                     {recentOrders.map((order) => (
-                      <div key={order._id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div key={order._id} className="flex items-center justify-between p-4 border border-theme rounded-lg">
                         <div className="flex items-center space-x-4">
                           <div>
                             <p className="font-medium text-theme-primary">#{order.orderNumber}</p>
@@ -301,7 +304,7 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <ShoppingBag className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <ShoppingBag className="w-12 h-12 text-theme-muted mx-auto mb-4" />
                     <p className="text-theme-muted">No recent orders</p>
                   </div>
                 )}
@@ -309,11 +312,15 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Low Stock Products */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-theme-secondary rounded-lg shadow border border-theme">
+              <div className="px-6 py-4 border-b border-theme">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-theme-primary">Low Stock Alert</h3>
-                  <Button variant="ghost" onClick={() => router.push('/admin/products')}>
+                  <Button 
+                    variant="secondary" 
+                    className="bg-theme-secondary"
+                    onClick={() => router.push('/admin/products')}
+                  >
                     View All
                   </Button>
                 </div>
@@ -322,7 +329,7 @@ const AdminDashboard: React.FC = () => {
                 {lowStockProducts.length > 0 ? (
                   <div className="space-y-4">
                     {lowStockProducts.map((product) => (
-                      <div key={product._id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div key={product._id} className="flex items-center justify-between p-4 border border-theme rounded-lg">
                         <div className="flex items-center space-x-4">
                           <img
                             src={product.image}
@@ -361,36 +368,84 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="mt-8 bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
+          <div className="mt-8 bg-theme-secondary rounded-lg shadow border border-theme">
+            <div className="px-6 py-4 border-b border-theme">
               <h3 className="text-lg font-medium text-theme-primary">Quick Actions</h3>
+              <p className="text-sm text-theme-muted mt-1">Common tasks to manage your store</p>
             </div>
             <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Button
-                  variant="ghost"
-                  className="h-20 flex-col"
+                  variant="secondary"
+                  className="h-24 flex-col group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   onClick={() => router.push('/admin/products/new')}
                 >
-                  <Plus className="w-6 h-6 mb-2" />
-                  Add Product
+                  <Plus className="w-8 h-8 mb-3 group-hover:scale-110 transition-transform duration-300 text-theme-primary" />
+                  <span className="font-semibold text-base text-theme-primary">Add Product</span>
+                  <span className="text-xs text-theme-secondary mt-1">Create new product listing</span>
                 </Button>
+                
                 <Button
-                  variant="ghost"
-                  className="h-20 flex-col"
+                  variant="secondary"
+                  className="h-24 flex-col group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   onClick={() => router.push('/admin/orders')}
                 >
-                  <ShoppingBag className="w-6 h-6 mb-2" />
-                  View Orders
+                  <ShoppingBag className="w-8 h-8 mb-3 group-hover:scale-110 transition-transform duration-300 text-theme-primary" />
+                  <span className="font-semibold text-base text-theme-primary">View Orders</span>
+                  <span className="text-xs text-theme-secondary mt-1">Manage customer orders</span>
                 </Button>
 
                 <Button
-                  variant="ghost"
-                  className="h-20 flex-col"
+                  variant="secondary"
+                  className="h-24 flex-col group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg"
                   onClick={() => router.push('/admin/analytics')}
                 >
-                  <BarChart3 className="w-6 h-6 mb-2" />
-                  View Analytics
+                  <BarChart3 className="w-8 h-8 mb-3 group-hover:scale-110 transition-transform duration-300 text-theme-primary" />
+                  <span className="font-semibold text-base text-theme-primary">View Analytics</span>
+                  <span className="text-xs text-theme-secondary mt-1">Track performance metrics</span>
+                </Button>
+              </div>
+              
+              {/* Additional Quick Actions Row */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-theme">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-col h-16 group hover:bg-theme-tertiary transition-all duration-200"
+                  onClick={() => router.push('/admin/products')}
+                >
+                  <Package className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
+                  <span className="text-sm font-medium text-theme-primary">Products</span>
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-col h-16 group hover:bg-theme-tertiary transition-all duration-200"
+                  onClick={() => router.push('/admin/settings')}
+                >
+                  <Calendar className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
+                  <span className="text-sm font-medium text-theme-primary">Settings</span>
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-col h-16 group hover:bg-theme-tertiary transition-all duration-200"
+                  onClick={() => window.open('/api/admin/analytics/export', '_blank')}
+                >
+                  <TrendingUp className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
+                  <span className="text-sm font-medium text-theme-primary">Export Data</span>
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-col h-16 group hover:bg-theme-tertiary transition-all duration-200"
+                  onClick={() => router.push('/admin/tutorials')}
+                >
+                  <Eye className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
+                  <span className="text-sm font-medium text-theme-primary">Tutorials</span>
                 </Button>
               </div>
             </div>

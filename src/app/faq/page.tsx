@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui'
 
 interface FAQItem {
   question: string
@@ -65,33 +66,35 @@ const FAQPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-theme-primary mb-4">Frequently Asked Questions</h1>
-        <p className="text-lg text-theme-secondary">
+      <div className="text-center mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-bold text-theme-secondary mb-3 sm:mb-4">Frequently Asked Questions</h1>
+        <p className="text-base sm:text-lg text-theme-secondary max-w-2xl mx-auto">
           Find answers to common questions about our products, shipping, returns, and more.
         </p>
       </div>
 
       {/* FAQ Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {faqData.map((item, index) => (
-          <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm">
-            <button
+          <div key={index} className="bg-theme-secondary border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <Button
               onClick={() => toggleItem(index)}
-              className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+              className="btn-primary w-full px-6 py-4 text-left flex items-center justify-between transition-colors duration-200"
             >
-              <h3 className="text-lg font-medium text-theme-primary">{item.question}</h3>
-              {openItems.has(index) ? (
-                <ChevronUpIcon className="w-5 h-5 text-theme-muted" />
-              ) : (
-                <ChevronDownIcon className="w-5 h-5 text-theme-muted" />
-              )}
-            </button>
+              <h3 className="text-lg font-medium text-theme-primary flex-1 pr-4">{item.question}</h3>
+              <div className="flex-shrink-0 flex items-center">
+                {openItems.has(index) ? (
+                  <ChevronUpIcon className="w-5 h-5 text-theme-muted" />
+                ) : (
+                  <ChevronDownIcon className="w-5 h-5 text-theme-muted" />
+                )}
+              </div>
+            </Button>
             {openItems.has(index) && (
-              <div className="px-6 pb-4">
-                <p className="text-theme-secondary leading-relaxed">{item.answer}</p>
+              <div className="px-6 pb-6">
+                <p className="text-theme-secondary leading-relaxed text-sm sm:text-base">{item.answer}</p>
               </div>
             )}
           </div>
@@ -99,21 +102,21 @@ const FAQPage: React.FC = () => {
       </div>
 
       {/* Contact Section */}
-      <div className="mt-12 bg-gray-50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold text-theme-primary mb-4">Still have questions?</h2>
-        <p className="text-theme-secondary mb-6">
+      <div className="mt-8 sm:mt-12 bg-gray-50 rounded-lg p-6 sm:p-8 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-3 sm:mb-4">Still have questions?</h2>
+        <p className="text-theme-secondary mb-4 sm:mb-6 text-sm sm:text-base">
           Can&apos;t find what you&apos;re looking for? Our customer service team is here to help.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <a
             href="/contact"
-            className="bg-blue-600 text-theme-primary px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="text-theme-primary px-4 sm:px-6 py-3 rounded-lg bg-theme-secondary transition-colors duration-200 text-sm sm:text-base font-medium"
           >
             Contact Us
           </a>
           <a
             href="/support"
-            className="border border-gray-300 ava-text-tertiary px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+            className="border border-gray-300 ava-text-tertiary px-4 sm:px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 text-sm sm:text-base font-medium"
           >
             Get Support
           </a>

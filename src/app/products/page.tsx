@@ -239,7 +239,7 @@ const ProductsPage: React.FC = () => {
     const endPage = Math.min(state.totalPages, startPage + maxVisiblePages - 1)
 
     return (
-      <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      <div className="flex items-center justify-between border-t border-gray-200 bg-theme-secondary px-4 py-3 sm:px-6">
         <div className="flex flex-1 justify-between sm:hidden">
           <Button
             variant="secondary"
@@ -324,7 +324,7 @@ const ProductsPage: React.FC = () => {
     return (
       <div className="space-y-4">
         {state.products.map((product) => (
-          <div key={product._id} className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6">
+          <div key={product._id} className="bg-theme-secondary border border-gray-200 rounded-lg p-6 flex items-center space-x-6">
             <div className="flex-shrink-0">
               <Image
                 src={product.image}
@@ -370,56 +370,63 @@ const ProductsPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 bg-theme-primary min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-theme-primary min-h-screen">
         {/* Prominent Logo Section */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="flex justify-center mb-4 sm:mb-6">
             {mounted && (
               <Image
                 src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                 alt="AVA Premium Skincare"
                 width={400}
                 height={133}
-                className="h-28 w-auto"
+                className="h-20 sm:h-28 w-auto"
                 priority
               />
             )}
           </div>
-          <h1 className="text-4xl font-bold text-theme-primary mb-4">Premium Skincare Collection</h1>
-          <p className="text-xl text-theme-secondary max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">Premium Skincare Collection</h1>
+          <p className="text-lg sm:text-xl text-theme-secondary max-w-2xl mx-auto px-4">
             Discover your perfect beauty routine with our scientifically-formulated products designed for radiant, healthy skin.
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="mb-8">
-          <form onSubmit={handleSearchSubmit} className="relative max-w-md mx-auto">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-              <MagnifyingGlassIcon className="h-5 w-5 text-theme-muted" />
+        <div className="mb-6 sm:mb-8">
+          <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto">
+            <div className="flex items-center border border-theme rounded-lg bg-theme-secondary shadow-sm">
+              <div className="pl-4 pr-3 py-3">
+                <MagnifyingGlassIcon className="h-5 w-5 text-theme-primary" />
+              </div>
+              <input
+                type="text"
+                value={filters.searchTerm}
+                onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                placeholder="Search products..."
+                className="flex-1 px-3 py-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:placeholder-theme-secondary focus:ring-0 focus:border-0 text-base sm:text-lg"
+              />
             </div>
-            <input
-              type="text"
-              value={filters.searchTerm}
-              onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
-              placeholder="Search products..."
-              className="block w-full pl-12 pr-3 py-3 border border-theme rounded-lg leading-5 bg-theme-secondary text-theme-primary placeholder-theme-muted focus:outline-none focus:placeholder-theme-secondary focus:ring-2 focus:ring-theme-primary focus:border-theme-primary text-lg relative"
-            />
           </form>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
           {/* Filters Sidebar */}
           <div className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-theme-primary border border-theme rounded-lg p-6 space-y-6 shadow-lg">
+            <div className="bg-theme-primary border border-theme rounded-lg p-4 sm:p-6 space-y-4 sm:space-y-6 shadow-lg">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-theme-primary">Filters</h2>
                 <div className="flex items-center space-x-2">
                   {getActiveFilterCount() > 0 && (
-                    <span className="bg-theme-secondary text-theme-primary text-xs px-2 py-1 rounded-full">
+                    <span className="bg-ava-accent text-theme-primary text-xs px-2 py-1 rounded-full">
                       {getActiveFilterCount()}
                     </span>
                   )}
-                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    onClick={clearFilters}
+                    className="bg-theme-secondary text-theme-primary hover:bg-theme-tertiary border border-theme"
+                  >
                     Clear All
                   </Button>
                 </div>
@@ -449,17 +456,17 @@ const ProductsPage: React.FC = () => {
           {/* Main Content */}
           <div className="flex-1">
             {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-              <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden"
+                  className="lg:hidden bg-theme-secondary text-theme-primary hover:bg-theme-tertiary border border-theme"
                 >
                   <FunnelIcon className="h-4 w-4 mr-2" />
                   Filters
                   {getActiveFilterCount() > 0 && (
-                    <span className="ml-2 bg-theme-secondary text-theme-primary text-xs px-2 py-1 rounded-full">
+                    <span className="ml-2 bg-ava-accent text-theme-primary text-xs px-2 py-1 rounded-full">
                       {getActiveFilterCount()}
                     </span>
                   )}
@@ -470,12 +477,12 @@ const ProductsPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 {/* Sort Dropdown */}
                 <select
                   value={`${filters.sortBy}-${filters.sortOrder}`}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary bg-theme-secondary text-theme-primary"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -485,12 +492,12 @@ const ProductsPage: React.FC = () => {
                 </select>
 
                 {/* View Toggle */}
-                <div className="flex items-center border border-gray-300 rounded-md">
+                <div className="flex items-center border border-theme rounded-md">
                   <Button
                     variant={viewMode === 'grid' ? 'primary' : 'ghost'}
                     size="sm"
                     onClick={() => setViewMode('grid')}
-                    className="rounded-r-none"
+                    className="rounded-r-none bg-theme-secondary text-theme-primary hover:bg-theme-tertiary"
                   >
                     <Squares2X2Icon className="h-4 w-4" />
                   </Button>
@@ -498,7 +505,7 @@ const ProductsPage: React.FC = () => {
                     variant={viewMode === 'list' ? 'primary' : 'ghost'}
                     size="sm"
                     onClick={() => setViewMode('list')}
-                    className="rounded-l-none border-l-0"
+                    className="rounded-l-none border-l-0 bg-theme-secondary text-theme-primary hover:bg-theme-tertiary"
                   >
                     <ListBulletIcon className="h-4 w-4" />
                   </Button>

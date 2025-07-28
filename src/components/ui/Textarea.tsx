@@ -13,14 +13,14 @@ const Textarea: React.FC<TextareaProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClasses = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 resize-vertical'
+  const baseClasses = 'w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary resize-vertical'
   const errorClasses = error ? 'border-red-500' : ''
   const classes = `${baseClasses} ${errorClasses} ${className}`.trim()
 
   return (
     <div className="mb-4">
       {label && (
-        <label className="block ava-text-tertiary text-sm font-bold mb-2">
+        <label className="block text-theme-primary text-sm font-bold mb-2">
           {label}
         </label>
       )}

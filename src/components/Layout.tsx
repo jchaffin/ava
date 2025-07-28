@@ -312,10 +312,11 @@ const Layout: React.FC<LayoutProps> = ({
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
+        style={{ touchAction: 'none' }}
       />
       
       {/* Sidebar */}
-      <div className={`lg:hidden fixed inset-y-0 left-0 w-80 bg-theme-secondary shadow-2xl transform transition-all duration-300 ease-out z-[9999] ${
+      <div className={`lg:hidden fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-theme-secondary shadow-2xl transform transition-all duration-300 ease-out z-[9999] ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         
@@ -354,7 +355,7 @@ const Layout: React.FC<LayoutProps> = ({
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center space-x-4 px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 transform hover:scale-[1.02] cursor-pointer focus:outline-none focus:ring-0 focus:border-0 ${
+                  className={`flex items-center space-x-4 px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 transform hover:scale-[1.02] cursor-pointer focus:outline-none focus:ring-0 focus:border-0 min-h-[44px] ${
                     isActiveLink(item.href)
                       ? 'text-theme-tertiary bg-ava-accent'
                       : 'text-theme-primary hover:text-ava-accent hover:bg-theme-secondary'
@@ -430,14 +431,14 @@ const Layout: React.FC<LayoutProps> = ({
                 <Link
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200"
+                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200 min-h-[44px]"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200"
+                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-primary bg-theme-primary hover:bg-theme-secondary rounded-xl transition-all duration-200 min-h-[44px]"
                 >
                   Sign Up
                 </Link>
@@ -526,7 +527,7 @@ const Layout: React.FC<LayoutProps> = ({
               onClick={() => {
                 toggleMobileMenu()
               }}
-              className="p-3 rounded-lg text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
+              className="p-3 rounded-lg text-theme-primary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
               aria-label="Open mobile menu"
               type="button"
             >
@@ -604,7 +605,7 @@ const Layout: React.FC<LayoutProps> = ({
       </div>
       
       {/* Mobile navigation overlay */}
-      {isMobileMenuOpen && renderMobileNavigation()}
+      {renderMobileNavigation()}
     </header>
   )
 

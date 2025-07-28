@@ -26,6 +26,14 @@ interface SiteSettings {
     contactEmail: string
     phoneNumber: string
     address: string
+    socialMedia: {
+      facebook: string
+      instagram: string
+      twitter: string
+      youtube: string
+      tiktok: string
+      linkedin: string
+    }
   }
   appearance: {
     primaryColor: string
@@ -75,7 +83,7 @@ interface SiteSettings {
 }
 
 const AdminSettings: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth()
+  const { user, isAuthenticated, isLoading, updateProfile } = useAuth()
   const router = useRouter()
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   const [loading, setLoading] = useState(true)
@@ -213,6 +221,29 @@ const AdminSettings: React.FC = () => {
         },
       }
     })
+
+    // Update user name in real-time when admin name is changed
+    if (section === 'security' && field === 'adminName' && typeof value === 'string') {
+      updateProfile({ name: value })
+    }
+  }
+
+  const updateSocialMedia = (platform: string, value: string) => {
+    if (!settings) return
+
+    setSettings(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        general: {
+          ...prev.general,
+          socialMedia: {
+            ...prev.general.socialMedia,
+            [platform]: value,
+          },
+        },
+      }
+    })
   }
 
   const tabs = [
@@ -227,9 +258,9 @@ const AdminSettings: React.FC = () => {
   if (isLoading || loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ava-accent mx-auto"></div>
             <p className="mt-4 text-theme-secondary">Loading settings...</p>
           </div>
         </div>
@@ -239,9 +270,9 @@ const AdminSettings: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -266,9 +297,9 @@ const AdminSettings: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {settings ? (
-            <div className="bg-white rounded-lg shadow">
+            <div className="bg-theme-secondary rounded-lg shadow border border-theme">
               {/* Tabs */}
-              <div className="border-b border-gray-200">
+              <div className="border-b border-theme">
                 <nav className="-mb-px flex space-x-8 px-6">
                   {tabs.map((tab) => {
                     const Icon = tab.icon
@@ -278,8 +309,8 @@ const AdminSettings: React.FC = () => {
                         onClick={() => setActiveTab(tab.id as 'general' | 'appearance' | 'notifications' | 'security' | 'payment' | 'shipping')}
                         className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                           activeTab === tab.id
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-theme-muted hover:ava-text-tertiary hover:border-gray-300'
+                            ? 'border-ava-accent text-ava-accent'
+                            : 'border-transparent text-theme-muted hover:text-theme-primary hover:border-theme'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -291,43 +322,91 @@ const AdminSettings: React.FC = () => {
               </div>
 
               {/* Tab Content */}
-              <div className="p-6">
+              <div className="p-6 bg-theme-primary">
                 {activeTab === 'general' && (
                   <div className="space-y-6">
                     <h3 className="text-lg font-medium text-theme-primary">General Settings</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Input
-                        label="Site Name"
-                        value={settings.general.siteName}
-                        onChange={(e) => updateSetting('general', 'siteName', e.target.value)}
-                        placeholder="Enter site name"
-                      />
-                      <Input
-                        label="Contact Email"
-                        type="email"
-                        value={settings.general.contactEmail}
-                        onChange={(e) => updateSetting('general', 'contactEmail', e.target.value)}
-                        placeholder="Enter contact email"
-                      />
-                      <Input
-                        label="Phone Number"
-                        value={settings.general.phoneNumber}
-                        onChange={(e) => updateSetting('general', 'phoneNumber', e.target.value)}
-                        placeholder="Enter phone number"
-                      />
-                      <Input
-                        label="Address"
-                        value={settings.general.address}
-                        onChange={(e) => updateSetting('general', 'address', e.target.value)}
-                        placeholder="Enter address"
-                      />
-                      <div className="md:col-span-2">
-                        <Textarea
-                          label="Site Description"
-                          value={settings.general.siteDescription}
-                          onChange={(e) => updateSetting('general', 'siteDescription', e.target.value)}
-                          placeholder="Enter site description"
-                          rows={3}
+                    
+                    {/* Basic Information */}
+                    <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
+                      <h4 className="text-md font-medium text-theme-primary">Basic Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input
+                          label="Site Name"
+                          value={settings.general.siteName}
+                          onChange={(e) => updateSetting('general', 'siteName', e.target.value)}
+                          placeholder="Enter site name"
+                        />
+                        <Input
+                          label="Contact Email"
+                          type="email"
+                          value={settings.general.contactEmail}
+                          onChange={(e) => updateSetting('general', 'contactEmail', e.target.value)}
+                          placeholder="Enter contact email"
+                        />
+                        <Input
+                          label="Phone Number"
+                          value={settings.general.phoneNumber}
+                          onChange={(e) => updateSetting('general', 'phoneNumber', e.target.value)}
+                          placeholder="Enter phone number"
+                        />
+                        <Input
+                          label="Address"
+                          value={settings.general.address}
+                          onChange={(e) => updateSetting('general', 'address', e.target.value)}
+                          placeholder="Enter address"
+                        />
+                        <div className="md:col-span-2">
+                          <Textarea
+                            label="Site Description"
+                            value={settings.general.siteDescription}
+                            onChange={(e) => updateSetting('general', 'siteDescription', e.target.value)}
+                            placeholder="Enter site description"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Social Media Links */}
+                    <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
+                      <h4 className="text-md font-medium text-theme-primary">Social Media Links</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input
+                          label="Facebook URL"
+                          value={settings.general.socialMedia?.facebook || ''}
+                          onChange={(e) => updateSocialMedia('facebook', e.target.value)}
+                          placeholder="https://facebook.com/yourpage"
+                        />
+                        <Input
+                          label="Instagram URL"
+                          value={settings.general.socialMedia?.instagram || ''}
+                          onChange={(e) => updateSocialMedia('instagram', e.target.value)}
+                          placeholder="https://instagram.com/yourpage"
+                        />
+                        <Input
+                          label="Twitter/X URL"
+                          value={settings.general.socialMedia?.twitter || ''}
+                          onChange={(e) => updateSocialMedia('twitter', e.target.value)}
+                          placeholder="https://twitter.com/yourpage"
+                        />
+                        <Input
+                          label="YouTube URL"
+                          value={settings.general.socialMedia?.youtube || ''}
+                          onChange={(e) => updateSocialMedia('youtube', e.target.value)}
+                          placeholder="https://youtube.com/yourchannel"
+                        />
+                        <Input
+                          label="TikTok URL"
+                          value={settings.general.socialMedia?.tiktok || ''}
+                          onChange={(e) => updateSocialMedia('tiktok', e.target.value)}
+                          placeholder="https://tiktok.com/@yourpage"
+                        />
+                        <Input
+                          label="LinkedIn URL"
+                          value={settings.general.socialMedia?.linkedin || ''}
+                          onChange={(e) => updateSocialMedia('linkedin', e.target.value)}
+                          placeholder="https://linkedin.com/company/yourcompany"
                         />
                       </div>
                     </div>
@@ -344,20 +423,6 @@ const AdminSettings: React.FC = () => {
                         value={settings.appearance.primaryColor}
                         onChange={(e) => updateSetting('appearance', 'primaryColor', e.target.value)}
                       />
-                      <div>
-                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
-                          Theme
-                        </label>
-                        <select
-                          value={settings.appearance.theme}
-                          onChange={(e) => updateSetting('appearance', 'theme', e.target.value)}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                          <option value="light">Light</option>
-                          <option value="dark">Dark</option>
-                          <option value="auto">Auto</option>
-                        </select>
-                      </div>
                       <Input
                         label="Logo URL"
                         value={settings.appearance.logoUrl}
@@ -387,7 +452,7 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.notifications.emailNotifications}
                           onChange={(e) => updateSetting('notifications', 'emailNotifications', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       <div className="flex items-center justify-between">
@@ -399,7 +464,7 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.notifications.orderNotifications}
                           onChange={(e) => updateSetting('notifications', 'orderNotifications', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       <div className="flex items-center justify-between">
@@ -411,7 +476,7 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.notifications.lowStockAlerts}
                           onChange={(e) => updateSetting('notifications', 'lowStockAlerts', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       <div className="flex items-center justify-between">
@@ -423,7 +488,7 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.notifications.marketingEmails}
                           onChange={(e) => updateSetting('notifications', 'marketingEmails', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                     </div>
@@ -435,7 +500,7 @@ const AdminSettings: React.FC = () => {
                     <h3 className="text-lg font-medium text-theme-primary">Security Settings</h3>
                     <div className="space-y-6">
                       {/* Admin Account Settings */}
-                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                      <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                         <h4 className="text-sm font-medium text-theme-primary">Admin Account</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <Input
@@ -456,7 +521,7 @@ const AdminSettings: React.FC = () => {
                       </div>
 
                       {/* Password Change Form */}
-                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                      <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                         <h4 className="text-sm font-medium text-theme-primary">Change Password</h4>
                         <div className="space-y-4">
                           <Input
@@ -502,27 +567,27 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.security.twoFactorAuth}
                           onChange={(e) => updateSetting('security', 'twoFactorAuth', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium ava-text-tertiary mb-2">
+                        <label className="block text-sm font-medium text-theme-primary mb-2">
                           Session Timeout (minutes)
                         </label>
-                        <input
-                          type="number"
-                          value={settings.security.sessionTimeout}
-                          onChange={(e) => updateSetting('security', 'sessionTimeout', parseInt(e.target.value))}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          min="5"
-                          max="1440"
-                        />
+                                                  <input
+                            type="number"
+                            value={settings.security.sessionTimeout}
+                            onChange={(e) => updateSetting('security', 'sessionTimeout', parseInt(e.target.value))}
+                            className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
+                            min="5"
+                            max="1440"
+                          />
                       </div>
                       <div>
                         <h4 className="text-sm font-medium text-theme-primary mb-4">Password Policy</h4>
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium ava-text-tertiary mb-2">
+                            <label className="block text-sm font-medium text-theme-primary mb-2">
                               Minimum Length
                             </label>
                             <input
@@ -532,7 +597,7 @@ const AdminSettings: React.FC = () => {
                                 ...settings.security.passwordPolicy,
                                 minLength: parseInt(e.target.value)
                               })}
-                              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                               min="6"
                               max="50"
                             />
@@ -546,7 +611,7 @@ const AdminSettings: React.FC = () => {
                                 ...settings.security.passwordPolicy,
                                 requireUppercase: e.target.checked
                               })}
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                             />
                           </div>
                           <div className="flex items-center justify-between">
@@ -558,7 +623,7 @@ const AdminSettings: React.FC = () => {
                                 ...settings.security.passwordPolicy,
                                 requireNumbers: e.target.checked
                               })}
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                             />
                           </div>
                           <div className="flex items-center justify-between">
@@ -570,7 +635,7 @@ const AdminSettings: React.FC = () => {
                                 ...settings.security.passwordPolicy,
                                 requireSymbols: e.target.checked
                               })}
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                             />
                           </div>
                         </div>
@@ -592,11 +657,11 @@ const AdminSettings: React.FC = () => {
                           type="checkbox"
                           checked={settings.payment.stripeEnabled}
                           onChange={(e) => updateSetting('payment', 'stripeEnabled', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       {settings.payment.stripeEnabled && (
-                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                        <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                           <h5 className="text-sm font-medium text-theme-primary">Stripe Configuration</h5>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="relative">
@@ -610,7 +675,7 @@ const AdminSettings: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setShowStripeKeys(prev => ({ ...prev, publishable: !prev.publishable }))}
-                                className="absolute right-3 top-8 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                className="absolute right-3 top-8 text-theme-muted hover:text-theme-primary focus:outline-none"
                               >
                                 {showStripeKeys.publishable ? (
                                   <EyeOff className="w-4 h-4" />
@@ -630,7 +695,7 @@ const AdminSettings: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setShowStripeKeys(prev => ({ ...prev, secret: !prev.secret }))}
-                                className="absolute right-3 top-8 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                className="absolute right-3 top-8 text-theme-muted hover:text-theme-primary focus:outline-none"
                               >
                                 {showStripeKeys.secret ? (
                                   <EyeOff className="w-4 h-4" />
@@ -649,17 +714,22 @@ const AdminSettings: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-medium text-theme-primary">PayPal Payments</h4>
-                          <p className="text-sm text-theme-muted">Enable PayPal payment processing</p>
+                          <p className="text-sm text-theme-muted">
+                            {settings.payment.paypalEnabled 
+                              ? "PayPal is enabled" 
+                              : "PayPal is disabled by default (requires PAYPAL_CLIENT_ID and PAYPAL_SECRET environment variables)"
+                            }
+                          </p>
                         </div>
                         <input
                           type="checkbox"
                           checked={settings.payment.paypalEnabled}
                           onChange={(e) => updateSetting('payment', 'paypalEnabled', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       {settings.payment.paypalEnabled && (
-                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                        <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                           <h5 className="text-sm font-medium text-theme-primary">PayPal Configuration</h5>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Input
@@ -685,17 +755,22 @@ const AdminSettings: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="text-sm font-medium text-theme-primary">Apple Pay</h4>
-                          <p className="text-sm text-theme-muted">Enable Apple Pay for mobile users</p>
+                          <p className="text-sm text-theme-muted">
+                            {settings.payment.applePayEnabled 
+                              ? "Apple Pay is enabled" 
+                              : "Apple Pay is disabled by default (requires APPLE_PAY_MERCHANT_ID environment variable)"
+                            }
+                          </p>
                         </div>
                         <input
                           type="checkbox"
                           checked={settings.payment.applePayEnabled}
                           onChange={(e) => updateSetting('payment', 'applePayEnabled', e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                         />
                       </div>
                       {settings.payment.applePayEnabled && (
-                        <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+                        <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                           <h5 className="text-sm font-medium text-theme-primary">Apple Pay Configuration</h5>
                           <div className="grid grid-cols-1 gap-4">
                             <Input
@@ -713,13 +788,13 @@ const AdminSettings: React.FC = () => {
                       )}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="block text-sm font-medium ava-text-tertiary mb-2">
+                          <label className="block text-sm font-medium text-theme-primary mb-2">
                             Currency
                           </label>
                           <select
                             value={settings.payment.currency}
                             onChange={(e) => updateSetting('payment', 'currency', e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                           >
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
@@ -728,14 +803,14 @@ const AdminSettings: React.FC = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium ava-text-tertiary mb-2">
+                          <label className="block text-sm font-medium text-theme-primary mb-2">
                             Tax Rate (%)
                           </label>
                           <input
                             type="number"
                             value={settings.payment.taxRate}
                             onChange={(e) => updateSetting('payment', 'taxRate', parseFloat(e.target.value))}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                             min="0"
                             max="100"
                             step="0.01"
@@ -758,7 +833,7 @@ const AdminSettings: React.FC = () => {
                           type="number"
                           value={settings.shipping.freeShippingThreshold}
                           onChange={(e) => updateSetting('shipping', 'freeShippingThreshold', parseFloat(e.target.value))}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                           min="0"
                           step="0.01"
                         />
@@ -771,7 +846,7 @@ const AdminSettings: React.FC = () => {
                           type="number"
                           value={settings.shipping.defaultShippingCost}
                           onChange={(e) => updateSetting('shipping', 'defaultShippingCost', parseFloat(e.target.value))}
-                          className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                           min="0"
                           step="0.01"
                         />
@@ -781,7 +856,7 @@ const AdminSettings: React.FC = () => {
                       <h4 className="text-sm font-medium text-theme-primary mb-4">Shipping Zones</h4>
                       <div className="space-y-4">
                         {settings.shipping.shippingZones.map((zone, index) => (
-                          <div key={index} className="border border-gray-200 rounded-md p-4">
+                          <div key={index} className="border border-theme rounded-md p-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <input
                                 type="text"
@@ -792,7 +867,7 @@ const AdminSettings: React.FC = () => {
                                   updateSetting('shipping', 'shippingZones', newZones)
                                 }}
                                 placeholder="Zone name"
-                                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                               />
                               <input
                                 type="number"
@@ -803,7 +878,7 @@ const AdminSettings: React.FC = () => {
                                   updateSetting('shipping', 'shippingZones', newZones)
                                 }}
                                 placeholder="Shipping cost"
-                                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                                 min="0"
                                 step="0.01"
                               />
@@ -816,7 +891,7 @@ const AdminSettings: React.FC = () => {
                                   updateSetting('shipping', 'shippingZones', newZones)
                                 }}
                                 placeholder="Countries (comma-separated)"
-                                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-tertiary text-theme-primary"
                               />
                             </div>
                           </div>
@@ -838,10 +913,28 @@ const AdminSettings: React.FC = () => {
                     </div>
                   </div>
                 )}
+                
+                {/* Save Settings Button */}
+                <div className="flex justify-end pt-6 border-t border-theme">
+                  <Button
+                    onClick={saveSettings}
+                    disabled={saving}
+                    className="px-6 py-2"
+                  >
+                    {saving ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Saving...
+                      </>
+                    ) : (
+                      'Save Settings'
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-theme-secondary rounded-lg shadow p-8 text-center">
               <Settings className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-theme-primary mb-2">No Settings Data</h3>
               <p className="text-theme-muted">Settings data will appear here once available.</p>

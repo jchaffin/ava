@@ -87,20 +87,20 @@ const ContactPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 bg-theme-primary min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-theme-primary mb-4">Contact Us</h1>
-        <p className="text-lg text-theme-secondary max-w-2xl mx-auto">
+      <div className="text-center mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">Contact Us</h1>
+        <p className="text-base sm:text-lg text-theme-secondary max-w-2xl mx-auto">
           Have a question or need help? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Contact Form */}
         <div className="lg:col-span-2">
-          <div className="bg-theme-primary border border-theme rounded-lg p-8 shadow-lg">
-            <h2 className="text-2xl font-bold text-theme-primary mb-6">Send us a Message</h2>
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6 sm:p-8 shadow-lg">
+            <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-4 sm:mb-6">Send us a Message</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -129,7 +129,7 @@ const ContactPage: React.FC = () => {
                   <select
                     value={formData.category}
                     onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
                   >
                     {categories.map(category => (
                       <option key={category.value} value={category.value}>
@@ -145,7 +145,7 @@ const ContactPage: React.FC = () => {
                   <select
                     value={formData.priority}
                     onChange={(e) => handleChange('priority', e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
                   >
                     {priorities.map(priority => (
                       <option key={priority.value} value={priority.value}>
@@ -173,7 +173,7 @@ const ContactPage: React.FC = () => {
                   onChange={(e) => handleChange('message', e.target.value)}
                   required
                   rows={6}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
                   placeholder="Please provide details about your inquiry..."
                 />
               </div>
@@ -192,38 +192,38 @@ const ContactPage: React.FC = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Contact Details */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-theme-primary mb-4">Get in Touch</h3>
+          <div className="bg-theme-secondary border border-theme rounded-lg p-4 sm:p-6 shadow-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-3 sm:mb-4">Get in Touch</h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
-                <EnvelopeIcon className="w-5 h-5 text-gray-400 mt-1" />
+                <EnvelopeIcon className="w-5 h-5 text-theme-muted mt-1" />
                 <div>
                   <p className="font-medium text-theme-primary">Email</p>
-                  <a href={`mailto:${contactInfo.email}`} className="text-blue-600 hover:underline">
+                  <a href={`mailto:${contactInfo.email}`} className="text-ava-accent hover:underline">
                     {contactInfo.email}
                   </a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <PhoneIcon className="w-5 h-5 text-gray-400 mt-1" />
+                <PhoneIcon className="w-5 h-5 text-theme-muted mt-1" />
                 <div>
                   <p className="font-medium text-theme-primary">Phone</p>
-                  <a href={`tel:${contactInfo.phone}`} className="text-blue-600 hover:underline">
+                  <a href={`tel:${contactInfo.phone}`} className="text-ava-accent hover:underline">
                     {contactInfo.phone}
                   </a>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPinIcon className="w-5 h-5 text-gray-400 mt-1" />
+                <MapPinIcon className="w-5 h-5 text-theme-muted mt-1" />
                 <div>
                   <p className="font-medium text-theme-primary">Address</p>
                   <p className="text-theme-secondary whitespace-pre-line">{contactInfo.address}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
-                <ClockIcon className="w-5 h-5 text-gray-400 mt-1" />
+                <ClockIcon className="w-5 h-5 text-theme-muted mt-1" />
                 <div>
                   <p className="font-medium text-theme-primary">Business Hours</p>
                   <p className="text-theme-secondary whitespace-pre-line">{contactInfo.hours}</p>
@@ -233,37 +233,37 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-theme-primary mb-4">Quick Actions</h3>
-            <div className="space-y-3">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-4 sm:p-6 shadow-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-3 sm:mb-4">Quick Actions</h3>
+            <div className="space-y-2 sm:space-y-3">
               <a
                 href="/faq"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                className="flex items-center space-x-3 p-3 bg-theme-primary rounded-lg hover:bg-theme-tertiary transition-colors duration-200"
               >
-                <DocumentTextIcon className="w-5 h-5 text-gray-400" />
-                <span className="ava-text-tertiary">Browse FAQ</span>
+                <DocumentTextIcon className="w-5 h-5 text-theme-secondary" />
+                <span className="text-theme-secondary">Browse FAQ</span>
               </a>
               <a
                 href="/support"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                className="flex items-center space-x-3 p-3 bg-theme-primary rounded-lg hover:bg-theme-tertiary transition-colors duration-200"
               >
-                <ChatBubbleLeftRightIcon className="w-5 h-5 text-gray-400" />
-                <span className="ava-text-tertiary">Get Support</span>
+                <ChatBubbleLeftRightIcon className="w-5 h-5 text-theme-secondary" />
+                <span className="text-theme-secondary">Get Support</span>
               </a>
               <a
                 href="/orders"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                className="flex items-center space-x-3 p-3 bg-theme-primary rounded-lg hover:bg-theme-tertiary transition-colors duration-200"
               >
-                <DocumentTextIcon className="w-5 h-5 text-gray-400" />
-                <span className="ava-text-tertiary">Track Order</span>
+                <DocumentTextIcon className="w-5 h-5 text-theme-secondary" />
+                <span className="text-theme-secondary">Track Order</span>
               </a>
             </div>
           </div>
 
           {/* Response Time */}
-          <div className="bg-white border border-blue-200 rounded-lg p-6 shadow-lg">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">Response Time</h3>
-            <p className="text-blue-700 text-sm">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-4 sm:p-6 shadow-lg">
+            <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-2 sm:mb-3">Response Time</h3>
+            <p className="text-theme-secondary text-sm">
               We typically respond to inquiries within 24 hours during business days. 
               For urgent matters, please call us directly.
             </p>

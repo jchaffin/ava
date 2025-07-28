@@ -64,10 +64,10 @@ const ShippingPage: React.FC = () => {
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Shipping Options</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {shippingOptions.map((option, index) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-lg p-6">
+            <div key={index} className="bg-text-theme-primary border border-gray-200 rounded-lg p-6">
               <div className="flex items-center mb-4">
-                <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                  <option.icon className="w-6 h-6 text-blue-600" />
+                <div className="bg-theme-secondary p-3 rounded-lg mr-4">
+                  <option.icon className="w-6 h-6 text-theme-secondary" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-theme-primary">{option.name}</h3>
@@ -140,7 +140,7 @@ const ShippingPage: React.FC = () => {
       {/* International Shipping */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">International Shipping</h2>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6">
           <p className="text-theme-secondary mb-4">
             We currently ship to the following countries:
           </p>
@@ -167,7 +167,7 @@ const ShippingPage: React.FC = () => {
       {/* Tracking Orders */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Tracking Your Order</h2>
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-lg font-semibold text-theme-primary mb-4">How to Track</h3>
@@ -207,21 +207,21 @@ const ShippingPage: React.FC = () => {
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Frequently Asked Questions</h2>
         <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">When will my order ship?</h3>
                           <p className="text-theme-secondary">
                 Orders are typically processed and shipped within 1-2 business days. You&apos;ll receive 
                 a confirmation email with tracking information once your order ships.
               </p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">Do you ship internationally?</h3>
             <p className="text-theme-secondary">
               Yes, we ship to select countries. International shipping rates and delivery times 
               vary by location. Additional customs duties may apply.
             </p>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">What if my package is lost or damaged?</h3>
             <p className="text-theme-secondary">
               All packages are insured. If your package is lost or damaged, please contact our 
@@ -240,7 +240,7 @@ const ShippingPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="/contact"
-            className="bg-blue-600 text-theme-primary px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="bg-theme-secondary text-theme-primary px-6 py-3 rounded-lg transition-colors duration-200"
           >
             Contact Us
           </a>

@@ -138,9 +138,9 @@ const NewProduct: React.FC = () => {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ava-accent mx-auto"></div>
             <p className="mt-4 text-theme-secondary">Loading...</p>
           </div>
         </div>
@@ -150,9 +150,9 @@ const NewProduct: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div className="flex items-center space-x-4">
@@ -176,7 +176,7 @@ const NewProduct: React.FC = () => {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+          <form onSubmit={handleSubmit} className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Product Name */}
               <div className="md:col-span-2">
@@ -235,7 +235,7 @@ const NewProduct: React.FC = () => {
                     id="featured"
                     checked={form.featured}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('featured', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                   />
                   <label htmlFor="featured" className="ml-2 text-sm ava-text-tertiary">
                     Featured Product
@@ -265,8 +265,8 @@ const NewProduct: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                      <Upload className="w-8 h-8 text-gray-400" />
+                    <div className="w-32 h-32 border-2 border-dashed border-theme rounded-lg flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-theme-muted" />
                     </div>
                   )}
                   <div>
@@ -274,7 +274,7 @@ const NewProduct: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary"
                     />
                     <p className="mt-1 text-sm text-theme-muted">
                       Upload a product image (optional)

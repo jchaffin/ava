@@ -468,7 +468,7 @@ export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | '
 }) => {
   if (variant === 'list') {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6 animate-pulse">
+      <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6 flex items-center space-x-6 animate-pulse">
         <div className="w-24 h-24 bg-gray-300 rounded-lg"></div>
         <div className="flex-1 space-y-3">
           <div className="h-4 bg-gray-300 rounded w-3/4"></div>
@@ -484,7 +484,7 @@ export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | '
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+    <div className="bg-theme-secondary rounded-lg shadow-md overflow-hidden animate-pulse">
       <div className={`bg-gray-300 ${variant === 'compact' ? 'h-32' : 'h-48'}`}></div>
       <div className="p-4 space-y-3">
         <div className="h-4 bg-gray-300 rounded w-3/4"></div>

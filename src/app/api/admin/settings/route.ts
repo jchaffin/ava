@@ -41,10 +41,10 @@ let siteSettings = {
     stripeEnabled: true,
     stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
     stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
-    paypalEnabled: true,
+    paypalEnabled: !!(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_SECRET),
     paypalClientId: process.env.PAYPAL_CLIENT_ID || '',
     paypalSecret: process.env.PAYPAL_SECRET || '',
-    applePayEnabled: true,
+    applePayEnabled: !!process.env.APPLE_PAY_MERCHANT_ID,
     applePayMerchantId: process.env.APPLE_PAY_MERCHANT_ID || '',
     currency: 'USD',
     taxRate: 8.5

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
 import { Button } from '@/components/ui'
@@ -55,24 +55,7 @@ const AdminAnalytics: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d' | '1y'>('30d')
 
 
-  useEffect(() => {
-    if (isLoading) return
-
-    if (!isAuthenticated || !user?.id) {
-      router.push('/signin?callbackUrl=/admin/analytics')
-      return
-    }
-
-    if (user.role !== 'admin') {
-      toast.error('Access denied. Admin privileges required.')
-      router.push('/')
-      return
-    }
-
-    fetchAnalytics()
-  }, [user, isAuthenticated, isLoading, router, selectedPeriod])
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/analytics?period=${selectedPeriod}`)
@@ -89,7 +72,24 @@ const AdminAnalytics: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedPeriod])
+
+  useEffect(() => {
+    if (isLoading) return
+
+    if (!isAuthenticated || !user?.id) {
+      router.push('/signin?callbackUrl=/admin/analytics')
+      return
+    }
+
+    if (user.role !== 'admin') {
+      toast.error('Access denied. Admin privileges required.')
+      router.push('/')
+      return
+    }
+
+    fetchAnalytics()
+  }, [user, isAuthenticated, isLoading, router, fetchAnalytics])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -126,9 +126,9 @@ const AdminAnalytics: React.FC = () => {
   if (isLoading || loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ava-accent mx-auto"></div>
             <p className="mt-4 text-theme-secondary">Loading analytics...</p>
           </div>
         </div>
@@ -138,9 +138,9 @@ const AdminAnalytics: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -151,11 +151,11 @@ const AdminAnalytics: React.FC = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <Calendar className="w-4 h-4 text-theme-muted" />
                   <select
                     value={selectedPeriod}
                     onChange={(e) => setSelectedPeriod(e.target.value as '7d' | '30d' | '90d' | '1y')}
-                    className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                   >
                     <option value="7d">Last 7 days</option>
                     <option value="30d">Last 30 days</option>
@@ -187,7 +187,7 @@ const AdminAnalytics: React.FC = () => {
             <>
               {/* Overview Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <DollarSign className="w-8 h-8 text-theme-primary" />
@@ -201,7 +201,7 @@ const AdminAnalytics: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <ShoppingBag className="w-8 h-8 text-blue-500" />
@@ -215,7 +215,7 @@ const AdminAnalytics: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <Users className="w-8 h-8 text-purple-500" />
@@ -229,7 +229,7 @@ const AdminAnalytics: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <BarChart3 className="w-8 h-8 text-orange-500" />
@@ -247,7 +247,7 @@ const AdminAnalytics: React.FC = () => {
               {/* Charts and Detailed Analytics */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Revenue Chart */}
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-theme-primary mb-4">Revenue Trend</h3>
                   <div className="h-64 flex items-center justify-center text-theme-muted">
                     <div className="text-center">
@@ -258,7 +258,7 @@ const AdminAnalytics: React.FC = () => {
                 </div>
 
                 {/* Top Products */}
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-theme-primary mb-4">Top Products</h3>
                   <div className="space-y-4">
                     {analytics.topProducts.slice(0, 5).map((product) => (
@@ -283,7 +283,7 @@ const AdminAnalytics: React.FC = () => {
                 </div>
 
                 {/* Customer Segments */}
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-theme-primary mb-4">Customer Segments</h3>
                   <div className="space-y-4">
                     {analytics.customerSegments.map((segment) => (
@@ -301,7 +301,7 @@ const AdminAnalytics: React.FC = () => {
                 </div>
 
                 {/* Order Status */}
-                <div className="bg-white rounded-lg shadow p-6">
+                <div className="bg-theme-secondary rounded-lg shadow p-6">
                   <h3 className="text-lg font-semibold text-theme-primary mb-4">Order Status</h3>
                   <div className="space-y-4">
                     {analytics.orderStatus.map((status) => (
@@ -318,7 +318,7 @@ const AdminAnalytics: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="bg-theme-secondary rounded-lg shadow p-8 text-center">
               <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-theme-primary mb-2">No Analytics Data</h3>
               <p className="text-theme-muted">Analytics data will appear here once available.</p>

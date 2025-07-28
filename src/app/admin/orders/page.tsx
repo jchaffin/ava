@@ -202,9 +202,9 @@ const AdminOrders: React.FC = () => {
   if (isLoading || loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ava-accent mx-auto"></div>
             <p className="mt-4 text-theme-secondary">Loading orders...</p>
           </div>
         </div>
@@ -214,9 +214,9 @@ const AdminOrders: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -231,23 +231,25 @@ const AdminOrders: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Filters and Search */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="bg-theme-secondary rounded-lg shadow p-6 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
-                <Input
+              <div className="flex border border-theme rounded-lg bg-theme-tertiary shadow-sm">
+                <div className="pl-4 pr-3 py-3">
+                  <Search className="w-4 h-4 text-theme-primary" />
+                </div>
+                <input
                   type="text"
                   placeholder="Search orders..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 relative"
+                  className="flex-1 px-3 py-3 bg-transparent focus:ring-0 focus:border-0 text-theme-primary placeholder:text-theme-muted"
                 />
               </div>
               
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as 'all' | 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled')}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none"
+                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
               >
                 <option value="all">All Orders</option>
                 <option value="pending">Pending</option>
@@ -260,7 +262,7 @@ const AdminOrders: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'createdAt' | 'total' | 'status')}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
               >
                 <option value="createdAt">Date Created</option>
                 <option value="total">Total Amount</option>
@@ -278,7 +280,7 @@ const AdminOrders: React.FC = () => {
           </div>
 
           {/* Orders List */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-theme-secondary rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-medium text-theme-primary">
                 Orders ({filteredAndSortedOrders.length})
@@ -313,7 +315,7 @@ const AdminOrders: React.FC = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-theme-secondary divide-y divide-gray-200">
                     {filteredAndSortedOrders.map((order) => (
                       <tr key={order._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -366,7 +368,7 @@ const AdminOrders: React.FC = () => {
                             <select
                               value={order.status}
                               onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
-                              className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              className="text-xs border border-theme rounded px-2 py-1 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                             >
                               <option value="pending">Pending</option>
                               <option value="processing">Processing</option>

@@ -208,19 +208,19 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h4 className="font-medium text-green-800 mb-2">Success</h4>
-              <div className="bg-white p-2 rounded border">
+              <div className="bg-theme-secondary p-2 rounded border">
                 <code className="text-sm">4242 4242 4242 4242</code>
               </div>
             </div>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <h4 className="font-medium text-red-800 mb-2">Decline</h4>
-              <div className="bg-white p-2 rounded border">
+              <div className="bg-theme-secondary p-2 rounded border">
                 <code className="text-sm">4000 0000 0000 0002</code>
               </div>
             </div>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <h4 className="font-medium text-yellow-800 mb-2">Requires Auth</h4>
-              <div className="bg-white p-2 rounded border">
+              <div className="bg-theme-secondary p-2 rounded border">
                 <code className="text-sm">4000 0025 0000 3155</code>
               </div>
             </div>
@@ -279,9 +279,9 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -295,7 +295,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
                   onClick={() => router.push('/admin/settings')}
                   variant="secondary"
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="w-4 h-4 mr-2 text-theme-primary" />
                   Go to Settings
                 </Button>
               </div>
@@ -304,23 +304,23 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-lg shadow">
+          <div className="bg-theme-secondary rounded-lg shadow border border-theme">
             {/* Progress Bar */}
-            <div className="border-b border-gray-200 p-6">
+            <div className="border-b border-theme p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-medium text-theme-primary">Setup Progress</h2>
                 <span className="text-sm text-theme-muted">Step {currentStep} of {steps.length}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-theme-tertiary rounded-full h-2">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-theme-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / steps.length) * 100}%` }}
                 ></div>
               </div>
             </div>
 
             {/* Step Navigation */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-theme">
               <div className="flex items-center justify-between">
                 <Button
                   onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
@@ -345,8 +345,8 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
               {steps.map((step) => (
                 <div key={step.id} className={currentStep === step.id ? 'block' : 'hidden'}>
                   <div className="flex items-center space-x-3 mb-6">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <step.icon className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-theme-tertiary rounded-full flex items-center justify-center">
+                      <step.icon className="w-5 h-5 text-theme-primary" />
                     </div>
                     <h3 className="text-xl font-semibold text-theme-primary">{step.title}</h3>
                   </div>
@@ -356,24 +356,24 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
             </div>
 
             {/* Features Overview */}
-            <div className="border-t border-gray-200 p-6 bg-gray-50">
+            <div className="border-t border-theme p-6 bg-theme-primary">
               <h3 className="text-lg font-medium text-theme-primary mb-4">Stripe Integration Features</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3">
-                  <Shield className="w-5 h-5 text-green-500" />
-                  <span>Secure card processing</span>
+                  <Shield className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Secure card processing</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Zap className="w-5 h-5 text-green-500" />
-                  <span>Apple Pay support</span>
+                  <Zap className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Apple Pay support</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Monitor className="w-5 h-5 text-green-500" />
-                  <span>Order management</span>
+                  <Monitor className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Order management</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Bell className="w-5 h-5 text-green-500" />
-                  <span>Real-time webhooks</span>
+                  <Bell className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Real-time webhooks</span>
                 </div>
               </div>
             </div>

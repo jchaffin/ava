@@ -89,35 +89,35 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-theme-primary py-20 px-4">
+      <section className="relative bg-theme-primary py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h1 className="text-4xl lg:text-6xl font-bold text-theme-primary mb-6">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center lg:text-left order-2 lg:order-1">
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-theme-primary mb-4 sm:mb-6 leading-tight">
                 Discover Your Perfect
-                <span className="text-ava-accent block">Beauty Routine</span>
+                <span className="text-ava-accent block mt-1 sm:mt-2">Beauty Routine</span>
               </h1>
-              <p className="text-xl text-theme-secondary mb-8 max-w-2xl">
+              <p className="text-lg sm:text-xl text-theme-secondary mb-6 sm:mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                 Transform your skincare journey with our premium collection of 
                 scientifically-formulated products designed for radiant, healthy skin.
               </p>
-              <div className="flex justify-center lg:justify-start">
-                <Link href="/products">
-                  <Button variant="primary" className="px-8 py-3 text-lg">
+              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                <Link href="/products" className="w-full sm:w-auto">
+                  <Button variant="primary" className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg">
                     Shop Now
                   </Button>
                 </Link>
               </div>
             </div>
-            <div className="relative">
-              <div className="relative z-10">
+            <div className="relative order-1 lg:order-2">
+              <div className="relative z-10 flex justify-center lg:justify-end">
                 {mounted && (
                   <Image
                     src={isDarkMode ? "/images/home/main_dark.png" : "/images/home/main_light.png"}
                     alt="Premium skincare products"
                     width={600}
                     height={400}
-                    className="rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg lg:max-w-xl"
+                    className="rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
                     style={{ width: 'auto', height: 'auto' }}
                     priority
                     onError={(e) => {
@@ -130,27 +130,27 @@ export default function Home() {
                   />
                 )}
               </div>
-              {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-200 rounded-full opacity-80 animate-bounce" />
-              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-pink-200 rounded-full opacity-80 animate-bounce" style={{ animationDelay: '0.5s' }} />
+              {/* Floating elements - hidden on mobile for cleaner look */}
+              <div className="hidden lg:block absolute -top-4 -right-4 w-20 h-20 bg-yellow-200 rounded-full opacity-80 animate-bounce" />
+              <div className="hidden lg:block absolute -bottom-4 -left-4 w-16 h-16 bg-pink-200 rounded-full opacity-80 animate-bounce" style={{ animationDelay: '0.5s' }} />
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-theme-secondary">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-theme-secondary">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">
               Why Choose AVA?
             </h2>
-            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-theme-secondary max-w-3xl mx-auto px-4">
               Our commitment to quality, science, and your skin&apos;s health sets us apart
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 icon: BeakerIcon,
@@ -168,12 +168,12 @@ export default function Home() {
                 description: 'Thousands of satisfied customers with visible improvements in their skin',
               }
             ].map((feature, index) => (
-              <div key={index} className="text-center p-6 rounded-xl bg-theme-primary shadow-lg hover:shadow-xl transition-all duration-300">
-                <div className="flex justify-center mb-4">
-                  <feature.icon className={`w-12 h-12 text-theme-secondary`} />
+              <div key={index} className="text-center p-6 sm:p-8 rounded-xl bg-theme-primary shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="flex justify-center mb-4 sm:mb-6">
+                  <feature.icon className={`w-10 h-10 sm:w-12 sm:h-12 text-theme-secondary`} />
                 </div>
-                <h3 className="text-xl font-semibold text-theme-secondary mb-3">{feature.title}</h3>
-                <p className="text-theme-muted">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-theme-secondary mb-3">{feature.title}</h3>
+                <p className="text-theme-muted text-sm sm:text-base leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -181,18 +181,18 @@ export default function Home() {
       </section>
 
       {/* Products Preview */}
-      <section className="py-20 px-4 bg-theme-primary">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-theme-primary">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">
               Featured Products
             </h2>
-            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-theme-secondary max-w-3xl mx-auto px-4">
               Discover our most popular skincare solutions
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
             {loading ? (
               // Loading skeletons
               Array.from({ length: 4 }).map((_, index) => (
@@ -211,18 +211,18 @@ export default function Home() {
                   className="bg-theme-primary rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
                   onClick={() => handleProductClick(product._id)}
                 >
-                  <div className="relative h-48">
+                  <div className="relative h-48 sm:h-56">
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
                       className="object-cover"
                     />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-theme-primary mb-2">{product.name}</h3>
-                    <p className="text-ava-accent font-bold">${product.price.toFixed(2)}</p>
+                  <div className="p-4 sm:p-6">
+                    <h3 className="font-semibold text-theme-primary mb-2 text-sm sm:text-base">{product.name}</h3>
+                    <p className="text-ava-accent font-bold text-lg sm:text-xl">${product.price.toFixed(2)}</p>
                   </div>
                 </div>
               ))
@@ -250,19 +250,19 @@ export default function Home() {
                   image: '/images/products/antiageserum/antiageserum_main.jpg',
                 }
               ].map((fallbackProduct, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className="relative h-48">
+                <div key={index} className="bg-theme-secondary rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="relative h-48 sm:h-56">
                     <Image
                       src={fallbackProduct.image}
                       alt={fallbackProduct.name}
                       fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
                       className="object-cover"
                     />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-black mb-2">{fallbackProduct.name}</h3>
-                    <p className="text-ava-accent font-bold">{fallbackProduct.price}</p>
+                  <div className="p-4 sm:p-6">
+                    <h3 className="font-semibold text-black mb-2 text-sm sm:text-base">{fallbackProduct.name}</h3>
+                    <p className="text-ava-accent font-bold text-lg sm:text-xl">{fallbackProduct.price}</p>
                   </div>
                 </div>
               ))
@@ -271,7 +271,7 @@ export default function Home() {
           
           <div className="text-center">
             <Link href="/products">
-              <Button className="px-8 py-3 text-lg">
+              <Button className="px-6 sm:px-8 py-3 text-base sm:text-lg">
                 View All Products
               </Button>
             </Link>
@@ -280,18 +280,18 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-theme-secondary">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-theme-secondary">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-theme-primary mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">
               What Our Customers Say
             </h2>
-            <p className="text-xl text-theme-secondary max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-theme-secondary max-w-3xl mx-auto px-4">
               Real results from real people
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 name: 'Sarah Johnson',
@@ -312,7 +312,7 @@ export default function Home() {
                 rating: 5
               }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-theme-primary shadow-lg p-6 rounded-xl">
+              <div key={index} className="bg-theme-primary shadow-lg p-6 sm:p-8 rounded-xl">
                 <div className="flex mb-4 space-x-1">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <StarIcon 
@@ -321,10 +321,10 @@ export default function Home() {
                     />
                   ))}
                 </div>
-                <p className="ava-text-tertiary mb-4 italic">&quot;{testimonial.content}&quot;</p>
+                <p className="ava-text-tertiary mb-4 italic text-sm sm:text-base leading-relaxed">&quot;{testimonial.content}&quot;</p>
                 <div>
-                  <p className="font-semibold text-theme-primary">{testimonial.name}</p>
-                  <p className="text-theme-secondary text-sm">{testimonial.role}</p>
+                  <p className="font-semibold text-theme-primary text-sm sm:text-base">{testimonial.name}</p>
+                  <p className="text-theme-secondary text-xs sm:text-sm">{testimonial.role}</p>
                 </div>
               </div>
             ))}
@@ -333,35 +333,35 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 bg-theme-primary relative">
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-theme-primary relative">
         
         <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="mb-8">
-            <h2 className="text-4xl lg:text-6xl font-bold text-theme-primary mb-6 leading-tight">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-theme-primary mb-4 sm:mb-6 leading-tight">
               Ready to Transform
-              <span className="block text-gradient">
+              <span className="block text-gradient mt-1 sm:mt-2">
                 Your Skin
               </span>
             </h2>
-            <p className="text-xl lg:text-2xl text-theme-secondary mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-theme-secondary mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
               Join thousands of customers who have discovered the power of premium skincare
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link href="/products">
-              <Button className="px-10 py-4 text-lg theme-bg-primary text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center px-4">
+            <Link href="/products" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg theme-bg-primary text-theme-primary font-bold rounded-full shadow-2xl hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105">
                 Start Shopping
               </Button>
             </Link>
-            <Link href="/register">
-              <Button className="px-10 py-4 text-lg bg-theme-primary text-theme-primary font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105">
+            <Link href="/register" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg bg-theme-primary text-theme-primary font-bold rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105">
                 Create Account
               </Button>
             </Link>
           </div>
           
-          <div className="mt-12 flex justify-center items-center space-x-8 text-theme-secondary text-sm">
+          <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8 text-theme-secondary text-xs sm:text-sm px-4">
             <div className="flex items-center">
               <TruckIcon className="w-4 h-4 text-theme-primary mr-2" />
               Free Shipping
@@ -374,17 +374,17 @@ export default function Home() {
               <ShieldCheckIcon className="w-4 h-4 text-theme-primary mr-2" />
               Secure Checkout
             </div>
-          </div>``
+          </div>
         </div>
       </section>
 
       {/* Newsletter */}
-      <section className="py-16 px-4 bg-theme-primary">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-theme-primary">
         <div className="max-w-2xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-theme-primary mb-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-theme-primary mb-3 sm:mb-4">
             Stay Updated
           </h3>
-          <p className="ava-text-tertiary mb-6">
+          <p className="ava-text-tertiary mb-6 text-sm sm:text-base">
             Get the latest skincare tips, product launches, and exclusive offers
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
@@ -393,10 +393,10 @@ export default function Home() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-3 py-3 outline-none focus:ring-0 focus:border-0 focus:shadow-none border-0 bg-transparent text-theme-primary placeholder-theme-muted"
+                className="flex-1 px-3 py-3 outline-none focus:ring-0 focus:border-0 focus:shadow-none border-0 bg-transparent text-theme-primary placeholder-theme-muted text-sm sm:text-base"
               />
             </div>
-            <Button variant="primary" className="px-6 py-3 whitespace-nowrap">
+            <Button variant="primary" className="px-6 py-3 whitespace-nowrap text-sm sm:text-base">
               Subscribe
             </Button>
           </div>

@@ -13,7 +13,7 @@ const Input: React.FC<InputProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClasses = 'w-full px-3 py-2 bg-theme-secondary border-0 rounded-lg focus:outline-none focus:ring-0 focus:border-0 text-theme-primary placeholder:text-theme-muted'
+  const baseClasses = 'w-full px-3 py-2 bg-theme-tertiary border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme text-theme-primary placeholder:text-theme-muted'
   const errorClasses = ''
   const classes = `${baseClasses} ${errorClasses} ${className}`.trim()
 

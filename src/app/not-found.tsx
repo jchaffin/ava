@@ -17,16 +17,16 @@ const NotFound = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-theme-primary px-4 sm:px-6">
       <div className="max-w-md w-full text-center">
         {/* 404 Number */}
         <div className="mb-8">
-          <h1 className="text-9xl font-bold text-gray-300 select-none">404</h1>
-          <div className="relative -mt-20">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-6xl sm:text-8xl lg:text-9xl font-bold text-theme-muted select-none">404</h1>
+          <div className="relative -mt-12 sm:-mt-16 lg:-mt-20">
+            <h2 className="text-2xl sm:text-3xl font-bold text-theme-primary mb-2">
               Page Not Found
             </h2>
-            <p className="text-theme-secondary mb-8">
+            <p className="text-theme-secondary mb-8 text-sm sm:text-base">
               Oops! The page you&apos;re looking for doesn&apos;t exist.
             </p>
           </div>
@@ -34,10 +34,10 @@ const NotFound = () => {
 
         {/* Illustration */}
         <div className="mb-8">
-          <div className="w-32 h-32 mx-auto mb-4">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4">
             <svg
               viewBox="0 0 200 200"
-              className="w-full h-full text-gray-400"
+              className="w-full h-full text-theme-muted"
               fill="currentColor"
             >
               <path d="M100 20c-44.18 0-80 35.82-80 80s35.82 80 80 80 80-35.82 80-80-35.82-80-80-80zm0 140c-33.14 0-60-26.86-60-60s26.86-60 60-60 60 26.86 60 60-26.86 60-60 60z" />
@@ -51,25 +51,25 @@ const NotFound = () => {
 
         {/* Helpful Links */}
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-4">
             Here are some helpful links:
           </h3>
           <div className="space-y-2">
             <Link 
               href="/"
-              className="block text-theme-primary hover:text-theme-secondary transition-colors"
+              className="block text-theme-primary hover:text-ava-accent transition-colors text-sm sm:text-base"
             >
               Home
             </Link>
             <Link 
               href="/products"
-              className="block text-theme-primary hover:text-theme-secondary transition-colors"
+              className="block text-theme-primary hover:text-ava-accent transition-colors text-sm sm:text-base"
             >
               Products
             </Link>
             <Link 
               href="/cart"
-              className="block text-theme-primary hover:text-theme-secondary transition-colors"
+              className="block text-theme-primary hover:text-ava-accent transition-colors text-sm sm:text-base"
             >
               Shopping Cart
             </Link>
@@ -77,10 +77,10 @@ const NotFound = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <Button
             onClick={handleGoBack}
-            className="w-full bg-gray-600 hover:bg-gray-700 text-theme-primary"
+            className="w-full bg-theme-secondary hover:bg-theme-tertiary text-theme-primary"
           >
             Go Back
           </Button>
@@ -93,13 +93,13 @@ const NotFound = () => {
         </div>
 
         {/* Search Suggestion */}
-        <div className="mt-8 p-4 bg-theme-primary rounded-lg shadow-sm border border-theme">
+        <div className="mt-8 p-4 bg-theme-secondary rounded-lg shadow-sm border border-theme">
           <p className="text-sm text-theme-secondary mb-2">
             Can&apos;t find what you&apos;re looking for?
           </p>
           <Link
             href="/products"
-            className="text-theme-primary hover:text-theme-secondary font-medium"
+            className="text-theme-primary hover:text-ava-accent font-medium"
           >
             Browse our products →
           </Link>

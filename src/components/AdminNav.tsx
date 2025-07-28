@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
+import ThemeToggle from './ThemeToggle'
 
 const AdminNav: React.FC = () => {
   const pathname = usePathname()
@@ -67,11 +68,12 @@ const AdminNav: React.FC = () => {
   return (
     <nav className="bg-theme-primary shadow-sm border-r border-theme w-64 min-h-screen">
       <div className="p-6">
-        <div className="flex items-center space-x-3 mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-lg font-semibold text-theme-primary">Admin Panel</h1>
             <p className="text-sm text-theme-muted">Welcome, {user?.name}</p>
           </div>
+          <ThemeToggle />
         </div>
 
         <div className="space-y-2">
@@ -83,7 +85,7 @@ const AdminNav: React.FC = () => {
                 href={item.href}
                 className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                    ? 'bg-theme-tertiary text-theme-primary border-r-2 border-theme-primary'
                     : 'text-theme-secondary hover:bg-theme-secondary hover:text-theme-primary'
                 }`}
               >
@@ -94,7 +96,7 @@ const AdminNav: React.FC = () => {
           })}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-theme">
           <h3 className="text-xs font-semibold text-theme-muted uppercase tracking-wider mb-3">Tutorials</h3>
           <div className="space-y-2">
             {tutorialItems.map((item) => {
@@ -105,7 +107,7 @@ const AdminNav: React.FC = () => {
                   href={item.href}
                   className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                      ? 'bg-theme-tertiary text-theme-primary border-r-2 border-theme-primary'
                       : 'text-theme-secondary hover:bg-theme-secondary hover:text-theme-primary'
                   }`}
                 >
@@ -117,7 +119,7 @@ const AdminNav: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-theme">
           <Button
             variant="ghost"
             onClick={logout}

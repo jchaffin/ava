@@ -205,9 +205,9 @@ const AdminProducts: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-theme-secondary shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -231,7 +231,7 @@ const AdminProducts: React.FC = () => {
               {/* Search */}
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-muted w-4 h-4 z-10" />
                   <Input
                     placeholder="Search products..."
                     value={searchTerm}
@@ -261,7 +261,7 @@ const AdminProducts: React.FC = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'stock' | 'createdAt')}
-                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                 >
                   <option value="name">Name</option>
                   <option value="price">Price</option>
@@ -284,8 +284,8 @@ const AdminProducts: React.FC = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
+          <div className="bg-theme-secondary rounded-lg shadow overflow-hidden">
+            <div className="px-6 py-4 border-b border-theme">
               <h3 className="text-lg font-medium text-theme-primary">
                 Products ({filteredAndSortedProducts.length})
               </h3>
@@ -294,7 +294,7 @@ const AdminProducts: React.FC = () => {
             {filteredAndSortedProducts.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-theme-tertiary">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Product
@@ -316,11 +316,11 @@ const AdminProducts: React.FC = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-theme-secondary divide-y divide-theme">
                     {filteredAndSortedProducts.map((product) => {
                       const stockStatus = getStockStatus(product.stock)
                       return (
-                        <tr key={product._id} className="hover:bg-gray-50">
+                        <tr key={product._id} className="hover:bg-theme-tertiary">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <img
@@ -398,7 +398,7 @@ const AdminProducts: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <Package className="w-12 h-12 text-theme-muted mx-auto mb-4" />
                 <p className="text-theme-muted">
                   {searchTerm || filter !== 'all' 
                     ? 'No products match your filters' 
@@ -426,14 +426,19 @@ const AdminProducts: React.FC = () => {
       <Dialog open={imageModal.open} onClose={() => setImageModal({ open: false, product: null })} className="fixed z-50 inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black opacity-30" />
-          <div className="bg-white rounded-lg shadow-lg p-6 z-10 max-w-md w-full">
-            <Dialog.Title className="text-lg font-bold mb-4">Upload Product Image</Dialog.Title>
+          <div className="bg-theme-secondary rounded-lg shadow-lg p-6 z-10 max-w-md w-full">
+            <Dialog.Title className="text-lg font-bold text-theme-primary mb-4">Upload Product Image</Dialog.Title>
             {imagePreview ? (
               <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded mb-4 mx-auto" />
             ) : (
               <img src={imageModal.product?.image} alt="Current" className="w-32 h-32 object-cover rounded mb-4 mx-auto" />
             )}
-            <input type="file" accept="image/*" onChange={handleImageChange} className="mb-4" />
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageChange} 
+              className="mb-4 block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary" 
+            />
             <div className="flex justify-end space-x-2">
               <Button variant="secondary" onClick={() => setImageModal({ open: false, product: null })}>Cancel</Button>
               <Button onClick={handleImageUpload} disabled={!imageFile}>Upload</Button>

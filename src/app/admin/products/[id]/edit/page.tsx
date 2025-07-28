@@ -211,7 +211,7 @@ const EditProduct: React.FC = () => {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+          <form onSubmit={handleSubmit} className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Product Name */}
               <div className="md:col-span-2">
@@ -270,7 +270,7 @@ const EditProduct: React.FC = () => {
                     id="featured"
                     checked={form.featured}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('featured', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-ava-accent focus:ring-ava-accent border-theme rounded"
                   />
                   <label htmlFor="featured" className="ml-2 text-sm ava-text-tertiary">
                     Featured Product
@@ -322,7 +322,7 @@ const EditProduct: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary"
                     />
                     <p className="mt-1 text-sm text-theme-muted">
                       Upload a new image to replace the current one
