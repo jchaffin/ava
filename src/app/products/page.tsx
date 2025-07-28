@@ -1,14 +1,13 @@
 import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
-import { headers } from 'next/headers';
 
 async function fetchInitialProducts() {
-  // Get the host from request headers for server-side fetch
-  const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3000';
-  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-  
-  const res = await fetch(`${protocol}://${host}/api/products?limit=12`, { 
+  // Use absolute URL that works in all environments
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000';
+    
+  const res = await fetch(`${baseUrl}/api/products?limit=12`, { 
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
