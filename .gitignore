@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# ST 3
+*.sublime-workspace
+*.sublime-project
