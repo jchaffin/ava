@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import Image from 'next/image'
 import { AdminLayout } from '@/components'
 import { Button, Input, Textarea } from '@/components/ui'
 import { useAuth } from '@/context'
@@ -11,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { localKeyToUrl, isLocalKey, extractKeyFromLocalUrl } from '@/lib/local-storage-client'
 
 interface Product {
   _id: string
@@ -19,6 +21,7 @@ interface Product {
   price: number
   stock: number
   image: string
+  images?: string[]
   featured: boolean
   createdAt: string
 }
@@ -64,12 +67,69 @@ const EditProduct: React.FC = () => {
           featured: data.data.featured,
         })
         
-        // Initialize with the base image for all 4 slots
+        // Initialize with the 4 images that are shown in the product page modal
         const baseImage = data.data.image || '/images/placeholder.jpg'
         console.log('Base image:', baseImage)
+        console.log('Product images array:', data.data.images)
         
-        // For now, use the same image for all 4 slots, but they can be updated independently
-        const images = [baseImage, baseImage, baseImage, baseImage]
+        // Generate the 4 images using the same logic as the product page
+        const images = [1, 2, 3, 4].map((index) => {
+          let imageUrl = ''
+          
+          // If product.images array exists, use those images
+          if (data.data.images && data.data.images[index - 1]) {
+            imageUrl = data.data.images[index - 1]
+            console.log(`Using image from array for index ${index}:`, imageUrl)
+          } else {
+            // Otherwise, fallback to replacing "_main" with "_index" pattern
+            // Handle different naming patterns: main.jpg, _main.jpg, etc.
+            if (baseImage.includes('_main.')) {
+              imageUrl = baseImage.replace('_main.', `_${index}.`)
+            } else if (baseImage.includes('main.')) {
+              imageUrl = baseImage.replace('main.', `${index}.`)
+            } else {
+              // Fallback: try to replace "main" with index
+              imageUrl = baseImage.replace('main', index.toString())
+            }
+            
+            // Ensure we're using the correct product ID in the path
+            if (imageUrl.includes('/images/products/')) {
+              const pathParts = imageUrl.split('/')
+              const productIdIndex = pathParts.findIndex(part => part === 'products') + 1
+              if (productIdIndex > 0 && pathParts[productIdIndex] !== data.data._id) {
+                pathParts[productIdIndex] = data.data._id
+                imageUrl = pathParts.join('/')
+                console.log(`Updated product ID in path for index ${index}:`, imageUrl)
+              }
+            }
+            
+            console.log(`Generated image URL for index ${index}:`, imageUrl)
+          }
+          
+          // Convert local storage keys to URLs
+          let finalUrl = imageUrl
+          
+          // Handle local storage keys and URLs
+          if (isLocalKey(imageUrl)) {
+            finalUrl = localKeyToUrl(imageUrl)
+            console.log(`Converted local key to URL for index ${index}:`, imageUrl, '->', finalUrl)
+          } else if (imageUrl.includes('/images/products/') || imageUrl.includes('/uploads/')) {
+            const key = extractKeyFromLocalUrl(imageUrl)
+            finalUrl = key ? localKeyToUrl(key) : imageUrl
+            console.log(`Extracted and converted URL for index ${index}:`, imageUrl, '->', finalUrl)
+          }
+          
+          // Ensure the URL starts with / for local images
+          if (finalUrl && !finalUrl.startsWith('http') && !finalUrl.startsWith('/')) {
+            finalUrl = '/' + finalUrl
+          }
+          
+
+          
+          console.log(`Final image URL for index ${index}:`, finalUrl)
+          return finalUrl
+        })
+        
         console.log('Initial images:', images)
         
         setProductImages(images)
@@ -166,7 +226,7 @@ const EditProduct: React.FC = () => {
       let response: Response
       
       if (imageFile) {
-        // Upload new image to S3
+        // Upload new image to local storage
         const formData = new FormData()
         formData.append('image', imageFile)
         formData.append('imageIndex', editingImageIndex.toString())
@@ -225,13 +285,18 @@ const EditProduct: React.FC = () => {
 
     setSaving(true)
     try {
-      // Update the product
+      // Update the product with images array
+      const updateData = {
+        ...form,
+        images: productImages
+      }
+      
       const response = await fetch(`/api/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(updateData),
       })
 
       const data = await response.json()
@@ -408,12 +473,21 @@ const EditProduct: React.FC = () => {
                               src={image} 
                               alt={`Product Image ${index + 1}`} 
                               className="w-full h-40 object-cover rounded-lg"
+                              onError={(e) => {
+                                console.error(`Failed to load image ${index + 1}:`, image)
+                                e.currentTarget.style.display = 'none'
+                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                              }}
                             />
                           ) : (
                             <div className="w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
                               <span className="text-theme-muted text-sm">No Image</span>
                             </div>
                           )}
+                          {/* Fallback for failed images */}
+                          <div className="hidden w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
+                            <span className="text-theme-muted text-sm">Failed to load</span>
+                          </div>
                           <button
                             type="button"
                             onClick={() => {
@@ -428,6 +502,9 @@ const EditProduct: React.FC = () => {
                           </button>
                         </div>
                         <p className="text-sm text-theme-muted text-center mt-2 font-medium">Image {index + 1}</p>
+                        <p className="text-xs text-theme-muted text-center mt-1 truncate" title={image}>
+                          {image ? image.split('/').pop() : 'No image'}
+                        </p>
                       </div>
                     ))}
                   </div>

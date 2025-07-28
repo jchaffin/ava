@@ -20,27 +20,59 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Return actual configuration values
-    const config = {
-      bucketName: process.env.AWS_S3_BUCKET_NAME || process.env.AWS_S3_BUCKET || 'adelas-bucket',
-      region: process.env.AWS_REGION || 'us-east-1',
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-      cdnDomain: process.env.AWS_CLOUDFRONT_DOMAIN || '',
-      bucketConfigured: !!(process.env.AWS_S3_BUCKET_NAME || process.env.AWS_S3_BUCKET),
-      accessKeyConfigured: !!process.env.AWS_ACCESS_KEY_ID,
-      secretKeyConfigured: !!process.env.AWS_SECRET_ACCESS_KEY,
-    }
-
+    // Return local storage configuration
     return NextResponse.json({
       success: true,
-      data: config
+      data: {
+        bucketName: 'Local Storage',
+        region: 'Local',
+        cdnDomain: undefined,
+        bucketConfigured: true,
+        accessKeyConfigured: true,
+        secretKeyConfigured: true,
+        uploadDir: 'public/uploads',
+        productImagesDir: 'public/images/products'
+      }
     })
 
   } catch (error) {
-    console.error('Error fetching S3 config:', error)
+    console.error('Error fetching local storage config:', error)
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch S3 configuration' },
+      { success: false, message: 'Failed to fetch local storage config' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    // Check authentication and authorization
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, message: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    if (session.user.role !== 'admin') {
+      return NextResponse.json(
+        { success: false, message: 'Admin access required' },
+        { status: 403 }
+      )
+    }
+
+    // For local storage, we don't need to save any configuration
+    // Just return success
+    return NextResponse.json({
+      success: true,
+      message: 'Local storage configuration updated successfully'
+    })
+
+  } catch (error) {
+    console.error('Error updating local storage config:', error)
+    return NextResponse.json(
+      { success: false, message: 'Failed to update local storage config' },
       { status: 500 }
     )
   }

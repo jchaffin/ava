@@ -10,7 +10,7 @@ import { Button } from '@/components/ui'
 import { useCart } from '@/context'
 import { IProduct } from '@/types'
 import { formatPrice, getSubDir } from '@/utils/helpers'
-import { s3KeyToUrl, isS3Key, extractKeyFromS3Url } from '@/lib/s3'
+import { localKeyToUrl, isLocalKey, extractKeyFromLocalUrl } from '@/lib/local-storage-client'
 import toast from 'react-hot-toast'
 import { 
   HeartIcon, 
@@ -435,23 +435,25 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
           {/* Product Images */}
           <div className="space-y-4">
             <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
-              <Image
-                src={(() => {
-                  if (isS3Key(product.image)) {
-                    return s3KeyToUrl(product.image)
-                  } else if (product.image.includes('s3.amazonaws.com')) {
-                    const key = extractKeyFromS3Url(product.image)
-                    return key ? s3KeyToUrl(key) : product.image
-                  } else {
-                    return product.image
-                  }
-                })()}
-                alt={product.name}
-                fill
-                sizes={product.sizes || '(max-width: 768px) 100vw, 50vw'}
-                className="object-cover"
-                priority
-              />
+              <div className="relative w-full h-full"> {/* Defensive wrapper for Next.js fill */}
+                <Image
+                  src={(() => {
+                    if (isLocalKey(product.image)) {
+                      return localKeyToUrl(product.image)
+                    } else if (product.image.includes('/images/products/') || product.image.includes('/uploads/')) {
+                      const key = extractKeyFromLocalUrl(product.image)
+                      return key ? localKeyToUrl(key) : product.image
+                    } else {
+                      return product.image
+                    }
+                  })()}
+                  alt={product.name}
+                  fill
+                  sizes={product.sizes || '(max-width: 768px) 100vw, 50vw'}
+                  className="object-cover"
+                  priority
+                />
+              </div>
 
               {isOutOfStock && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -469,11 +471,11 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                   : product.image.replace('main', index.toString())
                 
                 // Convert any format to URL
-                if (isS3Key(imageUrl)) {
-                  imageUrl = s3KeyToUrl(imageUrl)
-                } else if (imageUrl.includes('s3.amazonaws.com')) {
-                  const key = extractKeyFromS3Url(imageUrl)
-                  imageUrl = key ? s3KeyToUrl(key) : imageUrl
+                if (isLocalKey(imageUrl)) {
+                  imageUrl = localKeyToUrl(imageUrl)
+                } else if (imageUrl.includes('/images/products/') || imageUrl.includes('/uploads/')) {
+                  const key = extractKeyFromLocalUrl(imageUrl)
+                  imageUrl = key ? localKeyToUrl(key) : imageUrl
                 }
                 
                 return (
@@ -659,7 +661,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-16 border-t border-gray-200 pt-16 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8">
+        <div className="mt-16 pt-16 bg-theme-secondary rounded-xl p-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-theme-primary">Customer Reviews</h2>
             <Button
@@ -706,7 +708,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                   <textarea
                     value={reviewForm.comment}
                     onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                    placeholder="Share your experience with this product..."
+                    placeholder="Share your experience ewqwith this product..."
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
                     rows={4}
                   />
@@ -751,21 +753,17 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
           ) : (
             <div className="space-y-6">
               {state.reviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-6 bg-white rounded-lg p-6 shadow-sm">
+                <div key={review.id} className="border border-theme bg-theme-primary rounded-xl p-6 shadow-md mb-6">
                   <div className="flex items-center space-x-4 mb-3">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-medium text-theme-secondary">
+                    <div className="w-10 h-10 bg-theme-tertiary rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-theme-primary">
                         {review.userName.charAt(0)}
                       </span>
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium text-theme-primary">{review.userName}</h4>
-                        {review.verified && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                            Verified Purchase
-                          </span>
-                        )}
+                        {review.verified && null}
                       </div>
                       <div className="flex items-center space-x-2">
                         {renderStars(review.rating, 'sm')}
@@ -775,7 +773,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                       </div>
                     </div>
                   </div>
-                  <p className="ava-text-tertiary ml-14">{review.comment}</p>
+                  <p className="ml-14 text-theme-primary rounded-lg px-4 py-3 mt-2 inline-block w-fit">{review.comment}</p>
                 </div>
               ))}
             </div>

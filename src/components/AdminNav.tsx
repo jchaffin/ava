@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Package,
@@ -15,6 +16,7 @@ import {
   X,
   Home,
   BookOpen as Book,
+  ArrowLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
@@ -27,6 +29,7 @@ interface AdminNavProps {
 const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
   const pathname = usePathname()
   const { user, logout } = useAuth()
+  const router = useRouter();
 
   const navItems = [
     {
@@ -51,7 +54,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
     },
     {
       href: '/admin/s3',
-      label: 'S3 Management',
+      label: 'Local Storage',
       icon: Cloud,
     },
     {
@@ -74,7 +77,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
     },
     {
       href: '/admin/tutorials/aws',
-      label: 'AWS S3 Setup',
+      label: 'Storage Setup',
       icon: Cloud,
     },
   ]
@@ -198,7 +201,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
 
       {/* Fixed Bottom Section */}
       <div className="flex-shrink-0 p-6 border-t border-theme">
-        {/* Icon Row - Home, Theme Toggle, Tutorials */}
+        {/* Icon Row - Home, Back, Tutorials, Theme Toggle */}
         <div className="mb-4 flex items-center justify-center space-x-2">
           <Link href="/">
             <button
@@ -207,7 +210,12 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
               <Home className="w-5 h-5" />
             </button>
           </Link>
-          <ThemeToggle />
+          <button
+            className="p-2 text-theme-secondary hover:text-theme-primary"
+            onClick={() => router.back()}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <Link href="/admin/tutorials">
             <button
               className="p-2 text-theme-secondary hover:text-theme-primary"
@@ -215,6 +223,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
               <BookOpen className="w-5 h-5" />
             </button>
           </Link>
+          <ThemeToggle />
         </div>
         
         {/* Sign Out */}

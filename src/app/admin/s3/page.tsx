@@ -34,13 +34,15 @@ import {
 import toast from 'react-hot-toast'
 import { Dialog } from '@headlessui/react'
 
-interface S3Stats {
+interface LocalStorageStats {
   totalFiles: number
   totalSize: string
   bucketName: string
   region: string
   cdnEnabled: boolean
   cdnDomain?: string
+  uploadDir?: string
+  productImagesDir?: string
 }
 
 interface S3File {
@@ -52,21 +54,23 @@ interface S3File {
   folder: string
 }
 
-interface S3Config {
+interface LocalStorageConfig {
   bucketName: string
   region: string
   cdnDomain?: string
   bucketConfigured: boolean
   accessKeyConfigured: boolean
   secretKeyConfigured: boolean
+  uploadDir?: string
+  productImagesDir?: string
 }
 
 const AdminS3Management: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
-  const [stats, setStats] = useState<S3Stats | null>(null)
+  const [stats, setStats] = useState<LocalStorageStats | null>(null)
   const [files, setFiles] = useState<S3File[]>([])
-  const [config, setConfig] = useState<S3Config | null>(null)
+  const [config, setConfig] = useState<LocalStorageConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [uploadModal, setUploadModal] = useState(false)
   const [uploadFile, setUploadFile] = useState<File | null>(null)
@@ -441,9 +445,9 @@ const AdminS3Management: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
-                <h1 className="text-3xl font-bold text-theme-primary">S3 Management</h1>
+                <h1 className="text-3xl font-bold text-theme-primary">Local Storage Management</h1>
                 <p className="mt-1 text-sm text-theme-muted">
-                  Manage your AWS S3 assets and storage
+                  Manage your local file storage and assets
                 </p>
               </div>
               <div className="flex items-center space-x-4">
@@ -451,7 +455,7 @@ const AdminS3Management: React.FC = () => {
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh
                 </Button>
-                <Button variant="primary" onClick={() => setUploadModal(true)}>
+                <Button variant="secondary" onClick={() => setUploadModal(true)}>
                   <Upload className="w-4 h-4 mr-2" />
                   Upload File
                 </Button>
@@ -465,13 +469,13 @@ const AdminS3Management: React.FC = () => {
           {config && (
             <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-theme-primary">S3 Configuration</h3>
+                <h3 className="text-lg font-medium text-theme-primary">Local Storage Configuration</h3>
                 <Button variant="secondary" size="sm" onClick={async () => {
                   await fetchS3Config()
                   setConfigModal(true)
                 }}>
                   <Settings className="w-4 h-4 mr-2" />
-                  Configure
+                  View Info
                 </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -480,7 +484,7 @@ const AdminS3Management: React.FC = () => {
                     <HardDrive className="w-5 h-5 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-primary">Bucket</p>
+                    <p className="text-sm font-medium text-theme-primary">Storage Type</p>
                     <p className="text-sm text-theme-muted">{config.bucketName}</p>
                   </div>
                 </div>
@@ -489,26 +493,17 @@ const AdminS3Management: React.FC = () => {
                     <Globe className="w-5 h-5 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-primary">Region</p>
+                    <p className="text-sm font-medium text-theme-primary">Location</p>
                     <p className="text-sm text-theme-muted">{config.region}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <div className="flex-shrink-0 p-2 bg-theme-tertiary rounded-lg">
-                    <Shield className="w-5 h-5 text-theme-primary" />
+                    <Folder className="w-5 h-5 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-primary">Access Key</p>
-                    <div className="flex items-center space-x-1">
-                      {config.accessKeyConfigured ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                      <span className="text-sm text-theme-muted">
-                        {config.accessKeyConfigured ? 'Configured' : 'Missing'}
-                      </span>
-                    </div>
+                    <p className="text-sm font-medium text-theme-primary">Upload Directory</p>
+                    <p className="text-sm text-theme-muted">{config.uploadDir || 'public/uploads'}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -516,17 +511,8 @@ const AdminS3Management: React.FC = () => {
                     <Database className="w-5 h-5 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-primary">Secret Key</p>
-                    <div className="flex items-center space-x-1">
-                      {config.secretKeyConfigured ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                      <span className="text-sm text-theme-muted">
-                        {config.secretKeyConfigured ? 'Configured' : 'Missing'}
-                      </span>
-                    </div>
+                    <p className="text-sm font-medium text-theme-primary">Product Images</p>
+                    <p className="text-sm text-theme-muted">{config.productImagesDir || 'public/images/products'}</p>
                   </div>
                 </div>
               </div>
@@ -563,10 +549,10 @@ const AdminS3Management: React.FC = () => {
               <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 p-2 bg-theme-tertiary rounded-lg">
-                    <Cloud className="w-6 h-6 text-theme-primary" />
+                    <HardDrive className="w-6 h-6 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-secondary">Bucket</p>
+                    <p className="text-sm font-medium text-theme-secondary">Storage Type</p>
                     <p className="text-lg font-bold text-theme-primary">{stats.bucketName}</p>
                   </div>
                 </div>
@@ -575,20 +561,13 @@ const AdminS3Management: React.FC = () => {
               <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 p-2 bg-theme-tertiary rounded-lg">
-                    <Globe className="w-6 h-6 text-theme-primary" />
+                    <Folder className="w-6 h-6 text-theme-primary" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-medium text-theme-secondary">CDN Status</p>
-                    <div className="flex items-center space-x-1">
-                      {stats.cdnEnabled ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                      <span className="text-sm font-medium text-theme-primary">
-                        {stats.cdnEnabled ? 'Enabled' : 'Disabled'}
-                      </span>
-                    </div>
+                    <p className="text-sm font-medium text-theme-secondary">Storage Location</p>
+                    <span className="text-sm font-medium text-theme-primary">
+                      Local File System
+                    </span>
                   </div>
                 </div>
               </div>
@@ -635,14 +614,216 @@ const AdminS3Management: React.FC = () => {
             </div>
           </div>
 
-          {/* Tree View */}
+          {/* File Browser */}
           <div className="bg-theme-secondary rounded-lg shadow border border-theme overflow-hidden">
             <div className="px-6 py-4 border-b border-theme">
-              <h3 className="text-lg font-medium text-theme-primary">File Structure</h3>
+              <h3 className="text-lg font-medium text-theme-primary">Local File Storage</h3>
             </div>
             
             <div className="max-h-96 overflow-y-auto">
-              {getRootFolders().map((folder) => renderTreeItem(folder))}
+              {/* Tree View of Local Directories */}
+              <div className="p-4">
+                {/* Public Root */}
+                <div className="space-y-1">
+                  <div 
+                    className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                    onClick={() => toggleFolder('public')}
+                  >
+                    <div className="flex items-center flex-1">
+                      {isFolderExpanded('public') ? (
+                        <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                      )}
+                      <Folder className="w-5 h-5 mr-2 text-theme-primary" />
+                      <span className="text-sm font-medium text-theme-primary">public/</span>
+                      <span className="text-sm text-theme-muted ml-2">(Main assets directory)</span>
+                    </div>
+                  </div>
+                  
+                  {isFolderExpanded('public') && (
+                    <div className="ml-6 space-y-1">
+                      {/* Uploads */}
+                      <div 
+                        className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                        onClick={() => toggleFolder('public/uploads')}
+                      >
+                        <div className="flex items-center flex-1">
+                          {isFolderExpanded('public/uploads') ? (
+                            <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                          )}
+                          <Upload className="w-5 h-5 mr-2 text-theme-primary" />
+                          <span className="text-sm font-medium text-theme-primary">uploads/</span>
+                          <span className="text-sm text-theme-muted ml-2">(User uploaded files)</span>
+                        </div>
+                      </div>
+
+                      {/* Images */}
+                      <div 
+                        className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                        onClick={() => toggleFolder('public/images')}
+                      >
+                        <div className="flex items-center flex-1">
+                          {isFolderExpanded('public/images') ? (
+                            <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                          )}
+                          <File className="w-5 h-5 mr-2 text-theme-primary" />
+                          <span className="text-sm font-medium text-theme-primary">images/</span>
+                          <span className="text-sm text-theme-muted ml-2">(Static images and assets)</span>
+                        </div>
+                      </div>
+
+                      {isFolderExpanded('public/images') && (
+                        <div className="ml-6 space-y-1">
+                          {/* Product Images */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/products')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/products') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">products/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Product images and galleries)</span>
+                            </div>
+                          </div>
+
+                          {/* Logos */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/logos')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/logos') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">logos/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Brand logos and icons)</span>
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/content')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/content') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">content/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Website content images)</span>
+                            </div>
+                          </div>
+
+                          {/* Gallery */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/gallery')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/gallery') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">gallery/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Image gallery)</span>
+                            </div>
+                          </div>
+
+                          {/* Home */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/home')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/home') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">home/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Homepage images)</span>
+                            </div>
+                          </div>
+
+                          {/* Info */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/images/info')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/images/info') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">info/</span>
+                              <span className="text-sm text-theme-muted ml-2">(Information images)</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Assets */}
+                      <div 
+                        className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                        onClick={() => toggleFolder('public/assets')}
+                      >
+                        <div className="flex items-center flex-1">
+                          {isFolderExpanded('public/assets') ? (
+                            <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                          )}
+                          <File className="w-5 h-5 mr-2 text-theme-primary" />
+                          <span className="text-sm font-medium text-theme-primary">assets/</span>
+                          <span className="text-sm text-theme-muted ml-2">(CSS, JS, and other assets)</span>
+                        </div>
+                      </div>
+
+                      {isFolderExpanded('public/assets') && (
+                        <div className="ml-6 space-y-1">
+                          {/* Icons */}
+                          <div 
+                            className="flex items-center py-2 px-3 hover:bg-theme-tertiary cursor-pointer rounded-lg"
+                            onClick={() => toggleFolder('public/assets/icons')}
+                          >
+                            <div className="flex items-center flex-1">
+                              {isFolderExpanded('public/assets/icons') ? (
+                                <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+                              ) : (
+                                <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+                              )}
+                              <File className="w-5 h-5 mr-2 text-theme-primary" />
+                              <span className="text-sm font-medium text-theme-primary">icons/</span>
+                              <span className="text-sm text-theme-muted ml-2">(SVG icons)</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -705,90 +886,60 @@ const AdminS3Management: React.FC = () => {
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black opacity-30" />
           <div className="bg-theme-secondary rounded-lg shadow-lg p-6 z-10 max-w-2xl w-full">
-            <Dialog.Title className="text-lg font-bold text-theme-primary mb-4">S3 Configuration</Dialog.Title>
+            <Dialog.Title className="text-lg font-bold text-theme-primary mb-4">Local Storage Configuration</Dialog.Title>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-theme-primary mb-2">
-                  Bucket Name
+                  Storage Type
                 </label>
                 <input
                   type="text"
-                  value={s3Config.bucketName}
-                  onChange={(e) => setS3Config({...s3Config, bucketName: e.target.value})}
-                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary text-theme-primary"
-                  placeholder="your-bucket-name"
+                  value="Local File System"
+                  disabled
+                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary text-theme-muted cursor-not-allowed"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-theme-primary mb-2">
-                  Region
+                  Upload Directory
                 </label>
                 <input
                   type="text"
-                  value={s3Config.region}
-                  onChange={(e) => setS3Config({...s3Config, region: e.target.value})}
-                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary text-theme-primary"
-                  placeholder="us-east-1"
+                  value={config?.uploadDir || 'public/uploads'}
+                  disabled
+                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary text-theme-muted cursor-not-allowed"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-theme-primary mb-2">
-                  Access Key ID
+                  Product Images Directory
                 </label>
-                <div className="relative">
-                  <input
-                    type={showAccessKey ? "text" : "password"}
-                    value={s3Config.accessKeyId}
-                    onChange={(e) => setS3Config({...s3Config, accessKeyId: e.target.value})}
-                    className="w-full px-3 py-2 pr-10 border border-theme rounded-lg bg-theme-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary text-theme-primary"
-                    placeholder="AKIA..."
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowAccessKey(!showAccessKey)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-theme-muted hover:text-theme-primary"
-                  >
-                    {showAccessKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                <input
+                  type="text"
+                  value={config?.productImagesDir || 'public/images/products'}
+                  disabled
+                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary text-theme-muted cursor-not-allowed"
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">
+                      Local Storage Active
+                    </h3>
+                    <div className="mt-2 text-sm text-blue-700">
+                      <p>Files are stored locally in your project's public directory.</p>
+                      <p className="mt-1">No external configuration required.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-theme-primary mb-2">
-                  Secret Access Key
-                </label>
-                <div className="relative">
-                  <input
-                    type={showSecretKey ? "text" : "password"}
-                    value={s3Config.secretAccessKey}
-                    onChange={(e) => setS3Config({...s3Config, secretAccessKey: e.target.value})}
-                    className="w-full px-3 py-2 pr-10 border border-theme rounded-lg bg-theme-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary text-theme-primary"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowSecretKey(!showSecretKey)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-theme-muted hover:text-theme-primary"
-                  >
-                    {showSecretKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-theme-primary mb-2">
-                  CloudFront Domain (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={s3Config.cdnDomain}
-                  onChange={(e) => setS3Config({...s3Config, cdnDomain: e.target.value})}
-                  className="w-full px-3 py-2 border border-theme rounded-lg bg-theme-tertiary focus:outline-none focus:ring-2 focus:ring-theme-primary text-theme-primary"
-                  placeholder="your-domain.cloudfront.net"
-                />
               </div>
             </div>
 
@@ -796,8 +947,8 @@ const AdminS3Management: React.FC = () => {
               <Button variant="secondary" onClick={() => setConfigModal(false)}>
                 Cancel
               </Button>
-              <Button variant="primary" onClick={() => handleSaveConfig()}>
-                Save Configuration
+              <Button variant="primary" onClick={() => setConfigModal(false)}>
+                Close
               </Button>
             </div>
           </div>

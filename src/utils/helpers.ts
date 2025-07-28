@@ -644,28 +644,39 @@ export const testDeduplication = (testArray: string[]) => {
 }
 
 /**
- * Convert a product image field to a proper S3 URL
- * Handles cases where the image is just a filename (e.g., "0.jpg") or a full S3 key
- * Adds cache-busting parameter to prevent browser caching issues
+ * Convert a product image field to a proper local URL
+ * Handles cases where the image is just a filename (e.g., "0.jpg") or a full path
+ * Serves images from the local public/images directory
  */
 export function getProductImageUrl(image: string, productId?: string): string {
   if (!image) return ''
   
   let url = ''
   
-  // If it's already a full URL, use it
+  // If it's already a full URL, use it (for external images)
   if (image.startsWith('http')) {
     url = image
+  } else if (image.startsWith('products/')) {
+    // If it's a local storage key, convert to URL
+    const parts = image.split('/')
+    if (parts.length >= 3) {
+      const productId = parts[1]
+      const filename = parts[2]
+      url = `/images/products/${productId}/${filename}`
+    } else {
+      url = image
+    }
   } else if (image.match(/^\d+\.jpg$/) && productId) {
-    // If it's just a filename like "0.jpg" and we have a productId, construct the full path
-    url = `https://${process.env.AWS_S3_BUCKET_NAME || 'adelas-bucket'}.s3.${process.env.AWS_REGION || 'us-west-1'}.amazonaws.com/products/${productId}/${image}`
+    // If it's just a filename like "0.jpg" and we have a productId, construct the local path
+    url = `/images/products/${productId}/${image}`
+  } else if (image.includes('/')) {
+    // If it's a path, assume it's already a local path
+    url = image.startsWith('/') ? image : `/${image}`
   } else {
-    // Otherwise, assume it's a full S3 key and convert to URL
-    url = `https://${process.env.AWS_S3_BUCKET_NAME || 'adelas-bucket'}.s3.${process.env.AWS_REGION || 'us-west-1'}.amazonaws.com/${image}`
+    // Otherwise, assume it's a filename and construct the path
+    url = `/images/products/${image}`
   }
   
-  // Add cache-busting parameter to prevent browser caching
-  const separator = url.includes('?') ? '&' : '?'
-  return `${url}${separator}t=${Date.now()}`
+  return url
 }
 

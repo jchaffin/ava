@@ -262,7 +262,7 @@ const AdminOrders: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'createdAt' | 'total' | 'status')}
-                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
+                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 bg-theme-tertiary text-theme-primary"
               >
                 <option value="createdAt">Date Created</option>
                 <option value="total">Total Amount</option>

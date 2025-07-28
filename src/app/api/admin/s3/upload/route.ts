@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { uploadToS3 } from '@/lib/s3'
+import { uploadToLocal } from '@/lib/local-storage'
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Upload to S3
-    const uploadResult = await uploadToS3(buffer, {
+    // Upload to local storage
+    const uploadResult = await uploadToLocal(buffer, {
       folder,
       fileName: file.name,
       contentType: file.type || 'application/octet-stream'
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       data: {
         key: uploadResult.key,
         url: uploadResult.url,
-        cdnUrl: uploadResult.cdnUrl
+        path: uploadResult.path
       }
     })
 

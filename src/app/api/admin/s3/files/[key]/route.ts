@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { deleteFromS3 } from '@/lib/s3'
+import { deleteFromLocal } from '@/lib/local-storage'
 
 export async function DELETE(
   request: NextRequest,
@@ -26,11 +26,11 @@ export async function DELETE(
       )
     }
 
-    // Decode the key (it was URL encoded)
+    // Decode the key from URL
     const decodedKey = decodeURIComponent(key)
 
-    // Delete from S3
-    await deleteFromS3(decodedKey)
+    // Delete the file from local storage
+    await deleteFromLocal(decodedKey)
 
     return NextResponse.json({
       success: true,
@@ -38,7 +38,7 @@ export async function DELETE(
     })
 
   } catch (error) {
-    console.error('Error deleting file:', error)
+    console.error('Error deleting local file:', error)
     return NextResponse.json(
       { success: false, message: 'Failed to delete file' },
       { status: 500 }

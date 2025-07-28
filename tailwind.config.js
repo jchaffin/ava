@@ -87,8 +87,8 @@ module.exports = {
         'ava-xl': '0 12px 24px rgba(45, 55, 72, 0.2)',
       },
       backgroundImage: {
-        'ava-gradient-primary': 'linear-gradient(135deg, #2D3748 0%, #4A5568 100%)',
-        'ava-gradient-accent': 'linear-gradient(135deg, #E53E3E 0%, #C53030 100%)',
+        'ava-gradient-primary': 'var(--ava-gradient)',
+        'ava-gradient-accent': 'var(--ava-gradient)',
         'ava-gradient-gold': 'linear-gradient(135deg, #D69E2E 0%, #B7791F 100%)',
         'ava-gradient-cream': 'linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%)',
       },
@@ -153,6 +153,9 @@ module.exports = {
         // Theme-aware utility classes
         '.bg-theme-primary': {
           backgroundColor: theme('colors.theme.primary'),
+        },
+        '.theme-bg-primary': {
+          background: 'var(--ava-gradient)',
         },
         '.bg-theme-secondary': {
           backgroundColor: theme('colors.theme.secondary'),

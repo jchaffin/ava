@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useCart, useAuth } from '@/context'
 import { Button } from './ui'
+import { useTheme } from '@/hooks/useTheme'
 
 import { 
   ShoppingCartIcon, 
@@ -73,8 +74,7 @@ const Layout: React.FC<LayoutProps> = ({
     isOpen: false,
   })
 
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const { isDarkMode, mounted } = useTheme()
   const [siteSettings, setSiteSettings] = useState<{
     general: {
       socialMedia: {
@@ -87,27 +87,6 @@ const Layout: React.FC<LayoutProps> = ({
       }
     }
   } | null>(null)
-
-  // Check for dark mode on mount and when theme changes
-  useEffect(() => {
-    setMounted(true)
-    
-    const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark')
-      setIsDarkMode(isDark)
-    }
-
-    checkTheme()
-
-    // Listen for theme changes
-    const observer = new MutationObserver(checkTheme)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    })
-
-    return () => observer.disconnect()
-  }, [])
 
   // Fetch site settings
   useEffect(() => {
@@ -355,16 +334,16 @@ const Layout: React.FC<LayoutProps> = ({
         <div className="flex items-center justify-between p-6 border-b-2 border-theme">
           <div className="flex-1"></div>
           <Link href="/" className="flex items-center justify-center flex-1" onClick={() => setIsMobileMenuOpen(false)}>
-            {mounted && (
               <Image
+              key={isDarkMode ? 'dark' : 'light'}
                 src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                 alt="AVA Logo"
                 width={400}
                 height={134}
                 className="h-16 w-auto"
                 priority
+              suppressHydrationWarning
               />
-            )}
           </Link>
           <div className="flex-1 flex justify-end">
             <button
@@ -568,16 +547,16 @@ const Layout: React.FC<LayoutProps> = ({
           {/* Center - Logo (larger and centered) */}
           <div className="flex-1 flex justify-center">
             <Link href="/" className="hidden md:flex items-center">
-              {mounted && (
                 <Image
+                key={isDarkMode ? 'dark' : 'light'}
                   src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
                   alt="AVA Logo"
                   width={240}
                   height={80}
                   className="h-16 w-auto"
                   priority
+                suppressHydrationWarning
                 />
-              )}
             </Link>
           </div>
 
@@ -589,7 +568,9 @@ const Layout: React.FC<LayoutProps> = ({
           {/* Right side actions */}
           <div className="flex items-center space-x-6">
             {/* Theme toggle button */}
-            <ThemeToggle />
+            <div className="h-9 flex items-center justify-center">
+              <ThemeToggle />
+            </div>
             {/* Wishlist - only show for regular users */}
             {isAuthenticated && !hasRole('admin') && (
               <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
@@ -598,18 +579,20 @@ const Layout: React.FC<LayoutProps> = ({
             )}
 
             {/* Shopping cart */}
-            <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
-              {getTotalItems() > 0 ? (
-                <ShoppingCartSolidIcon className="w-5 h-5" />
-              ) : (
-                <ShoppingCartIcon className="w-5 h-5" />
-              )}
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  {getTotalItems() > 9 ? '9+' : getTotalItems()}
-                </span>
-              )}
-            </Link>
+            <div className="h-9 flex items-center justify-center">
+              <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
+                {getTotalItems() > 0 ? (
+                  <ShoppingCartSolidIcon className="w-5 h-5" />
+                ) : (
+                  <ShoppingCartIcon className="w-5 h-5" />
+                )}
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                  </span>
+                )}
+              </Link>
+            </div>
 
             {/* User menu or sign in */}
             {isAuthenticated ? (
@@ -686,8 +669,9 @@ const Layout: React.FC<LayoutProps> = ({
               {siteSettings?.general.socialMedia.amazonShop && (
                 <a href={siteSettings.general.socialMedia.amazonShop} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">
                   <span className="sr-only">Amazon Shop</span>
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M15.93 18.35L14.56 19.72L13.17 18.33L15.93 18.35M12.86 15.28C11.1 13.54 10.25 12.12 10.25 11.12C10.25 9.85 11.36 8.74 12.63 8.74C13.12 8.74 13.57 8.87 13.97 9.12C14.37 9.37 14.7 9.72 14.95 10.15C15.2 9.72 15.53 9.37 15.93 9.12C16.33 8.87 16.78 8.74 17.27 8.74C18.54 8.74 19.65 9.85 19.65 11.12C19.65 12.12 18.8 13.54 17.04 15.28L15.93 16.39L14.82 15.28H12.86M10.25 15.28L8.86 16.67L7.47 15.28L10.25 15.28M5.93 18.35L4.56 19.72L3.17 18.33L5.93 18.35M2.86 15.28C1.1 13.54 0.25 12.12 0.25 11.12C0.25 9.85 1.36 8.74 2.63 8.74C3.12 8.74 3.57 8.87 3.97 9.12C4.37 9.37 4.7 9.72 4.95 10.15C5.2 9.72 5.53 9.37 5.93 9.12C6.33 8.87 6.78 8.74 7.27 8.74C8.54 8.74 9.65 9.85 9.65 11.12C9.65 12.12 8.8 13.54 7.04 15.28L5.93 16.39L4.82 15.28H2.86Z"/>
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-label="Amazon" className="w-5 h-5 text-theme-primary">
+                    <title>Amazon</title>
+                    <path d="M6.5 17.5c5.5 3.5 13.5 3.5 19 0l-1.5-2c-4.5 2.5-11.5 2.5-16 0zM21.5 15.5c.5-.5.5-1.5 0-2s-1.5-.5-2 0c-.5.5-.5 1.5 0 2s1.5.5 2 0z"/>
                   </svg>
                 </a>
               )}

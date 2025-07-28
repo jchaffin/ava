@@ -66,5 +66,6 @@ NEXTAUTH_URL=http://localhost:3000
 
 - The seeder will clear all existing products and the specified test users
 - Passwords are properly hashed using bcrypt
-- Product images reference the existing image files in `/public/images/products/`
+- Product images reference the existing image files in `/public/images/products/[id]/`
+- Each product uses its specific main image file (e.g., `hydserum_main.jpg`, `vitcserum_main.jpg`)
 - Featured products are marked for display on the homepage 

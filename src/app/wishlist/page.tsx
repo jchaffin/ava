@@ -310,12 +310,10 @@ const WishlistPage: React.FC = () => {
                 <div className="mb-4">
                   {item.product.stock === 0 ? (
                     <span className="text-sm text-red-600 font-medium">Out of Stock</span>
-                  ) : item.product.stock <= 5 ? (
+                  ) : item.product.stock <= 5 && (
                     <span className="text-sm text-orange-600 font-medium">
                       Only {item.product.stock} left
                     </span>
-                  ) : (
-                    <span className="text-sm text-theme-primary font-medium">In Stock</span>
                   )}
                 </div>
 

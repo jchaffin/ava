@@ -49,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showWishlist = true,
   showRating = true,
 
-  showStock = true,
+  showStock = false,
   onWishlistToggle,
   onQuickView,
   className = '',
@@ -145,7 +145,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           ? 'Added to wishlist' 
           : 'Removed from wishlist'
       )
-    } catch {
+    } catch (error) {
+      console.error('Wishlist toggle error:', error)
       toast.error('Failed to update wishlist')
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
@@ -155,22 +156,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleQuickView = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
+    
     if (onQuickView) {
       onQuickView(product)
-    } else {
-      router.push(`/products/${product._id}`)
     }
   }
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
-    if (!session) {
-      router.push('/signin')
-      return
-    }
 
     if (isOutOfStock) {
       toast.error('Product is out of stock')
@@ -269,7 +263,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         
         <button
           onClick={handleQuickView}
-                      className="p-2 bg-theme-secondary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
+          className="p-2 bg-theme-secondary rounded-full shadow-md hover:shadow-lg transition-shadow duration-200"
           aria-label="Quick view product"
         >
           <EyeIcon className="w-5 h-5 text-theme-secondary hover:text-blue-500" />
@@ -279,135 +273,115 @@ const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   const renderProductInfo = () => (
-    <div className={`${variant === 'compact' ? 'p-2 sm:p-4' : 'p-4'} ${variant === 'list' ? 'flex-1 ml-4' : ''}`}>
-
-
-      {/* Product Name */}
-      <Link href={`/products/${product._id}`}>
-        <h3 className={`font-semibold text-theme-primary hover:text-blue-600 transition-colors line-clamp-2 ${
-          variant === 'compact' ? 'text-xs sm:text-sm' : 'text-lg'
-        }`}>
+    <div className="p-4">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="font-semibold text-theme-primary text-sm sm:text-base line-clamp-2">
           {product.name}
         </h3>
-      </Link>
-
-      {/* Description */}
-      {variant !== 'compact' && (
-        <p className="text-theme-secondary text-sm mt-2 line-clamp-2">
-          {product.description}
-        </p>
-      )}
-
-      {/* Rating */}
-      {showRating && variant !== 'compact' && (
-        <div className="mt-2">
+      </div>
+      
+      {showRating && (
+        <div className="mb-2">
           {renderStars(averageRating)}
         </div>
       )}
-
-      {/* Price */}
-      <div className="mt-3 flex items-center justify-between">
+      
+      <p className="text-theme-secondary text-sm mb-3 line-clamp-2">
+        {product.description}
+      </p>
+      
+      <div className="flex justify-between items-center mb-3">
         <div className="flex items-center space-x-2">
-          <span className={`font-bold text-theme-primary ${
-            variant === 'compact' ? 'text-sm sm:text-lg' : 'text-xl'
-          }`}>
-            {formatPrice(product.price)}
+          <span className="text-lg font-bold text-theme-primary">
+            ${product.price.toFixed(2)}
           </span>
           {discountPercentage > 0 && (
-            <span className="text-sm text-theme-muted line-through">
-              {formatPrice(product.price * (1 + discountPercentage / 100))}
+            <span className="text-sm text-gray-500 line-through">
+              ${(product.price / (1 - discountPercentage / 100)).toFixed(2)}
             </span>
           )}
         </div>
-
-        {/* Free shipping indicator */}
-        {product.price >= 100 && (
-          <div className="flex items-center text-theme-secondary text-xs">
-            <TruckIcon className="w-4 h-4 mr-1" />
-            <span>Free Shipping</span>
-          </div>
+        
+        {showStock && (
+          <span className={`text-xs px-2 py-1 rounded-full ${
+            isOutOfStock 
+              ? 'bg-gray-100 text-gray-600' 
+              : isLowStock 
+                ? 'bg-orange-100 text-orange-600' 
+                : 'bg-green-100 text-green-600'
+          }`}>
+            {isOutOfStock ? 'Out of Stock' : isLowStock ? 'Low Stock' : 'In Stock'}
+          </span>
         )}
       </div>
-
-      {/* Stock Info */}
-      {showStock && (
-        <div className="mt-2">
-          {isOutOfStock ? (
-            <span className="text-red-600 text-sm font-medium">Out of Stock</span>
-          ) : isLowStock ? (
-            <span className="text-orange-600 text-sm font-medium">
-              Only {product.stock} left
-            </span>
-          ) : null}
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className={`mt-4 ${variant === 'list' ? 'flex space-x-2' : 'space-y-2'}`}>
-        <Button
+      
+      <div className="flex space-x-2">
+        <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || state.isLoading}
-          loading={state.isLoading}
-          variant="secondary"
-          className={`${variant === 'list' ? 'flex-1' : 'w-full'}`}
-          size={variant === 'compact' ? 'sm' : 'md'}
+          className="flex-1 bg-theme-primary text-theme-secondary px-4 py-2 rounded-lg text-sm font-medium hover:bg-theme-secondary hover:text-theme-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ShoppingCartIcon className="w-4 h-4 mr-2" />
-          Add to Cart
-        </Button>
-
+          {state.isLoading ? 'Adding...' : 'Add to Cart'}
+        </button>
+        
         {variant !== 'compact' && (
-          <Button
+          <button
             onClick={handleBuyNow}
             disabled={isOutOfStock}
-            variant="secondary"
-            className={`${variant === 'list' ? 'flex-1' : 'w-full'}`}
-            size="md"
+            className="bg-ava-accent text-theme-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Buy Now
-          </Button>
+          </button>
         )}
       </div>
     </div>
   )
 
+  // List variant rendering
   if (variant === 'list') {
     return (
       <div className={`group ${getCardClasses()} ${className}`}>
-        {/* Image */}
-        <div className="relative">
-          {state.imageLoading && (
-            <div className="w-24 h-24 bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
-              <div className="text-gray-400 text-xs">Loading...</div>
-            </div>
-          )}
-          
-          {!state.imageError ? (
-            <Image
-              src={getProductImageUrl(product.image, product._id)}
-              alt={product.name}
-              width={96}
-              height={96}
-              sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
-              className={`${getImageClasses()} ${state.imageLoading ? 'hidden' : 'block'}`}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              priority={product.featured}
-            />
-          ) : (
-            <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-              <span className="text-gray-400 text-xs">No Image</span>
-            </div>
-          )}
+        <div className="flex items-center space-x-4">
+          {/* Image Container */}
+          <div className="relative flex-shrink-0">
+            {state.imageLoading && (
+              <div className="w-24 h-24 bg-gray-200 animate-pulse rounded-lg flex items-center justify-center">
+                <div className="text-gray-400 text-xs">Loading...</div>
+              </div>
+            )}
+            
+            {!state.imageError ? (
+              <Link href={`/products/${product._id}`}>
+                <div className="relative w-24 h-24">
+                  <Image
+                    src={getProductImageUrl(product.image, product._id)}
+                    alt={product.name}
+                    fill
+                    sizes="96px"
+                    className={`${getImageClasses()} transition-opacity duration-300 ${
+                      state.imageLoading ? 'opacity-0' : 'opacity-100'
+                    }`}
+                    onLoad={handleImageLoad}
+                    onError={handleImageError}
+                    priority={product.featured}
+                  />
+                </div>
+              </Link>
+            ) : (
+              <div className="w-24 h-24 bg-gray-200 flex items-center justify-center rounded-lg">
+                <span className="text-gray-400 text-xs">No Image</span>
+              </div>
+            )}
 
-          {isOutOfStock && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-              <span className="text-theme-primary text-xs font-medium">Out of Stock</span>
-            </div>
-          )}
+            {isOutOfStock && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                <span className="text-theme-primary text-xs font-medium">Out of Stock</span>
+              </div>
+            )}
+          </div>
+
+          {renderProductInfo()}
         </div>
-
-        {renderProductInfo()}
       </div>
     )
   }
@@ -416,30 +390,37 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <div className={`group ${getCardClasses()} ${className}`}>
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden">
-        {state.imageLoading && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400">Loading...</div>
+        {/* Loading placeholder - always visible initially */}
+        <div className={`absolute inset-0 bg-gray-200 transition-opacity duration-300 ${
+          state.imageLoading ? 'opacity-100' : 'opacity-0'
+        }`}>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-gray-400 text-sm">Loading...</div>
           </div>
-        )}
+        </div>
         
         {!state.imageError ? (
           <Link href={`/products/${product._id}`}>
-            <Image
-              src={getProductImageUrl(product.image, product._id)}
-              alt={product.name}
-              fill
-              sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
-              className={`${getImageClasses()} transition-transform duration-300 group-hover:scale-105 ${
-                state.imageLoading ? 'opacity-0' : 'opacity-100'
-              }`}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              priority={product.featured}
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={getProductImageUrl(product.image, product._id)}
+                alt={product.name}
+                fill
+                sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+                className={`${getImageClasses()} transition-opacity duration-300 ${
+                  state.imageLoading ? 'opacity-0' : 'opacity-100'
+                }`}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                priority={product.featured}
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+              />
+            </div>
           </Link>
         ) : (
           <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">No Image Available</span>
+            <span className="text-gray-400 text-sm">No Image Available</span>
           </div>
         )}
 

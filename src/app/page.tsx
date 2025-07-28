@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { getProductImageUrl } from '@/utils/helpers'
+import { useTheme } from '@/hooks/useTheme'
 import { 
   StarIcon,
   BeakerIcon,
@@ -35,30 +36,10 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [isClient, setIsClient] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const { isDarkMode, mounted } = useTheme()
 
-  useEffect(() => {
+    useEffect(() => {
     setIsClient(true)
-    setMounted(true)
-    
-    // Check for dark mode
-    const checkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark')
-      setIsDarkMode(isDark)
-    }
-    
-    // Initial check
-    checkTheme()
-    
-    // Watch for theme changes
-    const observer = new MutationObserver(checkTheme)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    })
-    
-    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -112,24 +93,17 @@ export default function Home() {
             </div>
             <div className="relative order-1 lg:order-2">
               <div className="relative z-10 flex justify-center lg:justify-end">
-                {mounted && (
-                  <Image
-                    src={isDarkMode ? "/images/home/main_dark.png" : "/images/home/main_light.png"}
-                    alt="Premium skincare products"
-                    width={600}
-                    height={400}
-                    className="rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
-                    style={{ width: 'auto', height: 'auto' }}
-                    priority
-                    onError={(e) => {
-                      console.error('Image failed to load:', e);
-                      // Fallback to a different image if needed
-                    }}
-                    onLoad={() => {
-                      console.log('Image loaded successfully');
-                    }}
-                  />
-                )}
+                <Image
+                  src={isDarkMode ? "/images/home/main_dark.png" : "/images/home/main_light.png"}
+                  alt="Premium skincare products"
+                  width={600}
+                  height={400}
+                  className="rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl"
+                  style={{ width: 'auto', height: 'auto' }}
+                  priority
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                />
               </div>
               {/* Floating elements - hidden on mobile for cleaner look */}
               <div className="hidden lg:block absolute -top-4 -right-4 w-20 h-20 bg-yellow-200 rounded-full opacity-80 animate-bounce" />
@@ -219,6 +193,8 @@ export default function Home() {
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
                       className="object-cover"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     />
                   </div>
                   <div className="p-4 sm:p-6">

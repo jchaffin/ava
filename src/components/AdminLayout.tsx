@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react'
 import { AdminNav } from '@/components'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui'
 import ThemeToggle from './ThemeToggle'
+import { useRouter } from 'next/navigation';
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -12,6 +13,7 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const router = useRouter();
 
   return (
     <div className="flex min-h-screen bg-theme-primary">
@@ -49,7 +51,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <Menu className="w-6 h-6" />
             </Button>
             <div className="flex-1" /> {/* Spacer */}
-            <ThemeToggle />
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="p-2 text-theme-primary hover:text-theme-primary hover:bg-theme-tertiary flex items-center"
+            >
+              <ArrowLeft className="w-5 h-5 mr-1" />
+              <span className="font-medium">Back</span>
+            </Button>
           </div>
         </div>
 

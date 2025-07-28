@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
 import { Button, Input } from '@/components/ui'
 import { useAuth } from '@/context'
-import { s3KeyToUrl, isS3Key, extractKeyFromS3Url } from '@/lib/s3'
+import { localKeyToUrl, extractKeyFromLocalUrl } from '@/lib/local-storage-client'
 import { getProductImageUrl } from '@/utils/helpers'
 import {
   Plus,
@@ -74,13 +74,13 @@ const AdminProducts: React.FC = () => {
       const data = await response.json()
       
       if (data.success) {
-        console.log('Fetched products:', data.data.length)
-        console.log('Sample product:', {
-          id: data.data[0]?._id,
-          name: data.data[0]?.name,
-          image: data.data[0]?.image,
-          images: data.data[0]?.images
-        })
+              console.log('Fetched products:', data.data.length)
+      console.log('Sample product:', {
+        id: data.data[0]?._id,
+        name: data.data[0]?.name,
+        image: data.data[0]?.image,
+        images: data.data[0]?.images
+      })
         setProducts(data.data)
       } else {
         toast.error(data.message || 'Failed to fetch products')
@@ -120,11 +120,12 @@ const AdminProducts: React.FC = () => {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+    const date = new Date(dateString)
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    const month = months[date.getMonth()]
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${month} ${day}, ${year}`
   }
 
   const getStockStatus = (stock: number) => {
@@ -161,6 +162,23 @@ const AdminProducts: React.FC = () => {
       }
     })
 
+  // Helper function to validate and normalize image arrays
+  const normalizeImageArray = (images: string[]): string[] => {
+    if (!Array.isArray(images)) return ['', '', '', '']
+    
+    // Filter out empty strings and normalize
+    const validImages = images
+      .filter(img => img && typeof img === 'string' && img.trim() !== '')
+      .map(img => img.trim())
+    
+    // Pad to 4 images
+    while (validImages.length < 4) {
+      validImages.push('')
+    }
+    
+    return validImages.slice(0, 4) // Ensure max 4 images
+  }
+
   // Image upload logic
   const handleImageClick = async (product: Product) => {
     setImageModal({ open: true, product })
@@ -172,40 +190,57 @@ const AdminProducts: React.FC = () => {
     // Simple function to extract clean key from any image string
     const extractCleanKey = (img: string): string => {
       if (!img) return ''
+      
       // If it's already a simple key like "0.jpg", return it
-      if (!img.includes('s3.amazonaws.com')) return img
-      // Extract key from URL (handles multiple prefixes)
-      const match = img.match(/s3\.amazonaws\.com\/([^?]+)/)
-      return match ? match[1] : img
+      if (!img.includes('/images/products/') && !img.includes('/uploads/') && !img.includes('http')) {
+        return img
+      }
+      
+      // Handle local URLs
+      if (img.includes('/images/products/') || img.includes('/uploads/')) {
+        const extractedKey = extractKeyFromLocalUrl(img)
+        return extractedKey || img
+      }
+      
+      // Handle external URLs (just return as is for now)
+      if (img.startsWith('http')) {
+        return img
+      }
+      
+      return img
     }
 
     // Simple function to convert key to clean URL
     const keyToCleanUrl = (key: string): string => {
       if (!key) return ''
+      
       // If it's already a full URL, return it
-      if (key.startsWith('https://')) return key
-      // If it's just a filename like "0.jpg", construct the full product path
-      if (key.match(/^\d+\.jpg$/)) {
-        return s3KeyToUrl(`products/${product._id}/${key}`)
+      if (key.startsWith('http')) return key
+      
+      // If it's just a filename like "2.jpg", "3.jpg", "4.jpg", or "main.jpg", construct the full product path
+      if (key.match(/^(main|\d+)\.jpg$/)) {
+        return localKeyToUrl(`products/${product._id}/${key}`)
       }
-      // Otherwise, assume it's a full key
-      return s3KeyToUrl(key)
+      
+      // If it's a local storage key, convert to URL
+      if (key.startsWith('products/')) {
+        return localKeyToUrl(key)
+      }
+      
+      // Otherwise, assume it's a filename and construct the path
+      return localKeyToUrl(`products/${product._id}/${key}`)
     }
 
     if (product.images && product.images.length > 0) {
-      // Remove duplicates and extract clean keys
-      const uniqueImages = Array.from(new Set(product.images))
-      const cleanKeys = uniqueImages.map(extractCleanKey).filter(key => key)
+      // Normalize the image array first
+      const normalizedImages = normalizeImageArray(product.images)
+      
+      // Extract clean keys from normalized images
+      const cleanKeys = normalizedImages.map(extractCleanKey)
       
       // Convert existing keys to URLs for display
       images = cleanKeys.map(keyToCleanUrl)
       keys = cleanKeys
-      
-      // Pad to 4 images if needed
-      while (keys.length < 4) {
-        keys.push('')
-        images.push('')
-      }
     } else {
       // No images array, start with empty slots
       keys = ['', '', '', '']
@@ -215,11 +250,20 @@ const AdminProducts: React.FC = () => {
     console.log('Image modal data:', {
       productId: product._id,
       keys: keys,
-      images: images
+      images: images,
+      originalImages: product.images,
+      originalImage: product.image
     })
     
     setProductImages(images)
     setProductImageKeys(keys)
+    
+    // Debug: Log the final state
+    console.log('Final modal state:', {
+      productImages: images,
+      productImageKeys: keys,
+      editingIndex: editingImageIndex
+    })
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,7 +301,7 @@ const AdminProducts: React.FC = () => {
         images: imageModal.product.images
       })
 
-      // Upload new image to S3
+      // Upload new image to local storage
       const formData = new FormData()
       formData.append('image', imageFile)
       formData.append('imageIndex', editingImageIndex.toString())
@@ -324,14 +368,18 @@ const AdminProducts: React.FC = () => {
       })
 
       // Clean and prepare the images array for saving
-      // We want to save S3 keys, not URLs
+      // We want to save local storage keys, not URLs
       const cleanImages = productImageKeys
         .filter(key => key && key.trim() !== '')
         .map(key => {
           // If it's a full URL, extract the key
-          if (key.includes('s3.amazonaws.com')) {
-            const match = key.match(/s3\.amazonaws\.com\/([^?]+)/)
-            return match ? match[1] : key
+          if (key.includes('/images/products/') || key.includes('/uploads/')) {
+            const extractedKey = extractKeyFromLocalUrl(key)
+            return extractedKey || key
+          }
+          // If it's an external URL, keep it as is
+          if (key.startsWith('http')) {
+            return key
           }
           // If it's already a key, return it
           return key
@@ -595,7 +643,6 @@ const AdminProducts: React.FC = () => {
               <p className="text-sm font-medium text-theme-primary mb-3">Product Images</p>
               <div className="grid grid-cols-2 gap-3">
                 {productImages.map((image, index) => {
-                  console.log(`Rendering image ${index}:`, image)
                   return (
                     <div key={index} className="relative">
                       <div className={`border-2 rounded-lg p-2 transition-colors ${
@@ -606,8 +653,6 @@ const AdminProducts: React.FC = () => {
                             src={image} 
                             alt={`Product Image ${index + 1}`} 
                             className="w-full h-24 object-cover rounded"
-                            onLoad={() => console.log(`Image ${index} loaded successfully:`, image)}
-                            onError={() => console.log(`Image ${index} failed to load:`, image)}
                           />
                         ) : (
                           <div className="w-full h-24 bg-theme-tertiary rounded flex items-center justify-center">

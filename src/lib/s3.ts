@@ -162,7 +162,10 @@ export function s3KeyToUrl(key: string): string {
   // Clean the key (remove any query parameters if present)
   const cleanKey = key.split('?')[0]
   
-  return `https://${BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${cleanKey}`
+  // Remove leading slash to prevent double slashes in URL
+  const normalizedKey = cleanKey.startsWith('/') ? cleanKey.slice(1) : cleanKey
+  
+  return `https://${BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${normalizedKey}`
 }
 
 /**

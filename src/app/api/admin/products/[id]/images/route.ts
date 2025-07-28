@@ -3,7 +3,8 @@ import { getServerSession } from 'next-auth/next'
 import connectDB from '@/lib/mongoose'
 import { authOptions } from '@/lib/auth'
 import { Product } from '@/models'
-import { uploadToS3, deleteFromS3, extractS3KeyFromUrl, s3KeyToUrl } from '@/lib/s3'
+import { uploadToLocal, deleteFromLocal } from '@/lib/local-storage'
+import { extractKeyFromLocalUrl, localKeyToUrl } from '@/lib/local-storage-client'
 import { isValidObjectId } from 'mongoose'
 
 // POST /api/admin/products/[id]/images - Upload new product image
@@ -74,16 +75,20 @@ export async function POST(
       fileType: imageFile.type
     })
 
-    // Upload to S3 with proper key structure
-    const uploadResult = await uploadToS3(buffer, {
-      folder: `products/${id}`,
-      fileName: `${imageIndex || 'main'}.jpg`,
-      contentType: imageFile.type || 'image/jpeg'
+    // Upload to local storage with proper key structure
+    // Use the imageIndex as the filename to match the display position (1-based)
+    const displayPosition = imageIndex === '0' || imageIndex === 'main' ? 'main' : (parseInt(imageIndex) + 1).toString()
+    const fileName = `${displayPosition}.jpg`
+    const uploadResult = await uploadToLocal(buffer, {
+      folder: 'products',
+      fileName: fileName,
+      contentType: imageFile.type || 'image/jpeg',
+      productId: id
     })
 
-    console.log('S3 upload result:', uploadResult)
+    console.log('Local storage upload result:', uploadResult)
 
-    // Store the S3 key in the database (not the full URL)
+    // Store the local storage key in the database (not the full URL)
     const imageKey = uploadResult.key
     
     if (!imageIndex || imageIndex === '0' || imageIndex === 'main') {
@@ -98,28 +103,25 @@ export async function POST(
       const currentProduct = await Product.findById(id)
       let currentImages = currentProduct.images || []
       
-      // Ensure the images array is long enough
-      while (currentImages.length <= imageIndexNum - 1) {
+      // Ensure the images array is long enough (0-based indexing)
+      while (currentImages.length <= imageIndexNum) {
         currentImages.push('')
       }
       
-      // Update the specific index
-      currentImages[imageIndexNum - 1] = imageKey
+      // Update the specific index (0-based)
+      currentImages[imageIndexNum] = imageKey
       
       // Save the updated images array
       await Product.findByIdAndUpdate(id, { images: currentImages })
-      console.log('Updated image in array:', { index: imageIndexNum - 1, key: imageKey, totalImages: currentImages.length })
+      console.log('Updated image in array:', { index: imageIndexNum, key: imageKey, totalImages: currentImages.length })
     }
 
-    // Add cache-busting parameter to force browser to reload the image
-    const cacheBustUrl = `${uploadResult.url}?t=${Date.now()}`
-    
     return NextResponse.json({
       success: true,
       message: 'Image uploaded successfully',
       data: {
-        imageUrl: cacheBustUrl, // Return the cache-busted URL for immediate display
-        key: uploadResult.key // Return the S3 key for database storage
+        imageUrl: uploadResult.url, // Return the URL for immediate display
+        key: uploadResult.key // Return the local storage key for database storage
       }
     })
 
@@ -186,9 +188,9 @@ export async function PUT(
         .filter(img => img && typeof img === 'string')
         .map(img => {
           // If it's a full URL, extract the key
-          if (img.includes('s3.amazonaws.com')) {
-            const match = img.match(/s3\.amazonaws\.com\/([^?]+)/)
-            return match ? match[1] : img
+          if (img.includes('/images/products/') || img.includes('/uploads/')) {
+            const key = extractKeyFromLocalUrl(img)
+            return key || img
           }
           // If it's already a key, return it
           return img
@@ -197,7 +199,7 @@ export async function PUT(
 
       console.log('Saving images to database:', cleanImages)
       
-      // Update all images configuration - store S3 keys, not URLs
+      // Update all images configuration - store local storage keys, not URLs
       await Product.findByIdAndUpdate(id, { images: cleanImages })
       
       return NextResponse.json({
@@ -269,16 +271,16 @@ export async function DELETE(
     const imageUrl = searchParams.get('imageUrl')
     
     if (imageUrl) {
-      const key = extractS3KeyFromUrl(imageUrl)
+      const key = extractKeyFromLocalUrl(imageUrl)
       if (key) {
-        await deleteFromS3(key)
+        await deleteFromLocal(key)
       }
     } else {
       // Delete all product images
       for (let i = 1; i <= 4; i++) {
         const key = `products/${id}/${i}.jpg`
         try {
-          await deleteFromS3(key)
+          await deleteFromLocal(key)
         } catch (error) {
           // Ignore errors if file doesn't exist
           console.log(`Image ${key} not found, skipping deletion`)

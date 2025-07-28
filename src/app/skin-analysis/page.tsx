@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui';
 import SkinAnalysisResults from '@/components/SkinAnalysisResults';
+import * as faceapi from 'face-api.js';
 
 interface AnalysisResult {
   skinType: string;
@@ -84,6 +85,19 @@ export default function SkinAnalysisPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
+  const [faceModelLoaded, setFaceModelLoaded] = useState(false);
+
+  // Load face-api.js model when camera is started
+  const loadFaceModel = async () => {
+    if (!faceModelLoaded) {
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+        setFaceModelLoaded(true);
+      } catch (err) {
+        toast.error('Failed to load face detection model');
+      }
+    }
+  };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -100,6 +114,7 @@ export default function SkinAnalysisPage() {
   };
 
   const startCamera = async () => {
+    await loadFaceModel();
     console.log('Starting camera...');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -138,17 +153,21 @@ export default function SkinAnalysisPage() {
     }
   };
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      
       if (context) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0);
-        
+        // Run face detection
+        const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions());
+        if (!detection) {
+          toast.error('No face detected. Please try again with your face clearly visible.');
+          return;
+        }
         canvas.toBlob((blob) => {
           if (blob) {
             const file = new File([blob], 'captured-photo.jpg', { type: 'image/jpeg' });

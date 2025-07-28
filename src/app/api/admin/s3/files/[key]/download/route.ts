@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
+import { readFile } from 'fs/promises'
+import { existsSync } from 'fs'
+import path from 'path'
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-})
-
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!
+const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
+const PRODUCT_IMAGES_DIR = path.join(process.cwd(), 'public', 'images', 'products')
 
 export async function GET(
   request: NextRequest,
@@ -36,50 +31,45 @@ export async function GET(
       )
     }
 
-    // Decode the key (it was URL encoded)
+    // Decode the key from URL
     const decodedKey = decodeURIComponent(key)
 
-    // Get object from S3
-    const getCommand = new GetObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: decodedKey,
-    })
-
-    const response = await s3Client.send(getCommand)
+    // Determine file path based on key
+    let filePath: string
     
-    if (!response.Body) {
+    if (decodedKey.startsWith('products/')) {
+      // Product images
+      const parts = decodedKey.split('/')
+      const productId = parts[1]
+      const filename = parts[2]
+      filePath = path.join(PRODUCT_IMAGES_DIR, productId, filename)
+    } else {
+      // Other uploads
+      filePath = path.join(UPLOAD_DIR, decodedKey)
+    }
+
+    // Check if file exists
+    if (!existsSync(filePath)) {
       return NextResponse.json(
         { success: false, message: 'File not found' },
         { status: 404 }
       )
     }
 
-    // Convert stream to buffer
-    const chunks: Uint8Array[] = []
-    const reader = response.Body.transformToWebStream().getReader()
-    
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      chunks.push(value)
-    }
-    
-    const buffer = Buffer.concat(chunks)
-
-    // Get filename from key
-    const filename = decodedKey.split('/').pop() || 'download'
+    // Read file
+    const fileBuffer = await readFile(filePath)
+    const filename = path.basename(filePath)
 
     // Return file as response
-    return new NextResponse(buffer, {
+    return new NextResponse(fileBuffer, {
       headers: {
-        'Content-Type': response.ContentType || 'application/octet-stream',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': response.ContentLength?.toString() || buffer.length.toString(),
+        'Content-Type': 'application/octet-stream',
       },
     })
 
   } catch (error) {
-    console.error('Error downloading file:', error)
+    console.error('Error downloading local file:', error)
     return NextResponse.json(
       { success: false, message: 'Failed to download file' },
       { status: 500 }
