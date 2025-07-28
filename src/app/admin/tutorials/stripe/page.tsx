@@ -20,6 +20,8 @@ import {
   TestTube,
   Monitor,
   Bell,
+  ArrowLeft,
+  BookOpen,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -125,7 +127,7 @@ const StripeTutorialPage: React.FC = () => {
           <p className="text-theme-secondary">
             Add these environment variables to your <code className="bg-gray-100 px-2 py-1 rounded">.env.local</code> file:
           </p>
-          <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+          <div className="bg-theme-tertiary text-theme-primary p-4 rounded-lg font-mono text-sm">
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-300">Environment Variables</span>
               <button
@@ -177,16 +179,16 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <span>Set the endpoint URL to: <code className="bg-gray-100 px-2 py-1 rounded">https://yourdomain.com/api/stripe/webhook</code></span>
+              <span>Set the endpoint URL to: <code className="bg-theme-tertiary px-2 py-1 rounded text-theme-primary">https://yourdomain.com/api/stripe/webhook</code></span>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
               <span>Select these events:</span>
             </div>
             <div className="ml-8 space-y-1">
-              <div>• <code className="bg-gray-100 px-1 rounded">checkout.session.completed</code></div>
-              <div>• <code className="bg-gray-100 px-1 rounded">payment_intent.succeeded</code></div>
-              <div>• <code className="bg-gray-100 px-1 rounded">payment_intent.payment_failed</code></div>
+              <div>• <code className="bg-theme-tertiary px-1 rounded text-theme-primary">checkout.session.completed</code></div>
+              <div>• <code className="bg-theme-tertiary px-1 rounded text-theme-primary">payment_intent.succeeded</code></div>
+              <div>• <code className="bg-theme-tertiary px-1 rounded text-theme-primary">payment_intent.payment_failed</code></div>
             </div>
             <div className="flex items-center space-x-3">
               <CheckCircle className="w-5 h-5 text-green-500" />
@@ -281,7 +283,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
     <AdminLayout>
       <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-theme-secondary shadow-sm border-b border-theme">
+        <div className="shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -292,11 +294,18 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
               </div>
               <div className="flex items-center space-x-4">
                 <Button
-                  onClick={() => router.push('/admin/settings')}
-                  variant="secondary"
+                  onClick={() => router.push('/admin/tutorials')}
+                  variant="ghost"
                 >
-                  <Settings className="w-4 h-4 mr-2 text-theme-primary" />
-                  Go to Settings
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Tutorials
+                </Button>
+                <Button
+                  onClick={() => router.push('/admin/tutorials/paypal')}
+                  variant="ghost"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Next: PayPal Setup
                 </Button>
               </div>
             </div>
@@ -332,7 +341,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
                 <Button
                   onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
                   disabled={currentStep === steps.length}
-                  variant="primary"
+                  variant="ghost"
                 >
                   Next
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -356,7 +365,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
             </div>
 
             {/* Features Overview */}
-            <div className="border-t border-theme p-6 bg-theme-primary">
+            <div className="border-t border-theme p-6">
               <h3 className="text-lg font-medium text-theme-primary mb-4">Stripe Integration Features</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3">

@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react'
 import { useCart } from '@/context'
 import { Button } from './ui'
 import { IProduct } from '@/types'
-import { formatPrice } from '@/utils/helpers'
+import { formatPrice, getProductImageUrl } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 import {
   HeartIcon,
@@ -384,7 +384,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           
           {!state.imageError ? (
             <Image
-              src={product.image}
+              src={getProductImageUrl(product.image, product._id)}
               alt={product.name}
               width={96}
               height={96}
@@ -425,7 +425,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {!state.imageError ? (
           <Link href={`/products/${product._id}`}>
             <Image
-              src={product.image}
+              src={getProductImageUrl(product.image, product._id)}
               alt={product.name}
               fill
               sizes={product.sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}

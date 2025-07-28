@@ -22,6 +22,18 @@ const ProductSchema = new Schema<IProductDocument>({
     type: String,
     required: [true, 'Product image is required'],
   },
+  images: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(images: string[]) {
+        // Remove duplicates while preserving order
+        const uniqueImages = Array.from(new Set(images))
+        return uniqueImages.length === images.length
+      },
+      message: 'Duplicate images are not allowed'
+    }
+  },
   sizes: {
     type: String,
     default: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
@@ -44,5 +56,14 @@ const ProductSchema = new Schema<IProductDocument>({
 // Index for better query performance
 ProductSchema.index({ featured: 1 })
 ProductSchema.index({ price: 1 })
+
+// Pre-save middleware to remove duplicates from images array
+ProductSchema.pre('save', function(next) {
+  if (this.images && this.images.length > 0) {
+    // Remove duplicates while preserving order
+    this.images = Array.from(new Set(this.images))
+  }
+  next()
+})
 
 export default mongoose.models.Product || mongoose.model<IProductDocument>('Product', ProductSchema)

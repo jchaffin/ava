@@ -41,6 +41,10 @@ const EditProduct: React.FC = () => {
   const [saving, setSaving] = useState(false)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [productImages, setProductImages] = useState<string[]>([])
+  const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null)
+  const [availableImages, setAvailableImages] = useState<string[]>([])
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   const fetchProduct = async () => {
     try {
@@ -48,6 +52,9 @@ const EditProduct: React.FC = () => {
       const data = await response.json()
       
       if (data.success) {
+        console.log('Product data:', data.data)
+        console.log('Product image:', data.data.image)
+        
         setProduct(data.data)
         setForm({
           name: data.data.name,
@@ -56,6 +63,17 @@ const EditProduct: React.FC = () => {
           stock: data.data.stock,
           featured: data.data.featured,
         })
+        
+        // Initialize with the base image for all 4 slots
+        const baseImage = data.data.image || '/images/placeholder.jpg'
+        console.log('Base image:', baseImage)
+        
+        // For now, use the same image for all 4 slots, but they can be updated independently
+        const images = [baseImage, baseImage, baseImage, baseImage]
+        console.log('Initial images:', images)
+        
+        setProductImages(images)
+        setAvailableImages(images)
       } else {
         toast.error(data.message || 'Failed to fetch product')
         router.push('/admin/products')
@@ -93,15 +111,108 @@ const EditProduct: React.FC = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
+    if (file && editingImageIndex !== null) {
       setImageFile(file)
       setImagePreview(URL.createObjectURL(file))
+      
+      // Automatically upload the image
+      const uploadImage = async () => {
+        try {
+          const formData = new FormData()
+          formData.append('image', file)
+          formData.append('imageIndex', editingImageIndex.toString())
+
+          const response = await fetch(`/api/admin/products/${productId}/images`, {
+            method: 'POST',
+            body: formData,
+          })
+
+          const data = await response.json()
+
+          if (data.success) {
+            toast.success(`Image ${editingImageIndex + 1} updated successfully`)
+            
+            // Update the local state
+            const updatedImages = [...productImages]
+            updatedImages[editingImageIndex] = data.data.imageUrl
+            setProductImages(updatedImages)
+            
+            // Reset state
+            setImageFile(null)
+            setImagePreview(null)
+            setEditingImageIndex(null)
+          } else {
+            toast.error(data.message || 'Failed to update image')
+          }
+        } catch (error) {
+          console.error('Error updating image:', error)
+          toast.error('Failed to update image')
+        }
+      }
+      
+      uploadImage()
     }
   }
 
   const removeImage = () => {
     setImageFile(null)
     setImagePreview(null)
+  }
+
+  const handleImageUpload = async () => {
+    if (!imageFile && !selectedImage || editingImageIndex === null) return
+
+    try {
+      let response: Response
+      
+      if (imageFile) {
+        // Upload new image to S3
+        const formData = new FormData()
+        formData.append('image', imageFile)
+        formData.append('imageIndex', editingImageIndex.toString())
+
+        response = await fetch(`/api/admin/products/${productId}/images`, {
+          method: 'POST',
+          body: formData,
+        })
+      } else if (selectedImage) {
+        // Use existing image
+        response = await fetch(`/api/admin/products/${productId}/images`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            imageUrl: selectedImage,
+            imageIndex: editingImageIndex 
+          }),
+        })
+      } else {
+        return
+      }
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success(`Image ${editingImageIndex + 1} updated successfully`)
+        
+        // Update the local state
+        const updatedImages = [...productImages]
+        updatedImages[editingImageIndex] = imageFile ? data.data.imageUrl : selectedImage!
+        setProductImages(updatedImages)
+        
+        // Reset editing state
+        setImageFile(null)
+        setImagePreview(null)
+        setSelectedImage(null)
+        setEditingImageIndex(null)
+      } else {
+        toast.error(data.message || 'Failed to update image')
+      }
+    } catch (error) {
+      console.error('Error updating image:', error)
+      toast.error('Failed to update image')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -278,57 +389,58 @@ const EditProduct: React.FC = () => {
                 </div>
               </div>
 
-              {/* Image Upload */}
+                              {/* Product Images Management */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium ava-text-tertiary mb-2">
-                  Product Image
+                <label className="block text-sm font-medium ava-text-tertiary mb-4">
+                  Product Images (Carousel)
                 </label>
-                <div className="flex items-center space-x-4">
-                  {imagePreview ? (
-                    <div className="relative">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-32 h-32 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={removeImage}
-                        className="absolute -top-2 -right-2 bg-red-500 text-theme-primary rounded-full p-1 hover:bg-red-600"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <img
-                        src={product?.image || '/images/placeholder.jpg'}
-                        alt="Current"
-                        className="w-32 h-32 object-cover rounded-lg"
-                      />
-                      {imageFile && (
-                        <button
-                          type="button"
-                          onClick={removeImage}
-                          className="absolute -top-2 -right-2 bg-red-500 text-theme-primary rounded-full p-1 hover:bg-red-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary"
-                    />
-                    <p className="mt-1 text-sm text-theme-muted">
-                      Upload a new image to replace the current one
-                    </p>
+                
+                {/* Product Images Grid */}
+                <div className="mb-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    {productImages.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <div className={`border-2 rounded-xl p-3 transition-all duration-200 ${
+                          editingImageIndex === index ? 'border-theme-primary bg-theme-tertiary shadow-lg' : 'border-theme hover:border-theme-primary hover:shadow-md'
+                        }`}>
+                          {image ? (
+                            <img 
+                              src={image} 
+                              alt={`Product Image ${index + 1}`} 
+                              className="w-full h-40 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
+                              <span className="text-theme-muted text-sm">No Image</span>
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingImageIndex(index)
+                              document.getElementById('file-upload')?.click()
+                            }}
+                            className="absolute top-3 right-3 bg-theme-primary text-theme-secondary rounded-full w-8 h-8 flex items-center justify-center text-sm hover:bg-theme-secondary hover:text-theme-primary transition-all duration-200 shadow-lg opacity-0 group-hover:opacity-100"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        </div>
+                        <p className="text-sm text-theme-muted text-center mt-2 font-medium">Image {index + 1}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
+
+                                {/* Hidden file input for direct upload */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden" 
+                  id="file-upload"
+                />
               </div>
             </div>
 
@@ -343,6 +455,7 @@ const EditProduct: React.FC = () => {
               </Button>
               <Button
                 type="submit"
+                variant="secondary"
                 loading={saving}
                 disabled={saving}
               >

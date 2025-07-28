@@ -609,7 +609,7 @@ export interface Translation {
 
 // Social and Sharing
 export interface SocialProfile {
-  platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok'
+  platform: 'facebook' | 'twitter' | 'instagram' | 'youtube' | 'tiktok' | 'amazon-shop'
   username: string
   url: string
   verified?: boolean

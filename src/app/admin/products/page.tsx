@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
 import { Button, Input } from '@/components/ui'
 import { useAuth } from '@/context'
+import { s3KeyToUrl, isS3Key, extractKeyFromS3Url } from '@/lib/s3'
+import { getProductImageUrl } from '@/utils/helpers'
 import {
   Plus,
   Search,
@@ -15,6 +17,7 @@ import {
   Package,
   TrendingUp,
   TrendingDown,
+  Upload,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Dialog } from '@headlessui/react'
@@ -26,6 +29,7 @@ interface Product {
   price: number
   stock: number
   image: string
+  images?: string[]
   featured: boolean
   createdAt: string
 }
@@ -42,6 +46,10 @@ const AdminProducts: React.FC = () => {
   const [imageModal, setImageModal] = useState<{ open: boolean; product: Product | null }>({ open: false, product: null })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+  const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null)
+  const [productImages, setProductImages] = useState<string[]>([])
+  const [productImageKeys, setProductImageKeys] = useState<string[]>([])
 
   useEffect(() => {
     if (isLoading) return
@@ -66,6 +74,13 @@ const AdminProducts: React.FC = () => {
       const data = await response.json()
       
       if (data.success) {
+        console.log('Fetched products:', data.data.length)
+        console.log('Sample product:', {
+          id: data.data[0]?._id,
+          name: data.data[0]?.name,
+          image: data.data[0]?.image,
+          images: data.data[0]?.images
+        })
         setProducts(data.data)
       } else {
         toast.error(data.message || 'Failed to fetch products')
@@ -147,46 +162,208 @@ const AdminProducts: React.FC = () => {
     })
 
   // Image upload logic
-  const handleImageClick = (product: Product) => {
+  const handleImageClick = async (product: Product) => {
     setImageModal({ open: true, product })
-    setImageFile(null)
-    setImagePreview(null)
+    
+    // Initialize arrays for keys and display URLs
+    let keys: string[] = []
+    let images: string[] = []
+
+    // Simple function to extract clean key from any image string
+    const extractCleanKey = (img: string): string => {
+      if (!img) return ''
+      // If it's already a simple key like "0.jpg", return it
+      if (!img.includes('s3.amazonaws.com')) return img
+      // Extract key from URL (handles multiple prefixes)
+      const match = img.match(/s3\.amazonaws\.com\/([^?]+)/)
+      return match ? match[1] : img
+    }
+
+    // Simple function to convert key to clean URL
+    const keyToCleanUrl = (key: string): string => {
+      if (!key) return ''
+      // If it's already a full URL, return it
+      if (key.startsWith('https://')) return key
+      // If it's just a filename like "0.jpg", construct the full product path
+      if (key.match(/^\d+\.jpg$/)) {
+        return s3KeyToUrl(`products/${product._id}/${key}`)
+      }
+      // Otherwise, assume it's a full key
+      return s3KeyToUrl(key)
+    }
+
+    if (product.images && product.images.length > 0) {
+      // Remove duplicates and extract clean keys
+      const uniqueImages = Array.from(new Set(product.images))
+      const cleanKeys = uniqueImages.map(extractCleanKey).filter(key => key)
+      
+      // Convert existing keys to URLs for display
+      images = cleanKeys.map(keyToCleanUrl)
+      keys = cleanKeys
+      
+      // Pad to 4 images if needed
+      while (keys.length < 4) {
+        keys.push('')
+        images.push('')
+      }
+    } else {
+      // No images array, start with empty slots
+      keys = ['', '', '', '']
+      images = ['', '', '', '']
+    }
+    
+    console.log('Image modal data:', {
+      productId: product._id,
+      keys: keys,
+      images: images
+    })
+    
+    setProductImages(images)
+    setProductImageKeys(keys)
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      console.log('Selected file:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        editingIndex: editingImageIndex
+      })
       setImageFile(file)
       setImagePreview(URL.createObjectURL(file))
     }
   }
 
   const handleImageUpload = async () => {
-    if (!imageFile || !imageModal.product) return
+    if (!imageFile || !imageModal.product || editingImageIndex === null) return
 
     try {
+      console.log('=== UPLOAD DEBUG ===')
+      console.log('Uploading image:', {
+        productId: imageModal.product._id,
+        imageIndex: editingImageIndex,
+        fileName: imageFile.name,
+        fileSize: imageFile.size,
+        fileType: imageFile.type
+      })
+      console.log('Current productImages before upload:', productImages)
+      console.log('Current productImageKeys before upload:', productImageKeys)
+      console.log('Product data before upload:', {
+        id: imageModal.product._id,
+        name: imageModal.product.name,
+        image: imageModal.product.image,
+        images: imageModal.product.images
+      })
+
+      // Upload new image to S3
       const formData = new FormData()
       formData.append('image', imageFile)
+      formData.append('imageIndex', editingImageIndex.toString())
 
-      const response = await fetch(`/api/products/${imageModal.product._id}/image`, {
+      const response = await fetch(`/api/admin/products/${imageModal.product._id}/images`, {
         method: 'POST',
         body: formData,
       })
 
       const data = await response.json()
+      console.log('Upload response:', data)
 
       if (data.success) {
-        toast.success('Image uploaded successfully')
+        toast.success(`Image ${editingImageIndex + 1} updated successfully`)
+        
+        console.log('Upload successful:', {
+          editingIndex: editingImageIndex,
+          returnedUrl: data.data.imageUrl,
+          returnedKey: data.data.key
+        })
+        
+        // Update the local state
+        const updatedImages = [...productImages]
+        const updatedKeys = [...productImageKeys]
+        updatedImages[editingImageIndex] = data.data.imageUrl
+        updatedKeys[editingImageIndex] = data.data.key
+        
+        console.log('Updated arrays:', {
+          updatedImages,
+          updatedKeys,
+          editingIndex: editingImageIndex
+        })
+        
+        setProductImages(updatedImages)
+        setProductImageKeys(updatedKeys)
+        
+        console.log('Updated productImages:', updatedImages)
+        console.log('Updated productImageKeys:', updatedKeys)
+        
+        // Reset editing state
+        setImageFile(null)
+        setImagePreview(null)
+        setEditingImageIndex(null)
+        
+        // Refresh the product data to show the updated image
+        fetchProducts()
+      } else {
+        toast.error(data.message || 'Failed to update image')
+      }
+    } catch (error) {
+      console.error('Error updating image:', error)
+      toast.error('Failed to update image')
+    }
+  }
+
+  const handleSaveAllImages = async () => {
+    if (!imageModal.product) return
+
+    try {
+      console.log('Saving all images:', {
+        productId: imageModal.product._id,
+        originalKeys: productImageKeys,
+        productImages: productImages
+      })
+
+      // Clean and prepare the images array for saving
+      // We want to save S3 keys, not URLs
+      const cleanImages = productImageKeys
+        .filter(key => key && key.trim() !== '')
+        .map(key => {
+          // If it's a full URL, extract the key
+          if (key.includes('s3.amazonaws.com')) {
+            const match = key.match(/s3\.amazonaws\.com\/([^?]+)/)
+            return match ? match[1] : key
+          }
+          // If it's already a key, return it
+          return key
+        })
+
+      console.log('Cleaned images for saving:', cleanImages)
+
+      const response = await fetch(`/api/admin/products/${imageModal.product._id}/images`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          images: cleanImages 
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast.success('All images saved successfully')
         setImageModal({ open: false, product: null })
         setImageFile(null)
         setImagePreview(null)
+        setEditingImageIndex(null)
         fetchProducts()
       } else {
-        toast.error(data.message || 'Failed to upload image')
+        toast.error(data.message || 'Failed to save images')
       }
     } catch (error) {
-      console.error('Error uploading image:', error)
-      toast.error('Failed to upload image')
+      console.error('Error saving images:', error)
+      toast.error('Failed to save images')
     }
   }
 
@@ -207,7 +384,7 @@ const AdminProducts: React.FC = () => {
     <AdminLayout>
       <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-theme-secondary shadow-sm border-b">
+        <div className="bg-theme-primary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -216,7 +393,7 @@ const AdminProducts: React.FC = () => {
                   Manage your product catalog
                 </p>
               </div>
-              <Button onClick={() => router.push('/admin/products/new')}>
+              <Button variant="primary" onClick={() => router.push('/admin/products/new')}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Product
               </Button>
@@ -226,75 +403,59 @@ const AdminProducts: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Filters and Search */}
-          <div className="mb-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              {/* Search */}
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-muted w-4 h-4 z-10" />
-                  <Input
+          <div className="bg-theme-secondary rounded-lg shadow p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="flex border border-theme rounded-lg bg-theme-tertiary shadow-sm">
+                <div className="pl-4 pr-3 py-3">
+                  <Search className="w-4 h-4 text-theme-primary" />
+                </div>
+                <input
+                  type="text"
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 relative"
+                  className="flex-1 px-3 py-3 bg-transparent focus:outline-none focus:ring-0 focus:border-0 text-theme-primary placeholder:text-theme-muted"
                   />
-                </div>
               </div>
 
-              {/* Filter */}
-              <div className="flex items-center space-x-2">
-                <Filter className="w-4 h-4 text-gray-400" />
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value as 'all' | 'low-stock' | 'featured')}
-                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 focus:border-0 bg-theme-tertiary text-theme-primary"
                 >
                   <option value="all">All Products</option>
                   <option value="low-stock">Low Stock</option>
                   <option value="featured">Featured</option>
                 </select>
-              </div>
 
-              {/* Sort */}
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-theme-muted">Sort by:</span>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'name' | 'price' | 'stock' | 'createdAt')}
-                  className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
+                className="border border-theme rounded-md px-3 py-2 focus:outline-none focus:ring-0 focus:border-0 bg-theme-tertiary text-theme-primary"
                 >
                   <option value="name">Name</option>
                   <option value="price">Price</option>
                   <option value="stock">Stock</option>
                   <option value="createdAt">Date Created</option>
                 </select>
+
                 <Button
                   variant="ghost"
-                  size="sm"
                   onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="flex items-center justify-center"
                 >
-                  {sortOrder === 'asc' ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
+                {sortOrder === 'asc' ? '↑' : '↓'}
                 </Button>
-              </div>
             </div>
           </div>
 
           {/* Products Grid */}
-          <div className="bg-theme-secondary rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-theme">
-              <h3 className="text-lg font-medium text-theme-primary">
-                Products ({filteredAndSortedProducts.length})
-              </h3>
-            </div>
+          <div className="bg-theme-secondary rounded-lg shadow border border-theme overflow-hidden">
             
             {filteredAndSortedProducts.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-theme-tertiary">
+                <table className="min-w-full divide-y divide-theme">
+                  <thead className="bg-theme-secondary">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-theme-muted uppercase tracking-wider">
                         Product
@@ -320,11 +481,11 @@ const AdminProducts: React.FC = () => {
                     {filteredAndSortedProducts.map((product) => {
                       const stockStatus = getStockStatus(product.stock)
                       return (
-                        <tr key={product._id} className="hover:bg-theme-tertiary">
+                        <tr key={product._id} className="hover:bg-theme-tertiary border border-theme rounded-lg transition-colors duration-200">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <img
-                                src={product.image}
+                                src={getProductImageUrl(product.image, product._id)}
                                 alt={product.name}
                                 className="w-12 h-12 object-cover rounded-lg mr-4 cursor-pointer hover:opacity-80"
                                 onClick={() => handleImageClick(product)}
@@ -335,7 +496,7 @@ const AdminProducts: React.FC = () => {
                                     {product.name}
                                   </span>
                                   {product.featured && (
-                                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-theme-tertiary text-theme-primary">
                                       Featured
                                     </span>
                                   )}
@@ -367,21 +528,21 @@ const AdminProducts: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end space-x-2">
                               <Button
-                                variant="ghost"
+                                variant="secondary"
                                 size="sm"
                                 onClick={() => router.push(`/products/${product._id}`)}
                               >
-                                <Eye className="w-4 h-4" />
+                                <Eye className="w-4 h-4 text-theme-primary" />
                               </Button>
                               <Button
-                                variant="ghost"
+                                variant="secondary"
                                 size="sm"
                                 onClick={() => router.push(`/admin/products/${product._id}/edit`)}
                               >
-                                <Edit className="w-4 h-4" />
+                                <Edit className="w-4 h-4 text-theme-primary" />
                               </Button>
                               <Button
-                                variant="ghost"
+                                variant="secondary"
                                 size="sm"
                                 onClick={() => handleDeleteProduct(product._id)}
                                 className="text-red-600 hover:text-red-800"
@@ -427,21 +588,111 @@ const AdminProducts: React.FC = () => {
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black opacity-30" />
           <div className="bg-theme-secondary rounded-lg shadow-lg p-6 z-10 max-w-md w-full">
-            <Dialog.Title className="text-lg font-bold text-theme-primary mb-4">Upload Product Image</Dialog.Title>
-            {imagePreview ? (
-              <img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded mb-4 mx-auto" />
-            ) : (
-              <img src={imageModal.product?.image} alt="Current" className="w-32 h-32 object-cover rounded mb-4 mx-auto" />
+                        <Dialog.Title className="text-lg font-bold text-theme-primary mb-4">Manage Product Images</Dialog.Title>
+            
+            {/* Product Images Grid */}
+            <div className="mb-6">
+              <p className="text-sm font-medium text-theme-primary mb-3">Product Images</p>
+              <div className="grid grid-cols-2 gap-3">
+                {productImages.map((image, index) => {
+                  console.log(`Rendering image ${index}:`, image)
+                  return (
+                    <div key={index} className="relative">
+                      <div className={`border-2 rounded-lg p-2 transition-colors ${
+                        editingImageIndex === index ? 'border-theme-primary bg-theme-tertiary' : 'border-theme'
+                      }`}>
+                        {image ? (
+                          <img 
+                            src={image} 
+                            alt={`Product Image ${index + 1}`} 
+                            className="w-full h-24 object-cover rounded"
+                            onLoad={() => console.log(`Image ${index} loaded successfully:`, image)}
+                            onError={() => console.log(`Image ${index} failed to load:`, image)}
+                          />
+                        ) : (
+                          <div className="w-full h-24 bg-theme-tertiary rounded flex items-center justify-center">
+                            <span className="text-theme-muted text-sm">No Image</span>
+                          </div>
+                        )}
+                        <button
+                          onClick={() => setEditingImageIndex(index)}
+                          className="absolute top-1 right-1 bg-theme-primary text-theme-secondary rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-theme-secondary hover:text-theme-primary transition-colors"
+                        >
+                          <Edit className="w-3 h-3" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-theme-muted text-center mt-1">Image {index + 1}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Image Editor */}
+            {editingImageIndex !== null && (
+              <div className="mb-6 p-4 border border-theme rounded-lg bg-theme-tertiary">
+                <p className="text-sm font-medium text-theme-primary mb-3">
+                  Editing Image {editingImageIndex + 1}
+                </p>
+                
+
+
+                {/* Upload New Image */}
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-theme-primary mb-2">Or upload new image:</p>
+                  {imagePreview && (
+                    <img src={imagePreview} alt="Preview" className="w-20 h-20 object-cover rounded mb-2 mx-auto" />
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                    className="hidden" 
+                    id="file-upload"
+                  />
+                  <label 
+                    htmlFor="file-upload" 
+                    className="flex items-center justify-center w-full p-2 border bg-theme-secondary border-theme rounded cursor-pointer hover:bg-theme-secondary transition-colors"
+                  >
+                    <Upload className="w-3 h-3 text-theme-muted mr-1" />
+                    <span className="text-xs text-theme-primary">Choose Image</span>
+                  </label>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="primary"
+                    size="sm" 
+                    className="btn-primary"
+                    onClick={handleImageUpload} 
+                    disabled={!imageFile}
+                  >
+                    Update Image {editingImageIndex + 1}
+                  </Button>
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    onClick={() => {
+                      setEditingImageIndex(null)
+                      setImageFile(null)
+                      setImagePreview(null)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
             )}
-            <input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleImageChange} 
-              className="mb-4 block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary" 
-            />
+
+            {/* Save All Button */}
             <div className="flex justify-end space-x-2">
-              <Button variant="secondary" onClick={() => setImageModal({ open: false, product: null })}>Cancel</Button>
-              <Button onClick={handleImageUpload} disabled={!imageFile}>Upload</Button>
+              <Button variant="secondary" onClick={() => setImageModal({ open: false, product: null })}>
+                Close
+              </Button>
+              <Button variant="secondary" onClick={handleSaveAllImages}>
+                Save All Images
+              </Button>
             </div>
           </div>
         </div>

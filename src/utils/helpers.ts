@@ -464,3 +464,208 @@ export const isArray = <T>(value: any): value is T[] => {
   return Array.isArray(value)
 }
 
+/**
+ * Removes duplicate images from an array while preserving order
+ * @param images - Array of image URLs
+ * @returns Array with duplicates removed
+ */
+export const deduplicateImages = (images: string[]): string[] => {
+  if (!Array.isArray(images)) return []
+  return Array.from(new Set(images)).filter(Boolean)
+}
+
+/**
+ * Validates and cleans an image array
+ * @param images - Array of image URLs
+ * @returns Cleaned array with duplicates removed and invalid entries filtered
+ */
+export const validateImageArray = (images: string[]): string[] => {
+  if (!Array.isArray(images)) return []
+  
+  // Remove duplicates and filter out empty/invalid entries
+  const cleaned = Array.from(new Set(images))
+    .filter(img => img && typeof img === 'string' && img.trim().length > 0)
+    .map(img => img.trim())
+  
+  return cleaned
+}
+
+/**
+ * Adds an image to an array if it doesn't already exist
+ * @param images - Current array of images
+ * @param newImage - New image URL to add
+ * @returns Updated array with new image (if not duplicate)
+ */
+export const addImageIfNotExists = (images: string[], newImage: string): string[] => {
+  if (!newImage || typeof newImage !== 'string' || newImage.trim().length === 0) {
+    return images
+  }
+  
+  const trimmedImage = newImage.trim()
+  if (images.includes(trimmedImage)) {
+    return images // Image already exists
+  }
+  
+  return [...images, trimmedImage]
+}
+
+/**
+ * Manages product image keys for admin interface
+ * Ensures no duplicates and maintains proper array structure
+ * @param currentKeys - Current array of image keys
+ * @param newKey - New key to add (optional)
+ * @param maxImages - Maximum number of images allowed (default: 4)
+ * @returns Cleaned and validated array of image keys
+ */
+export const manageProductImageKeys = (
+  currentKeys: string[], 
+  newKey?: string, 
+  maxImages: number = 4
+): string[] => {
+  // Start with current keys, removing duplicates
+  let keys = validateImageArray(currentKeys)
+  
+  // Add new key if provided and not already present
+  if (newKey && !keys.includes(newKey.trim())) {
+    keys.push(newKey.trim())
+  }
+  
+  // Limit to maxImages
+  keys = keys.slice(0, maxImages)
+  
+  // Pad with empty strings if needed
+  while (keys.length < maxImages) {
+    keys.push('')
+  }
+  
+  return keys
+}
+
+/**
+ * Validates and cleans S3 image keys
+ * @param keys - Array of S3 keys or URLs
+ * @returns Cleaned array of valid S3 keys
+ */
+export const validateS3ImageKeys = (keys: string[]): string[] => {
+  if (!Array.isArray(keys)) return []
+  
+  return Array.from(new Set(keys))
+    .filter(key => key && typeof key === 'string' && key.trim().length > 0)
+    .map(key => key.trim())
+    .filter(key => {
+      // Basic S3 key validation (no spaces, valid characters)
+      return /^[a-zA-Z0-9\/\-_\.]+$/.test(key) || key.includes('s3.amazonaws.com')
+    })
+}
+
+/**
+ * Extracts the base filename from an S3 URL or key
+ * @param imageString - S3 URL, key, or filename
+ * @returns Base filename (e.g., "3.jpg" from "https://bucket.s3.amazonaws.com/3.jpg")
+ */
+export const extractBaseFilename = (imageString: string): string => {
+  if (!imageString || typeof imageString !== 'string') return ''
+  
+  const trimmed = imageString.trim()
+  
+  // If it's already a simple filename, return it
+  if (!trimmed.includes('/') && !trimmed.includes('http')) {
+    return trimmed
+  }
+  
+  // If it's an S3 URL, extract the filename from the path
+  if (trimmed.includes('s3.amazonaws.com')) {
+    try {
+      const url = new URL(trimmed)
+      const pathname = url.pathname
+      // Get the last part of the path (filename)
+      const filename = pathname.split('/').pop()
+      return filename || trimmed
+    } catch (error) {
+      // If URL parsing fails, try to extract filename manually
+      const match = trimmed.match(/[^\/]+\.(jpg|jpeg|png|gif|webp|svg)$/i)
+      return match ? match[0] : trimmed
+    }
+  }
+  
+  // If it's a path-like string, get the filename
+  if (trimmed.includes('/')) {
+    return trimmed.split('/').pop() || trimmed
+  }
+  
+  return trimmed
+}
+
+/**
+ * Deduplicates image arrays that may contain mixed formats (filenames and URLs)
+ * @param images - Array of image strings (filenames, S3 keys, or URLs)
+ * @returns Deduplicated array, preferring URLs over filenames when duplicates exist
+ */
+export const deduplicateMixedImages = (images: string[]): string[] => {
+  if (!Array.isArray(images)) return []
+  
+  const filenameMap = new Map<string, string>()
+  
+  // Process each image and group by base filename
+  images.forEach(image => {
+    if (!image || typeof image !== 'string' || image.trim().length === 0) return
+    
+    const baseFilename = extractBaseFilename(image)
+    const trimmedImage = image.trim()
+    
+    // If we haven't seen this filename before, or if this is a URL and the existing one isn't
+    if (!filenameMap.has(baseFilename) || 
+        (trimmedImage.includes('http') && !filenameMap.get(baseFilename)?.includes('http'))) {
+      filenameMap.set(baseFilename, trimmedImage)
+    }
+  })
+  
+  return Array.from(filenameMap.values())
+}
+
+/**
+ * Test function to verify deduplication works with mixed image arrays
+ * @param testArray - Array to test
+ * @returns Object with original and deduplicated arrays
+ */
+export const testDeduplication = (testArray: string[]) => {
+  console.log('Testing deduplication with:', testArray)
+  
+  const deduplicated = deduplicateMixedImages(testArray)
+  
+  console.log('Original array:', testArray)
+  console.log('Deduplicated array:', deduplicated)
+  
+  return {
+    original: testArray,
+    deduplicated: deduplicated,
+    removedCount: testArray.length - deduplicated.length
+  }
+}
+
+/**
+ * Convert a product image field to a proper S3 URL
+ * Handles cases where the image is just a filename (e.g., "0.jpg") or a full S3 key
+ * Adds cache-busting parameter to prevent browser caching issues
+ */
+export function getProductImageUrl(image: string, productId?: string): string {
+  if (!image) return ''
+  
+  let url = ''
+  
+  // If it's already a full URL, use it
+  if (image.startsWith('http')) {
+    url = image
+  } else if (image.match(/^\d+\.jpg$/) && productId) {
+    // If it's just a filename like "0.jpg" and we have a productId, construct the full path
+    url = `https://${process.env.AWS_S3_BUCKET_NAME || 'adelas-bucket'}.s3.${process.env.AWS_REGION || 'us-west-1'}.amazonaws.com/products/${productId}/${image}`
+  } else {
+    // Otherwise, assume it's a full S3 key and convert to URL
+    url = `https://${process.env.AWS_S3_BUCKET_NAME || 'adelas-bucket'}.s3.${process.env.AWS_REGION || 'us-west-1'}.amazonaws.com/${image}`
+  }
+  
+  // Add cache-busting parameter to prevent browser caching
+  const separator = url.includes('?') ? '&' : '?'
+  return `${url}${separator}t=${Date.now()}`
+}
+

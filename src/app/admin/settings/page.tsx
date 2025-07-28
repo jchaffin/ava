@@ -33,6 +33,8 @@ interface SiteSettings {
       youtube: string
       tiktok: string
       linkedin: string
+      tiktokShop: string
+      amazonShop: string
     }
   }
   appearance: {
@@ -99,6 +101,11 @@ const AdminSettings: React.FC = () => {
     publishable: false,
     secret: false
   })
+  const [showPayPalKeys, setShowPayPalKeys] = useState({
+    clientId: false,
+    secret: false
+  })
+  const [showApplePayKey, setShowApplePayKey] = useState(false)
 
   useEffect(() => {
     if (isLoading) return
@@ -272,7 +279,7 @@ const AdminSettings: React.FC = () => {
     <AdminLayout>
       <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-theme-secondary shadow-sm border-b border-theme">
+        <div className="bg-theme-primary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -407,6 +414,18 @@ const AdminSettings: React.FC = () => {
                           value={settings.general.socialMedia?.linkedin || ''}
                           onChange={(e) => updateSocialMedia('linkedin', e.target.value)}
                           placeholder="https://linkedin.com/company/yourcompany"
+                        />
+                        <Input
+                          label="TikTok Shop URL"
+                          value={settings.general.socialMedia?.tiktokShop || ''}
+                          onChange={(e) => updateSocialMedia('tiktokShop', e.target.value)}
+                          placeholder="https://www.tiktok.com/@yourpage/shop"
+                        />
+                        <Input
+                          label="Amazon Shop URL"
+                          value={settings.general.socialMedia?.amazonShop || ''}
+                          onChange={(e) => updateSocialMedia('amazonShop', e.target.value)}
+                          placeholder="https://amazon.com/shop/yourstore"
                         />
                       </div>
                     </div>
@@ -732,23 +751,50 @@ const AdminSettings: React.FC = () => {
                         <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                           <h5 className="text-sm font-medium text-theme-primary">PayPal Configuration</h5>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Input
-                              label="PayPal Client ID"
-                              type="password"
-                              value={settings.payment.paypalClientId || ''}
-                              onChange={(e) => updateSetting('payment', 'paypalClientId', e.target.value)}
-                              placeholder="Client ID from PayPal Developer Dashboard"
-                            />
-                            <Input
-                              label="PayPal Secret"
-                              type="password"
-                              value={settings.payment.paypalSecret || ''}
-                              onChange={(e) => updateSetting('payment', 'paypalSecret', e.target.value)}
-                              placeholder="Secret from PayPal Developer Dashboard"
-                            />
+                            <div className="relative">
+                              <Input
+                                label="PayPal Client ID"
+                                type={showPayPalKeys.clientId ? "text" : "password"}
+                                value={settings.payment.paypalClientId || ''}
+                                onChange={(e) => updateSetting('payment', 'paypalClientId', e.target.value)}
+                                placeholder="Client ID from PayPal Developer Dashboard"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPayPalKeys(prev => ({ ...prev, clientId: !prev.clientId }))}
+                                className="absolute right-3 top-8 text-theme-muted hover:text-theme-primary focus:outline-none"
+                              >
+                                {showPayPalKeys.clientId ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                            <div className="relative">
+                              <Input
+                                label="PayPal Secret"
+                                type={showPayPalKeys.secret ? "text" : "password"}
+                                value={settings.payment.paypalSecret || ''}
+                                onChange={(e) => updateSetting('payment', 'paypalSecret', e.target.value)}
+                                placeholder="Secret from PayPal Developer Dashboard"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPayPalKeys(prev => ({ ...prev, secret: !prev.secret }))}
+                                className="absolute right-3 top-8 text-theme-muted hover:text-theme-primary focus:outline-none"
+                              >
+                                {showPayPalKeys.secret ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
                           </div>
                           <p className="text-xs text-theme-muted">
-                            Your PayPal credentials can be found in your PayPal Developer Dashboard under Apps &gt; My Apps.
+                            Your PayPal credentials can be found in your PayPal Developer Dashboard under Apps &gt; My Apps. 
+                            For security, these values are stored securely and masked in the interface.
                           </p>
                         </div>
                       )}
@@ -773,16 +819,30 @@ const AdminSettings: React.FC = () => {
                         <div className="space-y-4 p-4 bg-theme-secondary rounded-lg border border-theme">
                           <h5 className="text-sm font-medium text-theme-primary">Apple Pay Configuration</h5>
                           <div className="grid grid-cols-1 gap-4">
-                            <Input
-                              label="Apple Pay Merchant ID"
-                              type="password"
-                              value={settings.payment.applePayMerchantId || ''}
-                              onChange={(e) => updateSetting('payment', 'applePayMerchantId', e.target.value)}
-                              placeholder="merchant.com.yourcompany.applepay"
-                            />
+                            <div className="relative">
+                              <Input
+                                label="Apple Pay Merchant ID"
+                                type={showApplePayKey ? "text" : "password"}
+                                value={settings.payment.applePayMerchantId || ''}
+                                onChange={(e) => updateSetting('payment', 'applePayMerchantId', e.target.value)}
+                                placeholder="merchant.com.yourcompany.applepay"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowApplePayKey(!showApplePayKey)}
+                                className="absolute right-3 top-8 text-theme-muted hover:text-theme-primary focus:outline-none"
+                              >
+                                {showApplePayKey ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
                           </div>
                           <p className="text-xs text-theme-muted">
-                            Your Apple Pay Merchant ID can be found in your Apple Developer account under Certificates, Identifiers &amp; Profiles &gt; Identifiers.
+                            Your Apple Pay Merchant ID can be found in your Apple Developer account under Certificates, Identifiers &amp; Profiles &gt; Identifiers. 
+                            For security, this value is stored securely and masked in the interface.
                           </p>
                         </div>
                       )}

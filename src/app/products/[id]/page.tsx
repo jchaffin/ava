@@ -10,6 +10,7 @@ import { Button } from '@/components/ui'
 import { useCart } from '@/context'
 import { IProduct } from '@/types'
 import { formatPrice, getSubDir } from '@/utils/helpers'
+import { s3KeyToUrl, isS3Key, extractKeyFromS3Url } from '@/lib/s3'
 import toast from 'react-hot-toast'
 import { 
   HeartIcon, 
@@ -435,7 +436,16 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
           <div className="space-y-4">
             <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
               <Image
-                src={product.image}
+                src={(() => {
+                  if (isS3Key(product.image)) {
+                    return s3KeyToUrl(product.image)
+                  } else if (product.image.includes('s3.amazonaws.com')) {
+                    const key = extractKeyFromS3Url(product.image)
+                    return key ? s3KeyToUrl(key) : product.image
+                  } else {
+                    return product.image
+                  }
+                })()}
                 alt={product.name}
                 fill
                 sizes={product.sizes || '(max-width: 768px) 100vw, 50vw'}
@@ -452,23 +462,37 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
             {/* Additional product images would go here */}
             <div className="grid grid-cols-4 gap-2">
-              {/* Mock additional images */}
-              {[1, 2, 3, 4].map((index) => (
-                <div
-                  key={index}
-                  className="aspect-square bg-gray-100 rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500"
-                  onClick={() => setState(prev => ({ ...prev, selectedImageIndex: index }))}
-                >
-                  <Image
-                    src={product.image.replace('main', index.toString())}
-                    alt={`${product.name} view ${index}`}
-                    width={100}
-                    height={100}
-                    sizes="100px"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-              ))}
+              {/* Use the images array if available, otherwise fallback to pattern generation */}
+              {[1, 2, 3, 4].map((index) => {
+                let imageUrl = product.images && product.images[index - 1] 
+                  ? product.images[index - 1] 
+                  : product.image.replace('main', index.toString())
+                
+                // Convert any format to URL
+                if (isS3Key(imageUrl)) {
+                  imageUrl = s3KeyToUrl(imageUrl)
+                } else if (imageUrl.includes('s3.amazonaws.com')) {
+                  const key = extractKeyFromS3Url(imageUrl)
+                  imageUrl = key ? s3KeyToUrl(key) : imageUrl
+                }
+                
+                return (
+                  <div
+                    key={index}
+                    className="aspect-square bg-gray-100 rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500"
+                    onClick={() => setState(prev => ({ ...prev, selectedImageIndex: index }))}
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`${product.name} view ${index}`}
+                      width={100}
+                      height={100}
+                      sizes="100px"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                )
+              })}
             </div>
           </div>
 

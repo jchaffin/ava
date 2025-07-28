@@ -188,11 +188,13 @@ button,
 /* Button hover states with mathematical color calculations */
 .btn-primary {
   background-color: var(--ava-bg-secondary);
+  color: var(--ava-text-primary);
   transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   background-color: --alpha(var(--ava-bg-secondary) / 80%);
+  color: var(--ava-text-primary);
   opacity: 0.9;
 }
 
@@ -207,13 +209,15 @@ button,
 }
 
 .btn-ghost {
-  background-color: transparent;
-  border: 1px solid var(--ava-border);
+  background-color: var(--ava-bg-tertiary);
+  border: none;
+  color: var(--ava-text-primary);
   transition: all 0.2s ease;
 }
 
 .btn-ghost:hover {
   background-color: var(--ava-bg-tertiary);
+  color: var(--ava-text-primary);
   opacity: 0.9;
 }
 
@@ -231,6 +235,39 @@ button,
 .btn-solid {
   background-color: var(--ava-accent);
   transition: all 0.2s ease;
+}
+
+/* Navigation button styles */
+.btn-nav {
+  background-color: var(--ava-bg-tertiary);
+  color: var(--ava-text-primary);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-nav:hover {
+  background-color: var(--ava-bg-secondary);
+  color: var(--ava-text-primary);
+  opacity: 0.9;
+}
+
+.btn-nav-primary {
+  background-color: var(--ava-bg-secondary);
+  color: var(--ava-text-primary);
+}
+
+.btn-nav-primary:hover {
+  background-color: var(--ava-bg-primary);
+  color: var(--ava-text-primary);
+  opacity: 0.9;
 }
 
 .text-theme-primary {
@@ -259,9 +296,7 @@ button,
 }
 
 .theme-toggle-btn:hover {
-  background-color: var(--ava-bg-tertiary);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Shopping cart hover styles */

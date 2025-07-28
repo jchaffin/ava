@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { Product, Order } from '@/models'
 import { ApiResponse, IProduct, CreateProductInput, ProductAnalytics } from '@/types'
 import { isValidObjectId } from 'mongoose'
+import { validateImageArray } from '@/utils/helpers'
 
 interface ProductUpdateData extends Partial<CreateProductInput> {
   // Additional fields that might be updated
@@ -192,6 +193,11 @@ export async function PUT(
     if (body.image !== undefined) updateData.image = body.image.trim()
     if (body.stock !== undefined) updateData.stock = parseInt(body.stock.toString())
     if (body.featured !== undefined) updateData.featured = Boolean(body.featured)
+    
+    // Clean and validate images array if provided
+    if (body.images !== undefined) {
+      updateData.images = validateImageArray(body.images)
+    }
 
     // Track stock changes for notifications
     const stockChanged = body.stock !== undefined && body.stock !== existingProduct.stock

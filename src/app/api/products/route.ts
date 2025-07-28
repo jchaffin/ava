@@ -4,6 +4,7 @@ import connectDB from '@/lib/mongoose'
 import { authOptions } from '@/lib/auth'
 import { Product } from '@/models'
 import { CreateProductInput, ApiResponse, IProduct, ProductFilters, ProductLeanResult } from '@/types'
+import { validateImageArray } from '@/utils/helpers'
 
 interface ProductQueryParams {
   page?: string
@@ -183,6 +184,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       image: body.image.trim(),
       stock: parseInt(body.stock.toString()),
       featured: body.featured || false,
+    }
+
+    // Clean and validate images array if provided
+    if (body.images && Array.isArray(body.images)) {
+      productData.images = validateImageArray(body.images)
     }
 
     // Create new product

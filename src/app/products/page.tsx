@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ProductCard } from '@/components'
 import { Button } from '@/components/ui'
 import { IProduct, ProductFilters } from '@/types'
+import { getProductImageUrl } from '@/utils/helpers'
 
 import { 
   FunnelIcon, 
@@ -327,7 +328,7 @@ const ProductsPage: React.FC = () => {
           <div key={product._id} className="bg-theme-secondary border border-gray-200 rounded-lg p-6 flex items-center space-x-6">
             <div className="flex-shrink-0">
               <Image
-                src={product.image}
+                src={getProductImageUrl(product.image, product._id)}
                 alt={product.name}
                 width={96}
                 height={96}

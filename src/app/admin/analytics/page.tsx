@@ -149,13 +149,13 @@ const AdminAnalytics: React.FC = () => {
                   Comprehensive insights into your business performance
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-theme-muted" />
+                  <Calendar className="hidden sm:block w-4 h-4 text-theme-muted" />
                   <select
                     value={selectedPeriod}
                     onChange={(e) => setSelectedPeriod(e.target.value as '7d' | '30d' | '90d' | '1y')}
-                    className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
+                    className="border border-theme rounded-md pl-3 pr-2 py-2 text-sm focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                   >
                     <option value="7d">Last 7 days</option>
                     <option value="30d">Last 30 days</option>
@@ -163,16 +163,16 @@ const AdminAnalytics: React.FC = () => {
                     <option value="1y">Last year</option>
                   </select>
                 </div>
-                <Button onClick={fetchAnalytics} variant="secondary">
+                <Button onClick={fetchAnalytics} variant="secondary" size="sm">
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh
                 </Button>
-                <div className="flex space-x-2">
-                  <Button onClick={() => exportData('csv')} variant="secondary">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                  <Button onClick={() => exportData('csv')} variant="secondary" size="sm">
                     <Download className="w-4 h-4 mr-2" />
                     Export CSV
                   </Button>
-                  <Button onClick={() => exportData('pdf')} variant="secondary">
+                  <Button onClick={() => exportData('pdf')} variant="secondary" size="sm">
                     <Download className="w-4 h-4 mr-2" />
                     Export PDF
                   </Button>

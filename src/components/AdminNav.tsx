@@ -11,12 +11,20 @@ import {
   Settings,
   LogOut,
   BookOpen,
+  Cloud,
+  X,
+  Home,
+  BookOpen as Book,
 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
 import ThemeToggle from './ThemeToggle'
 
-const AdminNav: React.FC = () => {
+interface AdminNavProps {
+  onClose?: () => void
+}
+
+const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
   const pathname = usePathname()
   const { user, logout } = useAuth()
 
@@ -42,6 +50,11 @@ const AdminNav: React.FC = () => {
       icon: BarChart3,
     },
     {
+      href: '/admin/s3',
+      label: 'S3 Management',
+      icon: Cloud,
+    },
+    {
       href: '/admin/settings',
       label: 'Settings',
       icon: Settings,
@@ -59,76 +72,160 @@ const AdminNav: React.FC = () => {
       label: 'PayPal Setup',
       icon: BookOpen,
     },
+    {
+      href: '/admin/tutorials/aws',
+      label: 'AWS S3 Setup',
+      icon: Cloud,
+    },
   ]
 
   const isActive = (href: string) => {
     return pathname === href || pathname.startsWith(href + '/')
   }
 
+  const handleNavClick = () => {
+    if (onClose) {
+      onClose()
+    }
+  }
+
   return (
-    <nav className="bg-theme-primary shadow-sm border-r border-theme w-64 min-h-screen">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-lg font-semibold text-theme-primary">Admin Panel</h1>
-            <p className="text-sm text-theme-muted">Welcome, {user?.name}</p>
+    <nav className="flex flex-col h-full bg-theme-secondary">
+      {/* Header */}
+      <div className="flex items-center justify-between p-6 border-b-2 border-theme">
+        <div className="flex-1"></div>
+        <div className="flex items-center justify-center flex-1">
+        </div>
+        <div className="flex-1 flex justify-end">
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full bg-theme-secondary text-theme-primary hover:bg-theme-tertiary hover:text-theme-primary transition-all duration-200 cursor-pointer"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6">
+          {/* Desktop user info */}
+          <div className="hidden lg:block mb-8">
+            <div>
+              <h1 className="text-lg font-semibold text-theme-primary">Admin Panel</h1>
+              <p className="text-sm text-theme-muted">Welcome, {user?.name}</p>
+            </div>
           </div>
-          <ThemeToggle />
-        </div>
 
-        <div className="space-y-2">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-theme-tertiary text-theme-primary border-r-2 border-theme-primary'
-                    : 'text-theme-secondary hover:bg-theme-secondary hover:text-theme-primary'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </div>
+          {/* Mobile user info */}
+          <div className="lg:hidden mb-6 p-4 bg-theme-tertiary rounded-xl border border-theme">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-theme-primary rounded-full flex items-center justify-center">
+                <span className="text-theme-secondary font-semibold text-sm">
+                  {user?.name?.charAt(0) || 'U'}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-theme-primary truncate">
+                  {user?.name || 'User'}
+                </p>
+                <p className="text-xs text-theme-muted truncate">
+                  {user?.email || ''}
+                </p>
+              </div>
+            </div>
+          </div>
 
-        <div className="mt-6 pt-6 border-t border-theme">
-          <h3 className="text-xs font-semibold text-theme-muted uppercase tracking-wider mb-3">Tutorials</h3>
-          <div className="space-y-2">
-            {tutorialItems.map((item) => {
+          {/* Navigation Items */}
+          <div className="space-y-1">
+            {navItems.map((item, index) => {
               const Icon = item.icon
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  onClick={handleNavClick}
+                  className={`flex items-center space-x-4 px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 transform hover:scale-[1.02] cursor-pointer focus:outline-none focus:ring-0 focus:border-0 min-h-[44px] ${
                     isActive(item.href)
-                      ? 'bg-theme-tertiary text-theme-primary border-r-2 border-theme-primary'
-                      : 'text-theme-secondary hover:bg-theme-secondary hover:text-theme-primary'
+                      ? 'text-theme-tertiary bg-theme-primary'
+                      : 'text-theme-primary hover:text-theme-primary hover:bg-theme-tertiary'
                   }`}
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="flex-1">{item.label}</span>
+                  {isActive(item.href) && (
+                    <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
+                  )}
                 </Link>
               )
             })}
           </div>
-        </div>
 
-        <div className="mt-8 pt-6 border-t border-theme">
-          <Button
-            variant="ghost"
-            onClick={logout}
-            className="w-full justify-start text-theme-secondary hover:text-theme-primary"
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Sign Out
-          </Button>
+          {/* Tutorials Section */}
+          <div className="mt-6 pt-6 border-t border-theme">
+            <h3 className="text-xs font-semibold text-theme-muted uppercase tracking-wider mb-3">Tutorials</h3>
+            <div className="space-y-1">
+              {tutorialItems.map((item, index) => {
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavClick}
+                    className={`flex items-center space-x-4 px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 transform hover:scale-[1.02] cursor-pointer focus:outline-none focus:ring-0 focus:border-0 min-h-[44px] ${
+                      isActive(item.href)
+                        ? 'text-theme-tertiary bg-theme-primary'
+                        : 'text-theme-primary hover:text-theme-primary hover:bg-theme-tertiary'
+                    }`}
+                    style={{ animationDelay: `${(index + navItems.length) * 50}ms` }}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="flex-1">{item.label}</span>
+                    {isActive(item.href) && (
+                      <div className="w-2 h-2 bg-theme-primary rounded-full"></div>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Fixed Bottom Section */}
+      <div className="flex-shrink-0 p-6 border-t border-theme">
+        {/* Icon Row - Home, Theme Toggle, Tutorials */}
+        <div className="mb-4 flex items-center justify-center space-x-2">
+          <Link href="/">
+            <button
+              className="p-2 text-theme-secondary hover:text-theme-primary"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+          </Link>
+          <ThemeToggle />
+          <Link href="/admin/tutorials">
+            <button
+              className="p-2 text-theme-secondary hover:text-theme-primary"
+            >
+              <BookOpen className="w-5 h-5" />
+            </button>
+          </Link>
+        </div>
+        
+        {/* Sign Out */}
+        <Button
+          variant="ghost"
+          onClick={logout}
+          className="w-full justify-center text-theme-secondary hover:text-theme-primary"
+        >
+          <LogOut className="w-5 h-5 mr-3" />
+          Sign Out
+        </Button>
       </div>
     </nav>
   )

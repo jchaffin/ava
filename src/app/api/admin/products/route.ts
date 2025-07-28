@@ -37,9 +37,29 @@ export async function GET(): Promise<NextResponse<ApiResponse<any>>> {
 
     // Get all products with admin-specific fields
     const products = await Product.find({})
-      .select('_id name description price stock image featured createdAt')
+      .select('_id name description price stock image images featured createdAt')
       .sort({ createdAt: -1 })
       .lean()
+
+    console.log('Admin products API - Products fetched:', products.length)
+    console.log('Sample product:', {
+      id: products[0]?._id,
+      name: products[0]?.name,
+      image: products[0]?.image,
+      images: products[0]?.images,
+      hasImages: !!products[0]?.images,
+      imageType: typeof products[0]?.image
+    })
+    
+    // Log all products' image fields
+    products.forEach((product, index) => {
+      console.log(`Product ${index + 1}:`, {
+        name: product.name,
+        image: product.image,
+        imageLength: product.image?.length,
+        imageStartsWithHttp: product.image?.startsWith('http')
+      })
+    })
 
     return NextResponse.json(
       {

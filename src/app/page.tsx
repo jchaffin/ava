@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
+import { getProductImageUrl } from '@/utils/helpers'
 import { 
   StarIcon,
   BeakerIcon,
@@ -213,7 +214,7 @@ export default function Home() {
                 >
                   <div className="relative h-48 sm:h-56">
                     <Image
-                      src={product.image}
+                      src={getProductImageUrl(product.image, product._id)}
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"

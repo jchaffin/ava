@@ -5,6 +5,7 @@ export interface IProductDocument {
   description: string
   price: number
   image: string
+  images?: string[]
   imageDir?: string
   sizes?: string
   stock: number
@@ -20,6 +21,7 @@ export interface IProduct {
   description: string
   price: number
   image: string
+  images?: string[]
   sizes?: string
   stock: number
   featured: boolean
@@ -35,6 +37,7 @@ export type ProductLeanResult = {
   description: string
   price: number
   image: string
+  images?: string[]
   sizes?: string
   stock: number
   featured: boolean
@@ -49,6 +52,7 @@ export interface CreateProductInput {
   description: string
   price: number
   image: string
+  images?: string[]
   sizes?: string
   stock: number
   featured?: boolean

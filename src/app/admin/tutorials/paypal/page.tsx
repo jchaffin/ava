@@ -21,6 +21,9 @@ import {
   Bell,
   Users,
   Lock,
+  ArrowLeft,
+  BookOpen,
+  Cloud,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -168,7 +171,7 @@ const PayPalTutorialPage: React.FC = () => {
           <p className="text-theme-secondary">
             Add these environment variables to your <code className="bg-gray-100 px-2 py-1 rounded">.env.local</code> file:
           </p>
-          <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+          <div className="bg-theme-tertiary text-theme-primary p-4 rounded-lg font-mono text-sm">
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-300">Environment Variables</span>
               <button
@@ -337,7 +340,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
     <AdminLayout>
       <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-theme-secondary shadow-sm border-b border-theme">
+        <div className="shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -348,11 +351,18 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
               </div>
               <div className="flex items-center space-x-4">
                 <Button
-                  onClick={() => router.push('/admin/settings')}
-                  variant="secondary"
+                  onClick={() => router.push('/admin/tutorials/stripe')}
+                  variant="ghost"
                 >
-                  <Settings className="w-4 h-4 mr-2 text-theme-primary" />
-                  Go to Settings
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Previous: Stripe Setup
+                </Button>
+                <Button
+                  onClick={() => router.push('/admin/tutorials/aws')}
+                  variant="ghost"
+                >
+                  <Cloud className="w-4 h-4 mr-2" />
+                  Next: AWS S3 Setup
                 </Button>
               </div>
             </div>
@@ -388,7 +398,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
                 <Button
                   onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
                   disabled={currentStep === steps.length}
-                  variant="primary"
+                  variant="ghost"
                 >
                   Next
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -412,7 +422,7 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
             </div>
 
             {/* Features Overview */}
-            <div className="border-t border-theme p-6 bg-theme-primary">
+            <div className="border-t border-theme p-6">
               <h3 className="text-lg font-medium text-theme-primary mb-4">PayPal Integration Features</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3">

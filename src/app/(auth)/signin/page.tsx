@@ -8,6 +8,7 @@ import { Button, Input } from '@/components/ui'
 import { useAuth } from '@/context'
 import toast from 'react-hot-toast'
 import { signIn } from 'next-auth/react'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 interface SignInFormData {
   email: string
@@ -28,6 +29,7 @@ const SignInPage: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({})
   const [loading, setLoading] = useState(false)
   const [loginSuccess, setLoginSuccess] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const { login, user, isAuthenticated, isLoading } = useAuth()
 
@@ -195,17 +197,38 @@ const SignInPage: React.FC = () => {
                 required
               />
 
-              <Input
-                label="Password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                error={errors.password}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
+              <div className="mb-4">
+                <label className="block text-theme-primary text-sm font-bold mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    required
+                    className="w-full px-3 py-2 bg-theme-tertiary border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme text-theme-primary placeholder:text-theme-muted pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-theme-secondary hover:text-theme-primary focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-theme-secondary text-sm mt-1">{errors.password}</p>
+                )}
+              </div>
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center">

@@ -18,6 +18,7 @@ import {
   Edit,
   BarChart3,
   Calendar,
+  Cloud,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -175,7 +176,7 @@ const AdminDashboard: React.FC = () => {
     <AdminLayout>
       <div className="min-h-screen bg-theme-primary">
         {/* Header */}
-        <div className="bg-theme-secondary shadow-sm border-b border-theme">
+        <div className="bg-theme-primary shadow-sm border-b border-theme">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <div>
@@ -198,7 +199,7 @@ const AdminDashboard: React.FC = () => {
                     <option value="year">This Year</option>
                   </select>
                 </div>
-                <Button variant="secondary" onClick={() => router.push('/admin/products/new')}>
+                <Button variant="secondary" size="sm" onClick={() => router.push('/admin/products/new')}>
                   <Plus className="w-4 h-4 mr-2 text-theme-primary" />
                   Add Product
                 </Button>
@@ -446,6 +447,16 @@ const AdminDashboard: React.FC = () => {
                 >
                   <Eye className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
                   <span className="text-sm font-medium text-theme-primary">Tutorials</span>
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="flex-col h-16 group hover:bg-theme-tertiary transition-all duration-200"
+                  onClick={() => router.push('/admin/s3')}
+                >
+                  <Cloud className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
+                  <span className="text-sm font-medium text-theme-primary">S3 Management</span>
                 </Button>
               </div>
             </div>

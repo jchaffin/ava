@@ -86,29 +86,6 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3b82f6" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                if (typeof window !== 'undefined') {
-                  try {
-                    var theme = localStorage.getItem('theme');
-                    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    
-                    if (theme === 'dark' || (!theme && prefersDark)) {
-                      document.documentElement.classList.add('dark');
-                    } else {
-                      document.documentElement.classList.remove('dark');
-                    }
-                  } catch (e) {
-                    // Fallback to light theme if localStorage is not available
-                    document.documentElement.classList.remove('dark');
-                  }
-                }
-              })();
-            `,
-          }}
-        />
       </head>
       <body className="antialiased bg-theme-primary text-theme-primary" suppressHydrationWarning>
         <Providers>
