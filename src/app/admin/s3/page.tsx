@@ -3,33 +3,21 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
-import { Button, Input } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
 import {
-  Cloud,
   Upload,
-  Trash2,
   Download,
-  Eye,
-  EyeOff,
   RefreshCw,
-  AlertTriangle,
   CheckCircle,
-  XCircle,
   Folder,
   File,
   HardDrive,
   Database,
   Globe,
-  Shield,
   Settings,
-  Plus,
-  Search,
-  Filter,
   ChevronRight,
   ChevronDown,
-  ChevronLeft,
-  FolderOpen,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Dialog } from '@headlessui/react'
@@ -76,11 +64,8 @@ const AdminS3Management: React.FC = () => {
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [filter, setFilter] = useState<'all' | 'products' | 'uploads' | 'other'>('all')
   const [selectedFile, setSelectedFile] = useState<S3File | null>(null)
   const [filePreviewModal, setFilePreviewModal] = useState(false)
-  const [currentPath, setCurrentPath] = useState('')
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const [configModal, setConfigModal] = useState(false)
   const [s3Config, setS3Config] = useState({
@@ -90,8 +75,8 @@ const AdminS3Management: React.FC = () => {
     secretAccessKey: '',
     cdnDomain: ''
   })
-  const [showAccessKey, setShowAccessKey] = useState(false)
-  const [showSecretKey, setShowSecretKey] = useState(false)
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list')
+  const [currentPath, setCurrentPath] = useState('')
 
   useEffect(() => {
     if (isLoading) return
@@ -130,7 +115,7 @@ const AdminS3Management: React.FC = () => {
       if (configData.success) setConfig(configData.data)
 
     } catch (error) {
-      console.error('Error fetching S3 data:', error)
+      // console.error('Error fetching S3 data:', error)
       toast.error('Failed to fetch S3 data')
     } finally {
       setLoading(false)
@@ -162,32 +147,32 @@ const AdminS3Management: React.FC = () => {
         toast.error(data.message || 'Failed to upload file')
       }
     } catch (error) {
-      console.error('Error uploading file:', error)
+      // console.error('Error uploading file:', error)
       toast.error('Failed to upload file')
     }
   }
 
-  const handleFileDelete = async (fileKey: string) => {
-    if (!confirm('Are you sure you want to delete this file?')) return
+  // const handleFileDelete = async (fileKey: string) => {
+  //   if (!confirm('Are you sure you want to delete this file?')) return
 
-    try {
-      const response = await fetch(`/api/admin/s3/files/${encodeURIComponent(fileKey)}`, {
-        method: 'DELETE',
-      })
+  //   try {
+  //     const response = await fetch(`/api/admin/s3/files/${encodeURIComponent(fileKey)}`, {
+  //       method: 'DELETE',
+  //     })
 
-      const data = await response.json()
+  //     const data = await response.json()
 
-      if (data.success) {
-        toast.success('File deleted successfully')
-        fetchS3Data() // Refresh data
-      } else {
-        toast.error(data.message || 'Failed to delete file')
-      }
-    } catch (error) {
-      console.error('Error deleting file:', error)
-      toast.error('Failed to delete file')
-    }
-  }
+  //     if (data.success) {
+  //       toast.success('File deleted successfully')
+  //       fetchS3Data() // Refresh data
+  //     } else {
+  //       toast.error(data.message || 'Failed to delete file')
+  //     }
+  //   } catch (error) {
+  //     // console.error('Error deleting file:', error)
+  //     toast.error('Failed to delete file')
+  //   }
+  // }
 
   const handleFileDownload = async (file: S3File) => {
     try {
@@ -203,7 +188,7 @@ const AdminS3Management: React.FC = () => {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
-      console.error('Error downloading file:', error)
+      // console.error('Error downloading file:', error)
       toast.error('Failed to download file')
     }
   }
@@ -320,30 +305,30 @@ const AdminS3Management: React.FC = () => {
     return expandedFolders.has(folderPath)
   }
 
-  const handleSaveConfig = async () => {
-    try {
-      const response = await fetch('/api/admin/settings', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(s3Config),
-      })
+  // const handleSaveConfig = async () => {
+  //   try {
+  //     const response = await fetch('/api/admin/settings', {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(s3Config),
+  //     })
 
-      const data = await response.json()
+  //     const data = await response.json()
 
-      if (data.success) {
-        toast.success('S3 configuration saved successfully')
-        setConfigModal(false)
-        fetchS3Data() // Refresh data
-      } else {
-        toast.error(data.message || 'Failed to save configuration')
-      }
-    } catch (error) {
-      console.error('Error saving S3 config:', error)
-      toast.error('Failed to save configuration')
-    }
-  }
+  //     if (data.success) {
+  //       toast.success('S3 configuration saved successfully')
+  //       setConfigModal(false)
+  //       fetchS3Data() // Refresh data
+  //     } else {
+  //       toast.error(data.message || 'Failed to save configuration')
+  //     }
+  //   } catch (error) {
+  //     // console.error('Error saving S3 config:', error)
+  //     toast.error('Failed to save configuration')
+  //   }
+  // }
 
   const fetchS3Config = async () => {
     try {
@@ -360,7 +345,7 @@ const AdminS3Management: React.FC = () => {
         })
       }
     } catch (error) {
-      console.error('Error fetching S3 config:', error)
+      // console.error('Error fetching S3 config:', error)
     }
   }
 
@@ -373,55 +358,55 @@ const AdminS3Management: React.FC = () => {
     })
   }
 
-  // Render tree view recursively
-  const renderTreeItem = (folder: any, level: number = 0) => {
-    const isExpanded = isFolderExpanded(folder.path)
-    const subfolders = getSubfolders(folder.path)
-    const files = getFilesInFolder(folder.path)
+  // // Render tree view recursively
+  // const renderTreeItem = (folder: any, level: number = 0) => {
+  //   const isExpanded = isFolderExpanded(folder.path)
+  //   const subfolders = getSubfolders(folder.path)
+  //   const files = getFilesInFolder(folder.path)
     
-    return (
-      <div key={folder.path}>
-        <div 
-          className="flex items-center py-2 px-4 hover:bg-theme-tertiary cursor-pointer"
-          style={{ paddingLeft: `${level * 20 + 16}px` }}
-          onClick={() => toggleFolder(folder.path)}
-        >
-          <div className="flex items-center flex-1">
-            {isExpanded ? (
-              <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
-            ) : (
-              <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
-            )}
-            <span className="text-lg mr-2">📁</span>
-            <span className="text-sm font-medium text-theme-primary">{folder.name}</span>
-            <span className="text-sm text-theme-muted ml-2">
-              ({files.length} files{subfolders.length > 0 ? `, ${subfolders.length} folders` : ''})
-            </span>
-          </div>
-        </div>
+  //   return (
+  //     <div key={folder.path}>
+  //       <div 
+  //         className="flex items-center py-2 px-4 hover:bg-theme-tertiary cursor-pointer"
+  //         style={{ paddingLeft: `${level * 20 + 16}px` }}
+  //         onClick={() => toggleFolder(folder.path)}
+  //       >
+  //         <div className="flex items-center flex-1">
+  //           {isExpanded ? (
+  //             <ChevronDown className="w-4 h-4 mr-2 text-theme-primary" />
+  //           ) : (
+  //             <ChevronRight className="w-4 h-4 mr-2 text-theme-primary" />
+  //           )}
+  //           <span className="text-lg mr-2">📁</span>
+  //           <span className="text-sm font-medium text-theme-primary">{folder.name}</span>
+  //           <span className="text-sm text-theme-muted ml-2">
+  //             ({files.length} files{subfolders.length > 0 ? `, ${subfolders.length} folders` : ''})
+  //           </span>
+  //         </div>
+  //       </div>
         
-        {isExpanded && (
-          <div>
-            {/* Show subfolders */}
-            {subfolders.map((subfolder: any) => renderTreeItem(subfolder, level + 1))}
+  //       {isExpanded && (
+  //         <div>
+  //           {/* Show subfolders */}
+  //           {subfolders.map((subfolder: any) => renderTreeItem(subfolder, level + 1))}
             
-            {/* Show files */}
-            {files.map((file: any) => (
-              <div 
-                key={file.key}
-                className="flex items-center py-1 px-4 hover:bg-theme-tertiary"
-                style={{ paddingLeft: `${(level + 1) * 20 + 16}px` }}
-              >
-                <span className="text-lg mr-2">{getFileIcon(file.type)}</span>
-                <span className="text-sm text-theme-primary">{file.key.split('/').pop()}</span>
-                <span className="text-sm text-theme-muted ml-2">({formatFileSize(file.size)})</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
+  //           {/* Show files */}
+  //           {files.map((file: any) => (
+  //             <div 
+  //               key={file.key}
+  //               className="flex items-center py-1 px-4 hover:bg-theme-tertiary"
+  //               style={{ paddingLeft: `${(level + 1) * 20 + 16}px` }}
+  //             >
+  //               <span className="text-lg mr-2">{getFileIcon(file.type)}</span>
+  //               <span className="text-sm text-theme-primary">{file.key.split('/').pop()}</span>
+  //               <span className="text-sm text-theme-muted ml-2">({formatFileSize(file.size)})</span>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       )}
+  //     </div>
+  //   )
+  // }
 
   if (isLoading || loading) {
     return (

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '@/components'
-import { Button, Input } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
 import {
   Search,
@@ -89,7 +89,7 @@ const AdminOrders: React.FC = () => {
         toast.error(data.message || 'Failed to fetch orders')
       }
     } catch (error) {
-      console.error('Error fetching orders:', error)
+      // console.error('Error fetching orders:', error)
       toast.error('Failed to fetch orders')
     } finally {
       setLoading(false)
@@ -114,7 +114,7 @@ const AdminOrders: React.FC = () => {
         toast.error(data.message || 'Failed to update order status')
       }
     } catch (error) {
-      console.error('Error updating order status:', error)
+      // console.error('Error updating order status:', error)
       toast.error('Failed to update order status')
     }
   }
