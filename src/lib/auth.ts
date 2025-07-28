@@ -133,7 +133,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // JWT callback - runs whenever a JWT is created, updated, or accessed
     async jwt({ token, user, account, profile }) {
-      console.log('NextAuth: JWT callback', { token, user, account })
+  
       
       // Initial sign in
       if (user) {
@@ -142,7 +142,7 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email
         token.name = user.name
         token.picture = user.image
-        console.log('NextAuth: JWT callback - user data set', token)
+
       }
 
       // Handle OAuth sign-in
@@ -186,7 +186,7 @@ export const authOptions: NextAuthOptions = {
 
     // Session callback - runs whenever a session is checked
     async session({ session, token }) {
-      console.log('NextAuth: Session callback', { token, session })
+  
       
       if (token && session.user) {
         session.user.id = token.id as string
@@ -196,7 +196,7 @@ export const authOptions: NextAuthOptions = {
         session.user.image = token.picture as string
       }
 
-      console.log('NextAuth: Session callback result', session)
+      
       return session
     },
 
@@ -258,7 +258,7 @@ export const authOptions: NextAuthOptions = {
   // Events - for logging, analytics, etc.
   events: {
     async signIn({ user, account, profile, isNewUser }) {
-      console.log(`User ${user.email} signed in via ${account?.provider}`)
+      
       
       // Analytics tracking (only in production)
       if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined' && window.gtag) {
@@ -270,11 +270,11 @@ export const authOptions: NextAuthOptions = {
     },
 
     async signOut({ token }) {
-      console.log(`User ${token?.email} signed out`)
+      
     },
 
     async createUser({ user }) {
-      console.log(`New user created: ${user.email}`)
+      
       
       // Send welcome email, analytics, etc.
     },

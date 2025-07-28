@@ -76,7 +76,7 @@ const AdminNav: React.FC<AdminNavProps> = ({ onClose }) => {
       icon: BookOpen,
     },
     {
-      href: '/admin/tutorials/aws',
+      href: '/admin/tutorials/storage',
       label: 'Storage Setup',
       icon: Cloud,
     },

@@ -90,7 +90,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // Log successful registration
-    console.log(`New user registered: ${newUser.email}`)
+    
 
     // Send welcome email (in a real app)
     // await sendWelcomeEmail(newUser.email, newUser.name)

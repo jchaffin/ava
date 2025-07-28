@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { getLocalStorageStats } from '@/lib/local-storage'
+import { getStorageStats } from '@/lib/local-storage'
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get local storage stats
-    const stats = await getLocalStorageStats()
+    const stats = await getStorageStats()
 
     return NextResponse.json({
       success: true,
@@ -33,8 +33,8 @@ export async function GET(request: NextRequest) {
         region: 'Local',
         cdnEnabled: false,
         cdnDomain: undefined,
-        uploadDir: stats.uploadDir,
-        productImagesDir: stats.productImagesDir
+        uploadDir: 'public/uploads',
+        productImagesDir: 'public/images/products'
       }
     })
 

@@ -542,26 +542,26 @@ export const manageProductImageKeys = (
 }
 
 /**
- * Validates and cleans S3 image keys
- * @param keys - Array of S3 keys or URLs
- * @returns Cleaned array of valid S3 keys
+ * Validates and cleans image keys
+ * @param keys - Array of image keys or URLs
+ * @returns Cleaned array of valid image keys
  */
-export const validateS3ImageKeys = (keys: string[]): string[] => {
+export const validateImageKeys = (keys: string[]): string[] => {
   if (!Array.isArray(keys)) return []
   
   return Array.from(new Set(keys))
     .filter(key => key && typeof key === 'string' && key.trim().length > 0)
     .map(key => key.trim())
     .filter(key => {
-      // Basic S3 key validation (no spaces, valid characters)
-      return /^[a-zA-Z0-9\/\-_\.]+$/.test(key) || key.includes('s3.amazonaws.com')
+      // Basic key validation (no spaces, valid characters)
+      return /^[a-zA-Z0-9\/\-_\.]+$/.test(key) || key.includes('http')
     })
 }
 
 /**
- * Extracts the base filename from an S3 URL or key
- * @param imageString - S3 URL, key, or filename
- * @returns Base filename (e.g., "3.jpg" from "https://bucket.s3.amazonaws.com/3.jpg")
+ * Extracts the base filename from a URL or key
+ * @param imageString - URL, key, or filename
+ * @returns Base filename (e.g., "3.jpg" from "https://example.com/images/3.jpg")
  */
 export const extractBaseFilename = (imageString: string): string => {
   if (!imageString || typeof imageString !== 'string') return ''
@@ -573,8 +573,8 @@ export const extractBaseFilename = (imageString: string): string => {
     return trimmed
   }
   
-  // If it's an S3 URL, extract the filename from the path
-  if (trimmed.includes('s3.amazonaws.com')) {
+  // If it's a URL, extract the filename from the path
+  if (trimmed.includes('http')) {
     try {
       const url = new URL(trimmed)
       const pathname = url.pathname
@@ -598,7 +598,7 @@ export const extractBaseFilename = (imageString: string): string => {
 
 /**
  * Deduplicates image arrays that may contain mixed formats (filenames and URLs)
- * @param images - Array of image strings (filenames, S3 keys, or URLs)
+ * @param images - Array of image strings (filenames, keys, or URLs)
  * @returns Deduplicated array, preferring URLs over filenames when duplicates exist
  */
 export const deduplicateMixedImages = (images: string[]): string[] => {

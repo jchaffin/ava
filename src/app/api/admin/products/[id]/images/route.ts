@@ -79,11 +79,9 @@ export async function POST(
     // Use the imageIndex as the filename to match the display position (1-based)
     const displayPosition = imageIndex === '0' || imageIndex === 'main' ? 'main' : (parseInt(imageIndex) + 1).toString()
     const fileName = `${displayPosition}.jpg`
-    const uploadResult = await uploadToLocal(buffer, {
+    const uploadResult = await uploadToLocal(buffer, fileName, {
       folder: 'products',
-      fileName: fileName,
-      contentType: imageFile.type || 'image/jpeg',
-      productId: id
+      filename: fileName
     })
 
     console.log('Local storage upload result:', uploadResult)

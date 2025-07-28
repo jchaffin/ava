@@ -33,10 +33,10 @@ interface LocalStorageStats {
   productImagesDir?: string
 }
 
-interface S3File {
+interface LocalFile {
   key: string
   size: number
-  lastModified: string
+  modified: Date
   url: string
   type: string
   folder: string
@@ -53,18 +53,18 @@ interface LocalStorageConfig {
   productImagesDir?: string
 }
 
-const AdminS3Management: React.FC = () => {
+const AdminLocalStorageManagement: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [stats, setStats] = useState<LocalStorageStats | null>(null)
-  const [files, setFiles] = useState<S3File[]>([])
+  const [files, setFiles] = useState<LocalFile[]>([])
   const [config, setConfig] = useState<LocalStorageConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [uploadModal, setUploadModal] = useState(false)
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedFile, setSelectedFile] = useState<S3File | null>(null)
+  const [selectedFile, setSelectedFile] = useState<LocalFile | null>(null)
   const [filePreviewModal, setFilePreviewModal] = useState(false)
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const [configModal, setConfigModal] = useState(false)
@@ -174,7 +174,7 @@ const AdminS3Management: React.FC = () => {
   //   }
   // }
 
-  const handleFileDownload = async (file: S3File) => {
+  const handleFileDownload = async (file: LocalFile) => {
     try {
       const response = await fetch(`/api/admin/s3/files/${encodeURIComponent(file.key)}/download`)
       const blob = await response.blob()
@@ -414,7 +414,7 @@ const AdminS3Management: React.FC = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-theme-secondary">Loading S3 Management...</p>
+            <p className="mt-4 text-theme-secondary">Loading Local Storage Management...</p>
           </div>
         </div>
       </AdminLayout>
@@ -953,7 +953,7 @@ const AdminS3Management: React.FC = () => {
                   <h4 className="font-medium text-theme-primary">{selectedFile.key}</h4>
                   <p className="text-sm text-theme-muted">
                     Size: {formatFileSize(selectedFile.size)} | 
-                    Modified: {formatDate(selectedFile.lastModified)}
+                    Modified: {formatDate(selectedFile.modified.toISOString())}
                   </p>
                 </div>
 
@@ -991,4 +991,4 @@ const AdminS3Management: React.FC = () => {
   )
 }
 
-export default AdminS3Management 
+export default AdminLocalStorageManagement 

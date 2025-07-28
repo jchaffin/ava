@@ -72,19 +72,19 @@ const TutorialsPage: React.FC = () => {
       difficulty: 'Beginner'
     },
     {
-      id: 'aws',
-      title: 'AWS S3 Setup',
-      description: 'Complete guide to set up AWS S3 for asset management',
+      id: 'storage',
+      title: 'Local Storage Setup',
+      description: 'Complete guide to set up local file storage for asset management',
       icon: Cloud,
-      href: '/admin/tutorials/aws',
+      href: '/admin/tutorials/storage',
       features: [
-        'Secure file storage',
-        'Global CDN access',
+        'Local file storage',
         'Easy file uploads',
-        'Scalable infrastructure'
+        'Simple setup',
+        'Full control'
       ],
-      estimatedTime: '20-25 minutes',
-      difficulty: 'Intermediate'
+      estimatedTime: '5-10 minutes',
+      difficulty: 'Beginner'
     }
   ]
 

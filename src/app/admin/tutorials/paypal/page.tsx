@@ -358,11 +358,11 @@ NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_paypal_client_id_here
                   Previous: Stripe Setup
                 </Button>
                 <Button
-                  onClick={() => router.push('/admin/tutorials/aws')}
+                  onClick={() => router.push('/admin/tutorials/storage')}
                   variant="ghost"
                 >
                   <Cloud className="w-4 h-4 mr-2" />
-                  Next: AWS S3 Setup
+                  Next: Local Storage Setup
                 </Button>
               </div>
             </div>

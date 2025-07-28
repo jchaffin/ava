@@ -11,7 +11,7 @@ export interface SkinAnalysisResult {
 }
 
 export interface AIAnalysisConfig {
-  provider: 'mock' | 'google-vision' | 'azure-vision' | 'aws-rekognition' | 'openai';
+  provider: 'mock' | 'google-vision' | 'azure-vision' | 'openai';
   apiKey?: string;
   endpoint?: string;
 }
@@ -29,8 +29,7 @@ export class SkinAnalysisService {
         return this.analyzeWithGoogleVision(imageBuffer);
       case 'azure-vision':
         return this.analyzeWithAzureVision(imageBuffer);
-      case 'aws-rekognition':
-        return this.analyzeWithAWSRekognition(imageBuffer);
+
       case 'openai':
         return this.analyzeWithOpenAI(imageBuffer);
       case 'mock':
@@ -118,11 +117,7 @@ export class SkinAnalysisService {
     throw new Error('Azure Vision API integration not implemented');
   }
 
-  private async analyzeWithAWSRekognition(imageBuffer: Buffer): Promise<SkinAnalysisResult> {
-    // Implementation for AWS Rekognition
-    // This would require the aws-sdk package
-    throw new Error('AWS Rekognition integration not implemented');
-  }
+
 
   private async analyzeWithOpenAI(imageBuffer: Buffer): Promise<SkinAnalysisResult> {
     // Implementation for OpenAI Vision API

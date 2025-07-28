@@ -47,10 +47,9 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
 
     // Upload to local storage
-    const uploadResult = await uploadToLocal(buffer, {
+    const uploadResult = await uploadToLocal(buffer, file.name, {
       folder,
-      fileName: file.name,
-      contentType: file.type || 'application/octet-stream'
+      filename: file.name
     })
 
     return NextResponse.json({
@@ -59,7 +58,7 @@ export async function POST(request: NextRequest) {
       data: {
         key: uploadResult.key,
         url: uploadResult.url,
-        path: uploadResult.path
+        filename: uploadResult.filename
       }
     })
 

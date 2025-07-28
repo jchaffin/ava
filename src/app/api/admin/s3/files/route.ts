@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { listLocalFiles } from '@/lib/local-storage'
+import { listFiles } from '@/lib/local-storage'
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const folder = searchParams.get('folder') || ''
 
     // List local files
-    const files = await listLocalFiles(folder)
+    const files = await listFiles(folder)
 
     return NextResponse.json({
       success: true,

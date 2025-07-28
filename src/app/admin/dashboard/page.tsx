@@ -456,7 +456,7 @@ const AdminDashboard: React.FC = () => {
                   onClick={() => router.push('/admin/s3')}
                 >
                   <Cloud className="w-5 h-5 mb-1 group-hover:scale-110 transition-transform duration-200 text-theme-primary" />
-                  <span className="text-sm font-medium text-theme-primary">S3 Management</span>
+                  <span className="text-sm font-medium text-theme-primary">Local Storage</span>
                 </Button>
               </div>
             </div>
