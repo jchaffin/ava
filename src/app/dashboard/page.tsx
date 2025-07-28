@@ -99,7 +99,9 @@ const DashboardPage: React.FC = () => {
             { status: 'cancelled' as const, color: 'bg-red-100 text-red-800', icon: CheckCircleIcon },
           ]
           
-          const randomStatus = statuses[Math.floor(Math.random() * statuses.length)]
+          // Use a deterministic status based on order ID to avoid hydration issues
+          const statusIndex = order._id.charCodeAt(order._id.length - 1) % statuses.length
+          const randomStatus = statuses[statusIndex]
           
           return {
             ...order,

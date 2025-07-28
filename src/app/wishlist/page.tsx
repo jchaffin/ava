@@ -302,7 +302,11 @@ const WishlistPage: React.FC = () => {
                   </span>
                   
                   <span className="text-sm text-theme-muted">
-                    Added {new Date(item.addedAt).toLocaleDateString()}
+                    Added {new Date(item.addedAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
 

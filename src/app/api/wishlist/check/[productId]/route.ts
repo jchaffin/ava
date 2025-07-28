@@ -55,9 +55,9 @@ export async function GET(
     // })
     // const isWishlisted = !!wishlistItem
 
-    // For demo purposes, we'll randomly return true/false
+    // For demo purposes, we'll use a deterministic value based on product ID
     // In production, replace this with actual database query
-    const isWishlisted = Math.random() > 0.5
+    const isWishlisted = productId.charCodeAt(productId.length - 1) % 2 === 0
 
     return NextResponse.json(
       {

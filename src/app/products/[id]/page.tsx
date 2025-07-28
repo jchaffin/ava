@@ -576,7 +576,11 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                 <div>
                   <dt className="text-sm font-medium text-theme-muted">Added</dt>
                   <dd className="mt-1 text-sm text-theme-primary">
-                    {new Date(product.createdAt).toLocaleDateString()}
+                    {new Date(product.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
                   </dd>
                 </div>
               </dl>
@@ -768,7 +772,11 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                       <div className="flex items-center space-x-2">
                         {renderStars(review.rating, 'sm')}
                         <span className="text-sm text-theme-muted">
-                          {new Date(review.createdAt).toLocaleDateString()}
+                          {new Date(review.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
                         </span>
                       </div>
                     </div>

@@ -38,8 +38,8 @@ export default function TestThemePage() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Current Theme State</h2>
           <div className="bg-theme-secondary p-4 rounded-lg">
-            <p><strong>HTML class:</strong> {document.documentElement.className}</p>
-            <p><strong>Has &apos;dark&apos; class:</strong> {document.documentElement.classList.contains('dark') ? 'Yes' : 'No'}</p>
+            <p><strong>HTML class:</strong> {typeof window !== 'undefined' ? document.documentElement.className : 'N/A'}</p>
+            <p><strong>Has &apos;dark&apos; class:</strong> {typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') ? 'Yes' : 'No' : 'N/A'}</p>
             <p><strong>LocalStorage theme:</strong> {typeof window !== 'undefined' ? localStorage.getItem('theme') || 'none' : 'N/A'}</p>
           </div>
         </div>
