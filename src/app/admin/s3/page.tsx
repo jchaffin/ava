@@ -935,7 +935,7 @@ const AdminS3Management: React.FC = () => {
                       Local Storage Active
                     </h3>
                     <div className="mt-2 text-sm text-blue-700">
-                      <p>Files are stored locally in your project's public directory.</p>
+                      <p>Files are stored locally in your project&apos;s public directory.</p>
                       <p className="mt-1">No external configuration required.</p>
                     </div>
                   </div>
