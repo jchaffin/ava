@@ -5,7 +5,8 @@ import { Camera, Upload, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui';
 import SkinAnalysisResults from '@/components/SkinAnalysisResults';
-import * as faceapi from 'face-api.js';
+// Remove the top-level import to avoid Node.js module resolution issues
+// import * as faceapi from 'face-api.js';
 import { useRouter } from 'next/navigation';
 import { getProductImageUrl } from '@/utils/helpers';
 
@@ -134,6 +135,7 @@ export default function SkinAnalysisPage() {
     if (!faceModelLoaded) {
       try {
         console.log('Loading face detection model...');
+        const faceapi = await import('face-api.js');
         await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
         console.log('Tiny face detector loaded');
         setFaceModelLoaded(true);
@@ -146,6 +148,7 @@ export default function SkinAnalysisPage() {
     if (!landmarksModelLoaded) {
       try {
         console.log('Loading face landmarks model...');
+        const faceapi = await import('face-api.js');
         await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
         console.log('Face landmarks model loaded');
         setLandmarksModelLoaded(true);
@@ -230,6 +233,7 @@ export default function SkinAnalysisPage() {
           
           try {
             // Use more lenient detection options with landmarks
+            const faceapi = await import('face-api.js');
             const detection = await faceapi.detectSingleFace(
               canvas, 
               new faceapi.TinyFaceDetectorOptions({
@@ -310,6 +314,7 @@ export default function SkinAnalysisPage() {
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0);
         // Run face detection
+        const faceapi = await import('face-api.js');
         const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions());
         if (!detection) {
           toast.error('No face detected. Please try again with your face clearly visible.');

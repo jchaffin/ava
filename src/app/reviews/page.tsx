@@ -260,7 +260,7 @@ const ReviewsPage: React.FC = () => {
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Share Your Experience</h2>
             <p className="text-white/80 mb-6 max-w-md mx-auto">
-              Have you tried our products? We'd love to hear about your experience!
+              Have you tried our products? We&apos;d love to hear about your experience!
             </p>
             <Button className="bg-white text-purple-600 hover:bg-gray-100">
               Write a Review

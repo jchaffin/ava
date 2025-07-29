@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js'
 
 // Initialize Stripe server-side
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-06-30.basil',
+  apiVersion: '2023-08-16',
   typescript: true,
 })
 
