@@ -33,6 +33,26 @@ const SignInPage: React.FC = () => {
   const router = useRouter()
   const { login, user, isAuthenticated, isLoading } = useAuth()
 
+  // Check for OAuth errors in URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const error = urlParams.get('error')
+    
+    if (error === 'oauth_error') {
+      setErrors({ 
+        general: 'Google sign-in failed. Please check your Google OAuth configuration or try again.' 
+      })
+      // Clear the error from URL
+      router.replace('/signin')
+    } else if (error === 'oauth_state_error') {
+      setErrors({ 
+        general: 'Google sign-in session expired. Please try signing in again.' 
+      })
+      // Clear the error from URL
+      router.replace('/signin')
+    }
+  }, [router])
+
   // Handle redirect after successful login
   useEffect(() => {
     if (loginSuccess && isAuthenticated && user && !isLoading) {

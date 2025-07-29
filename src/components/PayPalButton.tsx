@@ -151,7 +151,7 @@ export default function PayPalButton({
   }
 
   return (
-    <div className={className}>
+    <div className={`${className} paypal-button`}>
       <div id="paypal-button-container"></div>
     </div>
   )

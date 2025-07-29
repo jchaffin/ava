@@ -228,7 +228,7 @@ const ApplePayButtonFallback: React.FC<ApplePayButtonProps> = ({
 // Main Apple Pay button component
 const ApplePayButton: React.FC<ApplePayButtonProps> = (props) => {
   return (
-    <div className="apple-pay-container">
+    <div className="apple-pay-container apple-pay-button">
       <ApplePayButtonFallback {...props} />
       <style jsx>{`
         .apple-pay-container {

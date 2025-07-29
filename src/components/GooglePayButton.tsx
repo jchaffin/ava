@@ -254,7 +254,7 @@ const GooglePayButton: React.FC<GooglePayButtonProps> = ({
 
   return (
     <div className="flex justify-center items-center w-full">
-      <div ref={googlePayRef} className={`${className} w-full flex justify-center items-center`} />
+      <div ref={googlePayRef} className={`${className} w-full flex justify-center items-center google-pay-button`} />
     </div>
   )
 }

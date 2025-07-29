@@ -59,6 +59,52 @@
   font-family: "Geist Sans", ui-sans-serif, system-ui, sans-serif !important;
 }
 
+/* Add cursor pointer to all Stripe buttons and clickable elements */
+.stripe-elements-theme-wrapper button,
+.stripe-elements-theme-wrapper [role="button"],
+.stripe-elements-theme-wrapper .Button,
+.stripe-elements-theme-wrapper .Tab,
+[data-elements-stable-field-name] button,
+[data-elements-stable-field-name] [role="button"],
+.StripeElement button,
+.StripeElement [role="button"],
+.stripe-elements button,
+.stripe-elements [role="button"] {
+  cursor: pointer !important;
+}
+
+/* Ensure disabled Stripe elements show not-allowed cursor */
+.stripe-elements-theme-wrapper button:disabled,
+.stripe-elements-theme-wrapper [role="button"]:disabled,
+.stripe-elements-theme-wrapper .Button:disabled,
+.stripe-elements-theme-wrapper .Tab:disabled,
+[data-elements-stable-field-name] button:disabled,
+[data-elements-stable-field-name] [role="button"]:disabled,
+.StripeElement button:disabled,
+.StripeElement [role="button"]:disabled,
+.stripe-elements button:disabled,
+.stripe-elements [role="button"]:disabled {
+  cursor: not-allowed !important;
+}
+
+/* Add cursor pointer to PayPal and other payment buttons */
+#paypal-button-container button,
+#paypal-button-container [role="button"],
+.paypal-button,
+.google-pay-button,
+.apple-pay-button {
+  cursor: pointer !important;
+}
+
+/* Ensure payment buttons show not-allowed cursor when disabled */
+#paypal-button-container button:disabled,
+#paypal-button-container [role="button"]:disabled,
+.paypal-button:disabled,
+.google-pay-button:disabled,
+.apple-pay-button:disabled {
+  cursor: not-allowed !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

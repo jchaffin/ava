@@ -112,7 +112,18 @@ export const authOptions: NextAuthOptions = {
             response_type: 'code',
             scope: 'openid email profile',
           }
-        }
+        },
+        // Add additional configuration to handle state issues
+        checks: ['state', 'pkce'],
+        profile(profile) {
+          return {
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+            role: 'user', // Default role for OAuth users
+          }
+        },
       })
     ] : []),
   ],
@@ -202,13 +213,26 @@ export const authOptions: NextAuthOptions = {
 
     // Redirect callback - controls where users are redirected after sign in
     async redirect({ url, baseUrl }) {
+      // Handle Google OAuth redirect specifically
+      if (url.includes('google') && url.includes('error=invalid_redirect')) {
+        console.error('Google OAuth invalid redirect error detected')
+        return `${baseUrl}/signin?error=oauth_error`
+      }
+      
+      // Handle OAuth state errors
+      if (url.includes('error=state_missing') || url.includes('error=state_mismatch')) {
+        console.error('Google OAuth state error detected')
+        return `${baseUrl}/signin?error=oauth_state_error`
+      }
+      
       // Allows relative callback URLs
       if (url.startsWith('/')) return `${baseUrl}${url}`
       
       // Allows callback URLs on the same origin
       if (new URL(url).origin === baseUrl) return url
       
-      return baseUrl
+      // Default redirect to home page
+      return `${baseUrl}/`
     },
 
     // Sign in callback - controls if sign in is allowed
@@ -218,8 +242,17 @@ export const authOptions: NextAuthOptions = {
 
         // For OAuth providers
         if (account?.provider === 'google') {
+          console.log('Google OAuth sign-in attempt:', {
+            email: profile?.email,
+            emailVerified: (profile as any)?.email_verified,
+            accountType: account.type,
+            hasAccessToken: !!account.access_token,
+            hasRefreshToken: !!account.refresh_token,
+          })
+
           // Check if email is verified for Google
           if ((profile as any)?.email_verified !== true) {
+            console.log('Google OAuth: Email not verified')
             return false
           }
 
@@ -227,10 +260,12 @@ export const authOptions: NextAuthOptions = {
           if (profile?.email) {
             const existingUser = await User.findOne({ email: profile.email })
             if (existingUser && existingUser.role === 'banned') {
+              console.log('Google OAuth: User is banned')
               return false
             }
           }
 
+          console.log('Google OAuth: Sign-in allowed')
           return true
         }
 
