@@ -72,23 +72,23 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
               </div>
               
               {/* Quantity Controls */}
-              <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+              <div className="flex items-center border border-theme rounded-md bg-theme-primary">
                 <button
                   onClick={() => handleQuantityChange(item.quantity - 1)}
-                  className="px-3 py-2 hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Decrease quantity"
                   disabled={item.quantity <= 1}
                 >
                   <Minus size={14} />
                 </button>
                 
-                <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-secondary">
+                <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary">
                   {item.quantity}
                 </span>
                 
                 <button
                   onClick={() => handleQuantityChange(item.quantity + 1)}
-                  className="px-3 py-2 hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Increase quantity"
                   disabled={item.quantity >= stock}
                 >

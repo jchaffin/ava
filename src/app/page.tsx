@@ -183,7 +183,7 @@ export default function Home() {
               featuredProducts.map((product) => (
                 <div 
                   key={product._id} 
-                  className="bg-theme-primary rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
+                  className="bg-theme-tertiary rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
                   onClick={() => handleProductClick(product._id)}
                 >
                   <div className="relative h-48 sm:h-56">

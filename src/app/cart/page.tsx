@@ -105,7 +105,7 @@ const CartPage: React.FC = () => {
             </p>
             <div className="space-y-4">
               <Link href="/products">
-                <Button className="font-bold px-8 py-3">
+                <Button variant="secondary" className="btn-secondary font-bold px-8 py-3 my-3">
                   <ShoppingBagIcon className="w-5 h-5 mr-2" />
                   Start Shopping
                 </Button>
@@ -186,7 +186,7 @@ const CartPage: React.FC = () => {
               
               <div className="p-6 space-y-4">
                 {/* Price Breakdown */}
-                <div className="space-y-3">
+                <div className="space-y-3 bg-theme-tertiary p-4 rounded-lg">
                   <div className="flex justify-between text-sm">
                     <span className="text-theme-secondary">Subtotal ({getTotalItems()} items)</span>
                     <span className="font-medium text-theme-primary">{formatCurrency(subtotal)}</span>
@@ -269,50 +269,33 @@ const CartPage: React.FC = () => {
                   {session ? 'Proceed to Checkout' : 'Sign in to Checkout'}
                 </Button>
 
-                {/* Security & Trust */}
-                <div className="border-t border-theme pt-4">
-                  <div className="flex items-center justify-center space-x-6 text-sm text-theme-muted">
-                    <div className="flex items-center">
-                      <ShieldCheckIcon className="w-4 h-4 mr-1" />
-                      <span>Secure Checkout</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CreditCardIcon className="w-4 h-4 mr-1" />
-                      <span>Multiple Payment Options</span>
+                {/* Text underneath checkout button */}
+                <div className="bg-theme-tertiary p-4 rounded-lg space-y-4">
+                  {/* Security & Trust */}
+                  <div className="border-t border-theme pt-4">
+                    <div className="flex items-center justify-center space-x-6 text-sm text-theme-muted">
+                      <div className="flex items-center">
+                        <ShieldCheckIcon className="w-4 h-4 mr-1" />
+                        <span>Secure Checkout</span>
+                      </div>
+                      <div className="flex items-center">
+                        <CreditCardIcon className="w-4 h-4 mr-1" />
+                        <span>Multiple Payment Options</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Additional Info */}
-                <div className="text-xs text-theme-muted space-y-1">
-                  <p>• Free shipping on orders over $100</p>
-                  <p>• 30-day money-back guarantee</p>
-                  <p>• Secure payment processing</p>
+                  {/* Additional Info */}
+                  <div className="text-xs text-theme-muted space-y-1 text-center">
+                    <p>• Free shipping on orders over $100</p>
+                    <p>• 30-day money-back guarantee</p>
+                    <p>• Secure payment processing</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Save for Later - Only show for guests with items */}
-            {!session && items.length > 0 && (
-              <div className="fixed bottom-6 right-6 w-80 bg-theme-tertiary rounded-lg shadow-lg border border-theme p-6 z-50">
-                <h3 className="text-lg font-semibold text-theme-primary mb-4">Save Your Cart</h3>
-                <p className="text-sm text-theme-secondary mb-4">
-                  Create an account to save these {getTotalItems()} item{getTotalItems() !== 1 ? 's' : ''} for later. Your cart will be preserved when you sign in.
-                </p>
-                <div className="space-y-2">
-                  <Link href="/register">
-                    <Button variant="primary" className="w-full">
-                      Create Account & Save Cart
-                    </Button>
-                  </Link>
-                  <Link href="/signin">
-                    <Button variant="ghost" className="w-full text-sm">
-                      Already have an account? Sign in
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </div>

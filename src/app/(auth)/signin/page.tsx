@@ -162,24 +162,26 @@ const SignInPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-theme-primary">
-              Sign in to your account
-            </h2>
-            <p className="mt-2 text-center text-sm text-theme-secondary">
-              Or&nbsp;
-              <Link
-                href="/register"
-                className="font-medium text-theme-primary hover:text-theme-secondary"
-              >
-                create a new account
-              </Link>
-            </p>
+    <div className="min-h-screen bg-theme-primary flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="bg-theme-secondary p-3 rounded-full">
+              <svg className="h-8 w-8 text-theme-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
           </div>
+          <h2 className="text-3xl font-bold text-theme-primary">Sign in to your account</h2>
+          <p className="mt-2 text-theme-secondary">
+            Welcome back! Sign in to continue
+          </p>
+        </div>
 
-          <div className="bg-theme-primary shadow-md rounded-lg p-8 border border-theme">
+        {/* Sign In Form */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="bg-theme-secondary rounded-lg shadow-md p-6 border border-theme">
             {/* General Error Message */}
             {errors.general && (
               <div className="mb-4 bg-theme-secondary border border-theme text-theme-primary px-4 py-3 rounded-md">
@@ -204,44 +206,64 @@ const SignInPage: React.FC = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Input
-                label="Email Address"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                error={errors.email}
-                placeholder="Enter your email"
-                autoComplete="email"
-                required
-              />
+            <div className="space-y-4">
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-theme-primary mb-1">
+                  Email Address
+                </label>
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
+                  <div className="pl-3 pr-2">
+                    <svg className="h-5 w-5 text-theme-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-theme-secondary text-sm mt-1">{errors.email}</p>
+                )}
+              </div>
 
-              <div className="mb-4">
-                <label className="block text-theme-primary text-sm font-bold mb-2">
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-theme-primary mb-1">
                   Password
                 </label>
-                <div className="relative">
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
+                  <div className="pl-3 pr-2">
+                    <svg className="h-5 w-5 text-theme-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    id="password"
                     name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
                     value={formData.password}
                     onChange={handleChange}
+                    className="flex-1 py-2 pr-3 bg-transparent text-theme-primary placeholder-theme-muted focus:outline-none focus:ring-0 focus:border-0 border-0 sm:text-sm"
                     placeholder="Enter your password"
-                    autoComplete="current-password"
-                    required
-                    className="w-full px-3 py-2 bg-theme-tertiary border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme text-theme-primary placeholder:text-theme-muted pr-10"
                   />
                   <button
                     type="button"
+                    className="pr-3 flex items-center cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-theme-secondary hover:text-theme-primary focus:outline-none"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5" />
+                      <EyeSlashIcon className="h-5 w-5 text-theme-muted" />
                     ) : (
-                      <EyeIcon className="h-5 w-5" />
+                      <EyeIcon className="h-5 w-5 text-theme-muted" />
                     )}
                   </button>
                 </div>
@@ -249,52 +271,62 @@ const SignInPage: React.FC = () => {
                   <p className="text-theme-secondary text-sm mt-1">{errors.password}</p>
                 )}
               </div>
+            </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between mt-6">
+              <div className="flex items-center">
+                                  <input
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-theme-primary focus:ring-theme-secondary border-theme rounded"
+                    className="h-4 w-4 text-theme-primary focus:outline-none focus:ring-0"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-theme-primary">
-                    Remember me
-                  </label>
-                </div>
-
-                <div className="text-sm">
-                  <Link
-                    href="/forgot-password"
-                    className="font-medium text-theme-primary hover:text-theme-secondary"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-theme-muted">
+                  Remember me
+                </label>
               </div>
 
-              <Button
+              <div className="text-sm">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-theme-muted"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="mt-6">
+              <button
                 type="submit"
-                loading={loading}
                 disabled={loading}
-                className="w-full"
-                size="lg"
+                className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-base font-bold rounded-lg btn-secondary focus:outline-none focus:ring-0 disabled:bg-theme-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </Button>
-            </form>
+                {loading ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-theme-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </div>
+                ) : (
+                  'Sign in'
+                )}
+              </button>
+            </div>
 
             {/* Google Sign In */}
             <div className="mt-6">
-              <Button
+              <button
                 type="button"
                 onClick={() => signIn('google')}
-                variant="outline"
-                size="lg"
-                className="w-full"
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-transparent btn-secondary font-bold shadow-sm transition-colors duration-150 cursor-pointer"
                 disabled={loading}
               >
-                <svg className="w-5 h-5 mr-3" viewBox="0 0 48 48">
+                <svg className="w-5 h-5" viewBox="0 0 48 48">
                   <g>
                     <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.73 5.48 2.69 13.44l7.98 6.2C12.13 13.13 17.62 9.5 24 9.5z"/>
                     <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.02l7.19 5.59C43.93 37.13 46.1 31.36 46.1 24.55z"/>
@@ -304,26 +336,25 @@ const SignInPage: React.FC = () => {
                   </g>
                 </svg>
                 Sign in with Google
-              </Button>
+              </button>
             </div>
-
-
           </div>
+        </form>
 
-          {/* Additional Links */}
-          <div className="text-center">
-            <p className="text-sm text-theme-secondary">
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/register"
-                className="font-medium text-theme-primary hover:text-theme-secondary"
-              >
-                Sign up for free
-              </Link>
-            </p>
-          </div>
+        {/* Additional Links */}
+        <div className="text-center">
+          <p className="text-sm text-theme-secondary">
+            Don&apos;t have an account?{' '}
+            <Link
+              href="/register"
+              className="font-medium text-theme-primary hover:text-theme-secondary"
+            >
+              Sign up for free
+            </Link>
+          </p>
         </div>
       </div>
+    </div>
   )
 }
 

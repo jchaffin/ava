@@ -82,10 +82,10 @@ const ShippingPage: React.FC = () => {
       </div>
 
       {/* Processing Information */}
-      <div className="bg-theme-tertiary rounded-lg p-8 mb-12">
+      <div className="bg-theme-secondary rounded-lg p-8 mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Processing & Delivery</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
+          <div className="bg-theme-tertiary rounded-lg p-4">
             <h3 className="text-lg font-semibold text-theme-primary mb-4">Processing Time</h3>
             <div className="space-y-3">
               <div className="flex items-center">
@@ -102,7 +102,7 @@ const ShippingPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div>
+          <div className="bg-theme-tertiary rounded-lg p-4">
             <h3 className="text-lg font-semibold text-theme-primary mb-4">Package Protection</h3>
             <div className="space-y-3">
               <div className="flex items-center">
@@ -125,7 +125,7 @@ const ShippingPage: React.FC = () => {
       {/* Shipping Restrictions */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Shipping Restrictions</h2>
-        <div className="bg-theme-tertiary border border-theme rounded-lg p-6">
+        <div className="bg-theme-secondary border border-theme rounded-lg p-6">
           <ul className="space-y-2">
             {restrictions.map((restriction, index) => (
               <li key={index} className="flex items-start">
@@ -167,9 +167,9 @@ const ShippingPage: React.FC = () => {
       {/* Tracking Orders */}
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Tracking Your Order</h2>
-        <div className="bg-theme-tertiary border border-theme rounded-lg p-6">
+        <div className="bg-theme-secondary border border-theme rounded-lg p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+            <div className="bg-theme-tertiary rounded-lg p-4">
               <h3 className="text-lg font-semibold text-theme-primary mb-4">How to Track</h3>
               <ul className="space-y-3 text-theme-secondary">
                 <li>• Check your order confirmation email for tracking information</li>
@@ -178,7 +178,7 @@ const ShippingPage: React.FC = () => {
                 <li>• Contact customer service for assistance</li>
               </ul>
             </div>
-            <div>
+            <div className="bg-theme-tertiary rounded-lg p-4">
               <h3 className="text-lg font-semibold text-theme-primary mb-4">Order Status Updates</h3>
               <div className="space-y-3">
                 <div className="flex items-center">
@@ -190,7 +190,7 @@ const ShippingPage: React.FC = () => {
                   <span className="ava-text-tertiary">Processing</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-theme-primary rounded-full mr-3"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                   <span className="ava-text-tertiary">Shipped</span>
                 </div>
                 <div className="flex items-center">
@@ -207,21 +207,21 @@ const ShippingPage: React.FC = () => {
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-theme-primary mb-6">Frequently Asked Questions</h2>
         <div className="space-y-4">
-          <div className="bg-theme-tertiary border border-theme rounded-lg p-6">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">When will my order ship?</h3>
                           <p className="text-theme-secondary">
                 Orders are typically processed and shipped within 1-2 business days. You&apos;ll receive 
                 a confirmation email with tracking information once your order ships.
               </p>
           </div>
-          <div className="bg-theme-tertiary border border-theme rounded-lg p-6">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">Do you ship internationally?</h3>
             <p className="text-theme-secondary">
               Yes, we ship to select countries. International shipping rates and delivery times 
               vary by location. Additional customs duties may apply.
             </p>
           </div>
-          <div className="bg-theme-tertiary border border-theme rounded-lg p-6">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6">
             <h3 className="font-semibold text-theme-primary mb-2">What if my package is lost or damaged?</h3>
             <p className="text-theme-secondary">
               All packages are insured. If your package is lost or damaged, please contact our 
@@ -232,7 +232,7 @@ const ShippingPage: React.FC = () => {
       </div>
 
       {/* Contact Section */}
-      <div className="bg-theme-tertiary rounded-lg p-8 text-center">
+      <div className="bg-theme-secondary rounded-lg p-8 text-center">
         <h2 className="text-2xl font-bold text-theme-primary mb-4">Need Help?</h2>
         <p className="text-theme-secondary mb-6">
           Have questions about shipping? Our customer service team is here to help.
@@ -240,13 +240,13 @@ const ShippingPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="/contact"
-            className="bg-theme-secondary text-theme-primary px-6 py-3 rounded-lg transition-colors duration-200"
+            className="bg-theme-primary text-theme-secondary px-6 py-3 rounded-lg transition-colors duration-200"
           >
             Contact Us
           </a>
           <a
             href="/faq"
-            className="border border-theme ava-text-tertiary px-6 py-3 rounded-lg hover:bg-theme-tertiary transition-colors duration-200"
+            className="bg-theme-primary text-theme-secondary px-6 py-3 rounded-lg transition-colors duration-200"
           >
             View FAQ
           </a>

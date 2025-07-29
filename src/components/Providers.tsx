@@ -17,11 +17,11 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
         <CartProvider>
           {children}
           <Toaster
-            position="top-right"
+            position="top-left"
             toastOptions={{
               duration: 3000,
               style: {
-                background: 'var(--ava-bg-secondary)',
+                background: 'var(--ava-bg-tertiary)',
                 color: 'var(--ava-text-primary)',
                 border: '1px solid var(--ava-border)',
                 borderRadius: '8px',
@@ -36,36 +36,36 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
               success: {
                 duration: 2500,
                 style: {
-                  background: 'var(--ava-bg-secondary)',
+                  background: 'var(--ava-bg-tertiary)',
                   color: 'var(--ava-text-primary)',
                   border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
                   primary: 'var(--ava-text-primary)',
-                  secondary: 'var(--ava-bg-secondary)',
+                  secondary: 'var(--ava-bg-tertiary)',
                 },
               },
               error: {
                 duration: 4000,
                 style: {
-                  background: 'var(--ava-bg-secondary)',
+                  background: 'var(--ava-bg-tertiary)',
                   color: 'var(--ava-text-primary)',
                   border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
                   primary: 'var(--ava-text-primary)',
-                  secondary: 'var(--ava-bg-secondary)',
+                  secondary: 'var(--ava-bg-tertiary)',
                 },
               },
               loading: {
                 style: {
-                  background: 'var(--ava-bg-secondary)',
+                  background: 'var(--ava-bg-tertiary)',
                   color: 'var(--ava-text-primary)',
                   border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
                   primary: 'var(--ava-text-primary)',
-                  secondary: 'var(--ava-bg-secondary)',
+                  secondary: 'var(--ava-bg-tertiary)',
                 },
               },
             }}

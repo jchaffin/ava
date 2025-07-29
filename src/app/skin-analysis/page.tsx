@@ -272,6 +272,13 @@ export default function SkinAnalysisPage() {
               } else {
                 setFaceLandmarks(null);
               }
+              
+              // Auto-capture when face is detected and locked on
+              if (!isAnalyzing) {
+                setTimeout(() => {
+                  capturePhoto();
+                }, 1000); // Wait 1 second after face detection to auto-capture
+              }
             } else {
               setFaceBox(null);
               setFaceLandmarks(null);
@@ -483,7 +490,7 @@ export default function SkinAnalysisPage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column - Upload & Recommended Products */}
+            {/* Left Column - Upload Section */}
             <div className="space-y-6">
               {/* Image Upload Section */}
               <div className="bg-theme-secondary rounded-2xl shadow-xl p-6">
@@ -494,7 +501,7 @@ export default function SkinAnalysisPage() {
                 {!previewUrl ? (
                   <div className="space-y-4">
                     {/* File Upload */}
-                    <div className="border-2 border-dashed border-theme rounded-xl p-8 text-center transition-colors">
+                    <div className="border-2 border-dashed border-theme rounded-xl p-8 text-center transition-colors bg-theme-primary">
                       <Upload className="w-12 h-12 text-theme-muted mx-auto mb-4" />
                       <p className="text-theme-secondary mb-4">
                         Drag and drop your image here, or click to browse
@@ -508,7 +515,8 @@ export default function SkinAnalysisPage() {
                       />
                       <Button
                         onClick={() => fileInputRef.current?.click()}
-                        className="btn-secondary px-6 py-2 rounded-lg"
+                        variant="primary"
+                        className="px-6 py-2 rounded-lg"
                       >
                         Choose File
                       </Button>
@@ -552,7 +560,7 @@ export default function SkinAnalysisPage() {
                     <Button
                       onClick={analyzeSkin}
                       disabled={isAnalyzing}
-                      variant="primary"
+                      variant="secondary"
                       className="w-full py-3 px-6 rounded-xl flex items-center justify-center space-x-2"
                     >
                       {isAnalyzing ? (
@@ -570,60 +578,10 @@ export default function SkinAnalysisPage() {
                   </div>
                 )}
               </div>
-
-              {/* Recommended Products - Always show */}
-              <div className="bg-theme-secondary rounded-2xl shadow-xl p-6">
-                <h2 className="text-2xl font-semibold text-theme-primary mb-6">
-                  {result ? 'Personalized Recommendations' : 'Featured Products'}
-                </h2>
-                <div className="space-y-3">
-                  {getRecommendedProducts().map((product) => {
-                    console.log('Product:', product);
-                    console.log('Product image:', product.images[0]);
-                    console.log('Product image URL:', getProductImageUrl(product.images[0], product._id));
-                    return (
-                      <div key={product._id} className="flex items-center justify-between p-3 bg-theme-tertiary rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          {product.images[0] && (
-                            <img
-                              src={getProductImageUrl(product.images[0], product._id)}
-                              alt={product.name}
-                              className="w-12 h-12 object-cover rounded-lg"
-                            />
-                          )}
-                          <div>
-                            <h4 className="font-medium text-theme-primary text-sm">
-                              {product.name}
-                            </h4>
-                            <p className="text-theme-secondary text-xs">
-                              ${product.price.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          onClick={() => handleAddToCart(product._id)}
-                          variant="primary"
-                          size="sm"
-                          className="px-3 py-1"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    );
-                  })}
-                </div>
-                {!result && (
-                  <div className="text-center mt-4">
-                    <p className="text-theme-muted text-sm">
-                      Get personalized recommendations after your skin analysis
-                    </p>
-                  </div>
-                )}
-              </div>
             </div>
 
             {/* Right Column - Results Section */}
-            <div className="bg-theme-tertiary rounded-2xl shadow-xl p-6">
+            <div className="bg-theme-secondary rounded-2xl shadow-xl p-6">
               <h2 className="text-2xl font-semibold text-theme-primary mb-6">
                 Analysis Results
               </h2>
@@ -650,15 +608,76 @@ export default function SkinAnalysisPage() {
             </div>
           </div>
 
+          {/* Recommended Products Section - After Analysis Results */}
+          {result && (
+            <div className="bg-theme-secondary rounded-2xl shadow-xl p-6">
+              <h2 className="text-2xl font-semibold text-theme-primary mb-6">
+                Recommended Products
+              </h2>
+              <div className="space-y-3">
+                {getRecommendedProducts().map((product) => {
+                  console.log('Product:', product);
+                  console.log('Product image:', product.images[0]);
+                  console.log('Product image URL:', getProductImageUrl(product.images[0], product._id));
+                  return (
+                    <div key={product._id} className="flex items-center justify-between p-3 bg-theme-tertiary rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        {product.images[0] && (
+                          <img
+                            src={getProductImageUrl(product.images[0], product._id)}
+                            alt={product.name}
+                            className="w-12 h-12 object-cover rounded-lg"
+                          />
+                        )}
+                        <div>
+                          <h4 className="font-medium text-theme-primary text-sm">
+                            {product.name}
+                          </h4>
+                          <p className="text-theme-secondary text-xs">
+                            ${product.price.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleAddToCart(product._id)}
+                        variant="primary"
+                        size="sm"
+                        className="px-3 py-1"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Personalized Recommendations Section - After Analysis Results */}
+          {result && (
+            <div className="bg-theme-secondary rounded-2xl shadow-xl p-6">
+              <h2 className="text-2xl font-semibold text-theme-primary mb-6">
+                Personalized Recommendations
+              </h2>
+              <div className="space-y-4">
+                {result.recommendations.map((recommendation, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-4 bg-theme-tertiary rounded-xl">
+                    <div className="w-2 h-2 bg-theme-primary rounded-full mt-2 flex-shrink-0" />
+                    <span className="text-theme-secondary">
+                      {recommendation}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          </div>
+
           {/* Camera Modal */}
           {isCameraActive && (
             <>
-              {/* Debug indicator */}
-              <div className="fixed top-4 right-4 bg-red-500 text-white p-2 rounded z-[10000]">
-                Camera Active: {isCameraActive.toString()}
-              </div>
-              <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999]">
-                <div className="bg-theme-secondary rounded-2xl p-6 max-w-md w-full mx-4 border border-theme shadow-2xl">
+              <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[9999] p-4">
+                <div className="bg-theme-secondary rounded-2xl p-6 max-w-lg w-full border border-theme shadow-2xl">
                   <h3 className="text-xl font-semibold text-theme-primary mb-4">
                     Take a Photo
                   </h3>
@@ -668,7 +687,9 @@ export default function SkinAnalysisPage() {
                     autoPlay
                     playsInline
                     muted
-                    className="w-full h-64 object-cover rounded-xl bg-black"
+                    className={`w-full h-96 object-cover rounded-xl bg-black transition-all duration-500 ${
+                      faceDetected ? 'scale-110' : 'scale-100'
+                    }`}
                   />
                   <canvas ref={canvasRef} className="hidden" />
                   
@@ -849,71 +870,55 @@ export default function SkinAnalysisPage() {
                     </div>
                   )}
                   
-                  {/* 3D Target Overlay for Face Positioning */}
+                  {/* Dynamic Face Detection Guide */}
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    {/* 3D Target with Perspective */}
-                    <div className="relative transform-gpu perspective-1000">
-                      {/* 3D Outer Ring with depth and shadow */}
-                      <div className="w-48 h-48 border-2 border-green-400 rounded-full animate-pulse transform rotate-x-12 rotate-y-12 shadow-2xl shadow-green-400/20"></div>
-                      
-                      {/* 3D Middle Ring with different depth */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36 h-36 border-2 border-green-400/70 rounded-full rotate-x-8 rotate-y-8 shadow-lg shadow-green-400/15"></div>
-                      
-                      {/* 3D Inner Ring */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 border-2 border-green-400/50 rounded-full rotate-x-4 rotate-y-4 shadow-md shadow-green-400/10"></div>
-                      
-                      {/* 3D Center Dot with glow effect */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-green-400 rounded-full shadow-lg shadow-green-400/50 animate-pulse"></div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full"></div>
-                      
-                      {/* 3D Crosshair Lines with depth */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-0.5 bg-gradient-to-r from-transparent via-green-400/60 to-transparent rotate-x-12"></div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0.5 h-48 bg-gradient-to-b from-transparent via-green-400/60 to-transparent rotate-y-12"></div>
-                      
-                      {/* 3D Position Text with backdrop */}
-                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 text-blue-300 text-sm font-medium">
-                        <div className="bg-black/60 px-4 py-2 rounded-lg backdrop-blur-sm border border-green-400/30 rotate-x-8">
+                    {faceDetected ? (
+                      <>
+                        {/* Zoomed in face detection box */}
+                        <div 
+                          className="absolute border-2 border-green-400 rounded-full animate-pulse transition-all duration-500"
+                          style={{
+                            left: `${faceBox?.x || 0}px`,
+                            top: `${faceBox?.y || 0}px`,
+                            width: `${faceBox?.width || 0}px`,
+                            height: `${faceBox?.height || 0}px`,
+                            transform: 'scale(1.1)',
+                            boxShadow: '0 0 20px rgba(34, 197, 94, 0.5)'
+                          }}
+                        >
+                          {/* Scanning dots around the detected face */}
+                          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                          <div className="absolute top-1/2 -left-2 transform -translate-y-1/2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                          <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-sm font-medium bg-green-600 px-3 py-1 rounded">
+                          ✓ Face Detected - Ready to Capture
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Default positioning guide */}
+                        <div className="w-48 h-48 border-2 border-green-400 rounded-full animate-pulse opacity-50"></div>
+                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-white text-sm font-medium bg-black/60 px-3 py-1 rounded">
                           Position your face here
                         </div>
-                      </div>
-                      
-                      {/* 3D Corner Guides with depth */}
-                      <div className="absolute -top-2 -left-2 w-6 h-6 border-l-2 border-t-2 border-green-400 rotate-x-12 rotate-y-12 shadow-sm"></div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 border-r-2 border-t-2 border-green-400 rotate-x-12 -rotate-y-12 shadow-sm"></div>
-                      <div className="absolute -bottom-2 -left-2 w-6 h-6 border-l-2 border-b-2 border-green-400 -rotate-x-12 rotate-y-12 shadow-sm"></div>
-                      <div className="absolute -bottom-2 -right-2 w-6 h-6 border-r-2 border-b-2 border-green-400 -rotate-x-12 -rotate-y-12 shadow-sm"></div>
-                      
-                      {/* 3D Depth Indicators */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-52 h-52 border border-green-400/20 rounded-full rotate-x-16 rotate-y-16"></div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 h-56 border border-green-400/10 rounded-full rotate-x-20 rotate-y-20"></div>
-                    </div>
+                      </>
+                    )}
                   </div>
                   
-                  {/* Scanning Overlay */}
+                  {/* Simple Corner Indicators */}
                   <div className="absolute inset-0 pointer-events-none">
-                    {/* Scanning Line */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-green-400 to-transparent animate-scan"></div>
-                    
-                    {/* Corner Indicators */}
                     <div className="absolute top-2 left-2 w-6 h-6 border-l-2 border-t-2 border-green-400"></div>
                     <div className="absolute top-2 right-2 w-6 h-6 border-r-2 border-t-2 border-green-400"></div>
                     <div className="absolute bottom-2 left-2 w-6 h-6 border-l-2 border-b-2 border-green-400"></div>
                     <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-green-400"></div>
-                    
-                    {/* Scanning Grid */}
-                    <div className="absolute inset-0 opacity-20">
-                      <div className="grid grid-cols-3 grid-rows-3 h-full">
-                        {Array.from({ length: 9 }).map((_, i) => (
-                          <div key={i} className="border border-green-400/30"></div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                                  </div>
                 </div>
-                                  <div className="flex space-x-3">
+                <div className="flex space-x-3">
                   <Button
                     onClick={capturePhoto}
-                    variant="primary"
+                    variant="secondary"
                     disabled={!faceDetected}
                     className={`flex-1 py-2 px-4 rounded-lg transition-all duration-300 ${
                       !faceDetected ? 'opacity-50 cursor-not-allowed' : ''
@@ -929,12 +934,11 @@ export default function SkinAnalysisPage() {
                     Cancel
                   </Button>
                 </div>
-                </div>
               </div>
+            </div>
             </>
           )}
         </div>
       </div>
-    </div>
   );
 } 

@@ -163,9 +163,9 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
   return (
     <div className="space-y-6">
       {/* Confidence Score */}
-      <div className="bg-theme-secondary rounded-xl p-4">
+      <div className="bg-theme-primary rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-blue-300">
+          <span className="text-sm font-medium text-theme-secondary">
             Analysis Confidence
           </span>
           <span className="text-sm font-bold text-theme-primary">
@@ -181,20 +181,20 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
       </div>
 
       {/* Skin Type */}
-      <div className="bg-theme-secondary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+      <div className="bg-theme-primary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
         <h3 className="font-semibold text-theme-primary mb-2">
           Skin Type
         </h3>
         <div className="flex items-center space-x-2">
           <CheckCircle className="w-5 h-5 text-theme-primary" />
-          <span className="text-blue-200 capitalize">
+          <span className="text-theme-secondary capitalize">
             {result.skinType}
           </span>
         </div>
       </div>
 
       {/* Concerns */}
-      <div className="bg-theme-secondary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+      <div className="bg-theme-primary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
         <h3 className="font-semibold text-theme-primary mb-3">
           Identified Concerns
         </h3>
@@ -210,22 +210,7 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
         </div>
       </div>
 
-      {/* Recommendations */}
-      <div className="bg-theme-secondary rounded-xl p-4">
-        <h3 className="font-semibold text-theme-primary mb-3">
-          Personalized Recommendations
-        </h3>
-        <div className="space-y-2">
-          {result.recommendations.map((recommendation, index) => (
-            <div key={index} className="flex items-start space-x-2">
-              <div className="w-2 h-2 bg-theme-primary rounded-full mt-2 flex-shrink-0" />
-              <span className="text-theme-secondary text-sm">
-                {recommendation}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+
 
 
 
@@ -235,8 +220,8 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
           <Button
             onClick={handleSaveAnalysis}
             disabled={isSaving}
-            variant="secondary"
-            className="btn-secondary flex-1 py-3 px-6 rounded-xl transition-all space-x-2"
+            variant="primary"
+            className="flex-1 py-3 px-6 rounded-xl transition-all space-x-2"
           >
             <Sparkles className="w-5 h-5" />
             <span>{isSaving ? 'Saving...' : 'Save Analysis'}</span>
@@ -244,9 +229,9 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
         )}
         {onReset && (
           <Button
-            variant="secondary"
+            variant="primary"
             onClick={onReset}
-            className="flex-1 btn-secondary py-3 px-6 rounded-xl transition-colors"
+            className="flex-1 py-3 px-6 rounded-xl transition-colors"
           >
             New Analysis
           </Button>
@@ -254,7 +239,7 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
       </div>
 
       {/* Disclaimer */}
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4">
+      <div className="bg-theme-primary rounded-xl p-4">
         <div className="flex items-start space-x-2">
           <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
           <div>

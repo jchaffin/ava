@@ -81,14 +81,14 @@ const Register: React.FC = () => {
 
         {/* Registration Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="bg-theme-primary rounded-lg shadow-md p-6 border border-theme">
+          <div className="bg-theme-secondary rounded-lg shadow-md p-6 border border-theme">
             <div className="space-y-4">
               {/* Name Field */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-theme-primary mb-1">
                   Full Name
                 </label>
-                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
                   <div className="pl-3 pr-2">
                     <User className="h-5 w-5 text-theme-muted" />
                   </div>
@@ -110,7 +110,7 @@ const Register: React.FC = () => {
                 <label htmlFor="email" className="block text-sm font-medium text-theme-primary mb-1">
                   Email Address
                 </label>
-                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
                   <div className="pl-3 pr-2">
                     <Mail className="h-5 w-5 text-theme-muted" />
                   </div>
@@ -132,7 +132,7 @@ const Register: React.FC = () => {
                 <label htmlFor="password" className="block text-sm font-medium text-theme-primary mb-1">
                   Password
                 </label>
-                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
                   <div className="pl-3 pr-2">
                     <Lock className="h-5 w-5 text-theme-muted" />
                   </div>
@@ -168,7 +168,7 @@ const Register: React.FC = () => {
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-theme-primary mb-1">
                   Confirm Password
                 </label>
-                <div className="flex items-center border border-theme rounded-md bg-theme-secondary">
+                <div className="flex items-center border-transparent rounded-md bg-theme-tertiary">
                   <div className="pl-3 pr-2">
                     <Lock className="h-5 w-5 text-theme-muted" />
                   </div>
@@ -209,7 +209,7 @@ const Register: React.FC = () => {
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-theme-primary bg-theme-secondary hover:bg-theme-tertiary focus:outline-none focus:ring-0 disabled:bg-theme-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="group relative w-full flex justify-center py-3 px-6 border border-transparent text-base font-bold rounded-lg btn-secondary focus:outline-none focus:ring-0 disabled:bg-theme-muted disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -230,7 +230,7 @@ const Register: React.FC = () => {
               <button
                 type="button"
                 onClick={() => signIn('google')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150 cursor-pointer"
+                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-transparent btn-secondary font-bold shadow-sm transition-colors duration-150 cursor-pointer"
                 disabled={loading}
               >
                 <svg className="w-5 h-5" viewBox="0 0 48 48">
