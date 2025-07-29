@@ -102,35 +102,34 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
 
   // Update URL when filters change
   const updateURL = (newFilters: FilterState, newPage: number = 1) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const nextUrl = new URL(window.location.href);
     
     // Update or remove search parameter
     if (newFilters.searchTerm) {
-      params.set('search', newFilters.searchTerm);
+      nextUrl.searchParams.set('search', newFilters.searchTerm);
     } else {
-      params.delete('search');
+      nextUrl.searchParams.delete('search');
     }
     
     // Update or remove inStock parameter
     if (newFilters.inStock) {
-      params.set('inStock', 'true');
+      nextUrl.searchParams.set('inStock', 'true');
     } else {
-      params.delete('inStock');
+      nextUrl.searchParams.delete('inStock');
     }
     
     // Update sort parameters
-    params.set('sortBy', newFilters.sortBy);
-    params.set('sortOrder', newFilters.sortOrder);
+    nextUrl.searchParams.set('sortBy', newFilters.sortBy);
+    nextUrl.searchParams.set('sortOrder', newFilters.sortOrder);
     
     // Update or remove page parameter
     if (newPage > 1) {
-      params.set('page', newPage.toString());
+      nextUrl.searchParams.set('page', newPage.toString());
     } else {
-      params.delete('page');
+      nextUrl.searchParams.delete('page');
     }
     
-    const newURL = params.toString() ? `?${params.toString()}` : '';
-    router.push(`${pathname}${newURL}`, { scroll: false });
+    router.push(nextUrl.pathname + nextUrl.search, { scroll: false });
   };
 
   // Only fetch when user explicitly changes filters
@@ -302,7 +301,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
   const renderProductGrid = () => {
     if (viewMode === 'grid') {
       return (
-        <div className="grid grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {state.products.map((product) => (
             <ProductCard key={product._id} product={product} variant="compact" />
           ))}
@@ -332,20 +331,23 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
               <p className="text-theme-primary text-sm mt-1 line-clamp-2">
                 {product.description}
               </p>
-              <div className="mt-2 flex items-center space-x-4">
-                <span className="text-lg font-bold text-theme-primary">
-                  ${product.price.toFixed(2)}
-                </span>
-                {product.stock === 0 && (
-                  <span className="text-sm text-red-600">Out of Stock</span>
-                )}
+              <div className="mt-2 flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg font-bold text-theme-primary">
+                    ${product.price.toFixed(2)}
+                  </span>
+                  {product.stock === 0 && (
+                    <span className="text-sm text-red-600">Out of Stock</span>
+                  )}
+                </div>
+                <Link href={`/products/${product._id}`}>
+                  <Button size="sm" variant="secondary" className="text-xs px-3 py-1">
+                    View Details
+                  </Button>
+                </Link>
               </div>
             </div>
-            <div className="flex-shrink-0">
-              <Link href={`/products/${product._id}`}>
-                <Button>View Details</Button>
-              </Link>
-            </div>
+
           </div>
         ))}
       </div>

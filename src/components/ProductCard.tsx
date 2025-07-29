@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Variant-specific styling
   const getCardClasses = (): string => {
-    const baseClasses = 'bg-theme-secondary rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
+    const baseClasses = 'bg-theme-tertiary rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg'
     
     switch (variant) {
       case 'compact':
@@ -273,9 +273,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   const renderProductInfo = () => (
-    <div className="p-4">
+    <div className={variant === 'compact' ? 'p-3' : 'p-4'}>
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-theme-primary text-sm sm:text-base line-clamp-2">
+        <h3 className={`font-semibold text-theme-primary text-sm sm:text-base w-full ${
+          variant === 'compact' ? 'line-clamp-1' : 'line-clamp-2'
+        }`}>
           {product.name}
         </h3>
       </div>
@@ -286,11 +288,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       )}
       
-      <p className="text-theme-secondary text-sm mb-3 line-clamp-2">
-        {product.description}
-      </p>
+      {variant !== 'compact' && (
+        <p className="text-theme-secondary text-sm mb-3 line-clamp-2">
+          {product.description}
+        </p>
+      )}
       
-      <div className="flex justify-between items-center mb-3">
+      <div className={`flex justify-between items-center ${variant === 'compact' ? 'mb-2' : 'mb-3'}`}>
         <div className="flex items-center space-x-2">
           <span className="text-lg font-bold text-theme-primary">
             ${product.price.toFixed(2)}
@@ -319,7 +323,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || state.isLoading}
-          className="flex-1 bg-theme-primary text-theme-secondary px-4 py-2 rounded-lg text-sm font-medium hover:bg-theme-secondary hover:text-theme-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`flex-1 bg-theme-primary text-theme-secondary rounded-lg text-sm font-medium hover:bg-theme-secondary hover:text-theme-primary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+            variant === 'compact' ? 'px-3 py-1.5' : 'px-4 py-2'
+          }`}
         >
           {state.isLoading ? 'Adding...' : 'Add to Cart'}
         </button>
@@ -449,7 +455,7 @@ export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | '
 }) => {
   if (variant === 'list') {
     return (
-      <div className="bg-theme-secondary border border-gray-200 rounded-lg p-6 flex items-center space-x-6 animate-pulse">
+      <div className="bg-theme-tertiary border border-gray-200 rounded-lg p-6 flex items-center space-x-6 animate-pulse">
         <div className="w-24 h-24 bg-gray-300 rounded-lg"></div>
         <div className="flex-1 space-y-3">
           <div className="h-4 bg-gray-300 rounded w-3/4"></div>
@@ -465,7 +471,7 @@ export const ProductCardSkeleton: React.FC<{ variant?: 'default' | 'compact' | '
   }
 
   return (
-    <div className="bg-theme-secondary rounded-lg shadow-md overflow-hidden animate-pulse">
+    <div className="bg-theme-tertiary rounded-lg shadow-md overflow-hidden animate-pulse">
       <div className={`bg-gray-300 ${variant === 'compact' ? 'h-32' : 'h-48'}`}></div>
       <div className="p-4 space-y-3">
         <div className="h-4 bg-gray-300 rounded w-3/4"></div>

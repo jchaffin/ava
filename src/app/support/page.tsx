@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { 
   ChatBubbleLeftRightIcon, 
   EnvelopeIcon, 
@@ -9,6 +10,7 @@ import {
   DocumentTextIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui'
 
 interface SupportOption {
   title: string
@@ -80,7 +82,7 @@ const SupportPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-theme-primary min-h-screen">
       {/* Header */}
       <div className="text-center mb-8 sm:mb-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">Customer Support</h1>
@@ -94,9 +96,7 @@ const SupportPage: React.FC = () => {
         {supportOptions.map((option, index) => (
           <div 
             key={index} 
-            className={`bg-theme-primary border rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200 ${
-              option.priority === 'high' ? 'border-ava-accent' : 'border-theme'
-            }`}
+            className={`bg-theme-secondary rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-200`}
           >
             <div className="flex items-start space-x-3 sm:space-x-4">
               <div className={`p-2 sm:p-3 rounded-lg flex-shrink-0 ${
@@ -108,27 +108,22 @@ const SupportPage: React.FC = () => {
                 <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-2">{option.title}</h3>
                 <p className="text-theme-secondary text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed">{option.description}</p>
                 {option.href ? (
-                  <a
-                    href={option.href}
-                    className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors duration-200 ${
-                      option.priority === 'high' 
-                        ? 'bg-theme-primary text-theme-secondary hover:bg-theme-tertiary border border-theme' 
-                        : 'bg-theme-secondary text-theme-primary hover:bg-theme-tertiary border border-theme'
-                    }`}
-                  >
-                    Get Help
-                  </a>
+                  <Link href={option.href}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Get Help
+                    </Button>
+                  </Link>
                 ) : (
-                  <button
+                  <Button
                     onClick={option.action}
-                    className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors duration-200 ${
-                      option.priority === 'high' 
-                        ? 'bg-theme-primary text-theme-secondary hover:bg-theme-tertiary border border-theme' 
-                        : 'bg-theme-secondary text-theme-primary hover:bg-theme-tertiary border border-theme'
-                    }`}
+                    variant="secondary"
+                    size="sm"
                   >
                     Get Help
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -139,7 +134,7 @@ const SupportPage: React.FC = () => {
       {/* Contact Information */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Contact Details */}
-        <div className="bg-theme-primary border border-theme rounded-lg p-6 sm:p-8">
+        <div className="bg-theme-primary rounded-lg p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-4 sm:mb-6">Contact Information</h2>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
@@ -167,7 +162,7 @@ const SupportPage: React.FC = () => {
         </div>
 
         {/* Quick Help */}
-        <div className="bg-theme-secondary border border-theme rounded-lg p-6 sm:p-8">
+        <div className="bg-theme-secondary rounded-lg p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-4 sm:mb-6">Quick Help</h2>
           <div className="space-y-4">
             <div>
@@ -193,34 +188,7 @@ const SupportPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Emergency Contact */}
-      <div className="mt-6 sm:mt-8 bg-theme-secondary border border-theme rounded-lg p-4 sm:p-6">
-        <div className="flex items-start space-x-3">
-          <div className="p-2 bg-ava-accent rounded-lg flex-shrink-0">
-            <ExclamationTriangleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-theme-primary" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="text-base sm:text-lg font-semibold text-theme-primary mb-2">Urgent Issues</h3>
-            <p className="text-theme-secondary mb-4 text-sm sm:text-base leading-relaxed">
-              For urgent matters like allergic reactions or severe skin irritation, please contact us immediately by phone or email.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href="tel:+1-800-AVA-SKIN"
-                className="bg-theme-primary text-theme-secondary px-4 py-3 rounded-lg hover:bg-theme-tertiary transition-colors duration-200 text-center text-sm sm:text-base font-medium border border-theme shadow-sm"
-              >
-                Call Now
-              </a>
-              <a
-                href="/contact?priority=urgent"
-                className="bg-theme-secondary text-theme-primary px-4 py-3 rounded-lg hover:bg-theme-tertiary transition-colors duration-200 text-center text-sm sm:text-base font-medium border border-theme"
-              >
-                Send Urgent Email
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
   )
 }

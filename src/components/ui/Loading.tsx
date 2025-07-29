@@ -44,11 +44,11 @@ const Loading: React.FC<LoadingProps> = ({
 
   const renderOverlay = () => (
     <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${className}`}>
-      <div className="bg-white rounded-lg p-6 shadow-xl">
+      <div className="bg-theme-secondary rounded-lg p-6 shadow-xl border border-theme">
         <div className="flex flex-col items-center space-y-4">
           <LoadingSpinner size={size} color="primary" />
           {text && (
-            <p className="ava-text-tertiary font-medium">{text}</p>
+            <p className="text-theme-primary font-medium">{text}</p>
           )}
         </div>
       </div>

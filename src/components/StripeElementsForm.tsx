@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import Button from './ui/Button'
 
 interface StripeElementsFormProps {
   amount: number
@@ -51,16 +52,40 @@ const StripeElementsForm: React.FC<StripeElementsFormProps> = ({ amount, email, 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement options={{ layout: 'tabs' }} />
-      {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
-      <button
+      <div className="stripe-elements-theme-wrapper">
+        <PaymentElement 
+          options={{ 
+            layout: 'tabs',
+            fields: {
+              billingDetails: {
+                name: 'auto',
+                email: 'auto',
+                phone: 'auto',
+                address: {
+                  country: 'auto',
+                  line1: 'auto',
+                  line2: 'auto',
+                  city: 'auto',
+                  state: 'auto',
+                  postalCode: 'auto',
+                },
+              },
+            },
+          }} 
+        />
+      </div>
+      {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
+      <Button
         type="submit"
-        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-theme-primary font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        variant="secondary"
+        size="lg"
+        className="w-full btn-secondary"
         disabled={isLoading || disabled || !stripe || !elements}
+        loading={isLoading}
       >
         {isLoading ? (
           <div className="flex items-center justify-center gap-3">
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-theme-primary border-t-transparent rounded-full animate-spin"></div>
             <span className="text-lg">Processing...</span>
           </div>
         ) : (
@@ -71,7 +96,7 @@ const StripeElementsForm: React.FC<StripeElementsFormProps> = ({ amount, email, 
             <span className="text-lg">Pay ${amount.toFixed(2)}</span>
           </div>
         )}
-      </button>
+      </Button>
     </form>
   )
 }

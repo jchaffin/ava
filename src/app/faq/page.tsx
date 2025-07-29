@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui'
+import { useTheme } from '@/hooks/useTheme'
 
 interface FAQItem {
   question: string
@@ -11,6 +12,7 @@ interface FAQItem {
 
 const FAQPage: React.FC = () => {
   const [openItems, setOpenItems] = useState<Set<number>>(new Set())
+  const { isDarkMode } = useTheme()
 
   const faqData: FAQItem[] = [
     {
@@ -66,7 +68,7 @@ const FAQPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-theme-primary min-h-screen">
       {/* Header */}
       <div className="text-center mb-8 sm:mb-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-theme-secondary mb-3 sm:mb-4">Frequently Asked Questions</h1>
@@ -78,10 +80,10 @@ const FAQPage: React.FC = () => {
       {/* FAQ Section */}
       <div className="space-y-3 sm:space-y-4">
         {faqData.map((item, index) => (
-          <div key={index} className="bg-theme-secondary border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+          <div key={index} className="bg-theme-secondary rounded-lg shadow-sm overflow-hidden">
             <Button
               onClick={() => toggleItem(index)}
-              className="btn-primary w-full px-6 py-4 text-left flex items-center justify-between transition-colors duration-200"
+              className="w-full px-6 py-4 text-left flex items-center justify-between transition-colors duration-200 bg-theme-secondary hover:bg-theme-tertiary text-theme-primary border-0"
             >
               <h3 className="text-lg font-medium text-theme-primary flex-1 pr-4">{item.question}</h3>
               <div className="flex-shrink-0 flex items-center">
@@ -102,24 +104,18 @@ const FAQPage: React.FC = () => {
       </div>
 
       {/* Contact Section */}
-      <div className="mt-8 sm:mt-12 bg-gray-50 rounded-lg p-6 sm:p-8 text-center">
+      <div className="mt-8 sm:mt-12 bg-theme-secondary rounded-lg p-6 sm:p-8 text-center">
         <h2 className="text-xl sm:text-2xl font-bold text-theme-primary mb-3 sm:mb-4">Still have questions?</h2>
         <p className="text-theme-secondary mb-4 sm:mb-6 text-sm sm:text-base">
           Can&apos;t find what you&apos;re looking for? Our customer service team is here to help.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-          <a
-            href="/contact"
-            className="text-theme-primary px-4 sm:px-6 py-3 rounded-lg bg-theme-secondary transition-colors duration-200 text-sm sm:text-base font-medium"
-          >
+          <Button variant="secondary" onClick={() => window.location.href = '/contact'}>
             Contact Us
-          </a>
-          <a
-            href="/support"
-            className="border border-gray-300 ava-text-tertiary px-4 sm:px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 text-sm sm:text-base font-medium"
-          >
+          </Button>
+          <Button variant="secondary" onClick={() => window.location.href = '/support'}>
             Get Support
-          </a>
+          </Button>
         </div>
       </div>
     </div>

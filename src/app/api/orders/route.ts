@@ -297,7 +297,7 @@ function validateOrderData(data: CreateOrderRequestBody): Array<{ field: string;
   // Validate payment method
   if (!data.paymentMethod) {
     errors.push({ field: 'paymentMethod', message: 'Payment method is required' })
-  } else if (!['card', 'paypal', 'bank_transfer'].includes(data.paymentMethod)) {
+  } else if (!['card', 'paypal', 'bank_transfer', 'google_pay', 'apple_pay'].includes(data.paymentMethod)) {
     errors.push({ field: 'paymentMethod', message: 'Invalid payment method' })
   }
 

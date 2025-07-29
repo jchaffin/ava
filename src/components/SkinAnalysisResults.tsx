@@ -35,7 +35,7 @@ const mockProducts: Product[] = [
     id: 'vitamin-c-serum',
     name: 'Vitamin C Brightening Serum',
     price: 45.00,
-    image: '/images/products/vitcserum/vitcserum_main.jpg',
+    image: '/images/products/7007/vitcserum_main.jpg',
     category: 'serum',
     description: 'Brightening serum with 20% Vitamin C for even skin tone'
   },
@@ -43,7 +43,7 @@ const mockProducts: Product[] = [
     id: 'hyaluronic-acid-serum',
     name: 'Hyaluronic Acid Hydration Serum',
     price: 38.00,
-    image: '/images/products/hydserum/hydserum_main.jpg',
+    image: '/images/products/7006/hydserum_main.jpg',
     category: 'serum',
     description: 'Deeply hydrating serum with hyaluronic acid'
   },
@@ -51,7 +51,7 @@ const mockProducts: Product[] = [
     id: 'retinol-serum',
     name: 'Advanced Retinol Night Serum',
     price: 52.00,
-    image: '/images/products/brserum/brserum_main.jpg',
+    image: '/images/products/700a/brserum_main.jpg',
     category: 'serum',
     description: 'Anti-aging retinol serum for fine lines and wrinkles'
   },
@@ -59,7 +59,7 @@ const mockProducts: Product[] = [
     id: 'niacinamide-serum',
     name: 'Niacinamide Oil Control Serum',
     price: 35.00,
-    image: '/images/products/iserum/iserum_main.jpg',
+    image: '/images/products/700c/iserum_main.jpg',
     category: 'serum',
     description: 'Oil control and pore-minimizing serum'
   },
@@ -67,7 +67,7 @@ const mockProducts: Product[] = [
     id: 'gentle-cleanser',
     name: 'Gentle Daily Cleanser',
     price: 28.00,
-    image: '/images/products/soothserum/soothserum_main.jpg',
+    image: '/images/products/700b/soothserum_main.jpg',
     category: 'cleanser',
     description: 'Gentle foaming cleanser for all skin types'
   },
@@ -75,7 +75,7 @@ const mockProducts: Product[] = [
     id: 'sunscreen-spf30',
     name: 'Daily Defense SPF 30',
     price: 32.00,
-    image: '/images/products/collagenserum/collagenserum_main.jpg',
+    image: '/images/products/7008/collagenserum_main.jpg',
     category: 'sunscreen',
     description: 'Broad spectrum sunscreen with antioxidants'
   }
@@ -165,7 +165,7 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
       {/* Confidence Score */}
       <div className="bg-theme-secondary rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium  ">
+          <span className="text-sm font-medium text-blue-300">
             Analysis Confidence
           </span>
           <span className="text-sm font-bold text-theme-primary">
@@ -182,12 +182,12 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
 
       {/* Skin Type */}
       <div className="bg-theme-secondary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-        <h3 className="font-semibold text-gray-900 dark:text-theme-primary mb-2">
+        <h3 className="font-semibold text-theme-primary mb-2">
           Skin Type
         </h3>
         <div className="flex items-center space-x-2">
           <CheckCircle className="w-5 h-5 text-theme-primary" />
-          <span className="text-gray-700 dark:text-gray-300 capitalize">
+          <span className="text-blue-200 capitalize">
             {result.skinType}
           </span>
         </div>
@@ -195,14 +195,14 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
 
       {/* Concerns */}
       <div className="bg-theme-secondary rounded-xl p-4 border border-gray-200 dark:border-gray-600">
-        <h3 className="font-semibold text-gray-900 dark:text-theme-primary mb-3">
+        <h3 className="font-semibold text-theme-primary mb-3">
           Identified Concerns
         </h3>
         <div className="space-y-2">
           {result.concerns.map((concern, index) => (
             <div key={index} className="flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 text-orange-500" />
-              <span className="text-gray-700 dark:text-gray-300 text-sm">
+              <span className="text-theme-secondary text-sm">
                 {concern}
               </span>
             </div>
@@ -212,14 +212,14 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
 
       {/* Recommendations */}
       <div className="bg-theme-secondary rounded-xl p-4">
-        <h3 className="font-semibold text-gray-900 dark:text-theme-primary mb-3">
+        <h3 className="font-semibold text-theme-primary mb-3">
           Personalized Recommendations
         </h3>
         <div className="space-y-2">
           {result.recommendations.map((recommendation, index) => (
             <div key={index} className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-theme-primary rounded-full mt-2 flex-shrink-0" />
-              <span className="text-gray-700 dark:text-gray-300 text-sm">
+              <span className="text-theme-secondary text-sm">
                 {recommendation}
               </span>
             </div>

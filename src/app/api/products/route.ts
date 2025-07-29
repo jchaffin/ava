@@ -67,7 +67,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         .sort(sort)
         .skip(skip)
         .limit(limit)
-        .lean(), // Use lean() for better performance when we don't need Mongoose document methods
+        .lean()
+        .exec(), // Ensure proper execution
       Product.countDocuments(filter),
     ])
 

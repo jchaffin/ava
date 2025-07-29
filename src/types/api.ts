@@ -296,7 +296,7 @@ export interface CreateOrderRequest {
     lastName?: string
     phone?: string
   }
-  paymentMethod: 'card' | 'paypal' | 'bank_transfer'
+  paymentMethod: 'card' | 'paypal' | 'bank_transfer' | 'google_pay' | 'apple_pay'
   paymentDetails?: {
     token?: string
     cardLast4?: string

@@ -34,11 +34,26 @@ STRIPE_SECRET_KEY=sk_test_your_secret_key_here
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
 
+# Google Pay & Apple Pay Configuration
+NEXT_PUBLIC_STRIPE_MERCHANT_ID=your_stripe_merchant_id_here
+
 # For production, use:
 # STRIPE_SECRET_KEY=sk_live_your_live_secret_key
 # NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_your_live_publishable_key
 # STRIPE_WEBHOOK_SECRET=whsec_your_live_webhook_secret
+# NEXT_PUBLIC_STRIPE_MERCHANT_ID=your_live_stripe_merchant_id_here
 ```
+
+### 3.1 Getting Your Stripe Merchant ID
+
+For Google Pay and Apple Pay to work, you need your Stripe Merchant ID:
+
+1. **Log into your Stripe Dashboard**
+2. **Go to "Settings" → "Account details"**
+3. **Find your "Merchant ID"** (it's a string like `acct_1234567890abcdef`)
+4. **Copy this ID** and add it to your environment variables as `NEXT_PUBLIC_STRIPE_MERCHANT_ID`
+
+**Note**: The Merchant ID is the same for both test and live environments, but you should verify it's correct in your Stripe dashboard.
 
 ### 4. Webhook Setup
 
@@ -64,6 +79,7 @@ The Stripe integration includes:
 
 - **Card Payments**: Secure credit/debit card processing
 - **Apple Pay**: Native Apple Pay support
+- **Google Pay**: Native Google Pay support
 - **Order Management**: Automatic order creation and status updates
 - **Stock Management**: Automatic inventory updates
 - **Webhook Processing**: Real-time payment status updates

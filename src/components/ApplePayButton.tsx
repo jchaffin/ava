@@ -45,8 +45,8 @@ const applePayButtonStyle = {
   width: '100%',
   borderRadius: '8px',
   border: 'none',
-  backgroundColor: 'black',
-  color: 'white',
+  backgroundColor: 'var(--ava-bg-secondary)',
+  color: 'var(--ava-text-primary)',
   fontSize: '16px',
   fontWeight: '600',
   cursor: 'pointer',
@@ -70,16 +70,19 @@ const ApplePayButtonFallback: React.FC<ApplePayButtonProps> = ({
   useEffect(() => {
     // Check if Apple Pay is available
     console.log('Checking Apple Pay availability...')
-    console.log('Window ApplePaySession:', typeof window !== 'undefined' ? !!window.ApplePaySession : 'window undefined')
     
-    if (typeof window !== 'undefined' && window.ApplePaySession) {
-      const canMakePayments = window.ApplePaySession.canMakePayments()
-      console.log('Apple Pay canMakePayments:', canMakePayments)
-      setIsApplePayAvailable(canMakePayments)
+    if (typeof window !== 'undefined' && window.ApplePaySession && typeof window.ApplePaySession === 'function') {
+      try {
+        const canMakePayments = window.ApplePaySession.canMakePayments()
+        console.log('Apple Pay canMakePayments:', canMakePayments)
+        setIsApplePayAvailable(canMakePayments)
+      } catch (error) {
+        console.log('Apple Pay canMakePayments failed:', error)
+        setIsApplePayAvailable(false)
+      }
     } else {
-      console.log('Apple Pay not available - window.ApplePaySession is undefined')
-      // For testing purposes, let's show the button anyway
-      setIsApplePayAvailable(true)
+      console.log('Apple Pay not available - window.ApplePaySession is not a constructor')
+      setIsApplePayAvailable(false)
     }
   }, [])
 
@@ -119,7 +122,11 @@ const ApplePayButtonFallback: React.FC<ApplePayButtonProps> = ({
         },
       }
 
-      const session = new (window as any).ApplePaySession(3, paymentRequest)
+      if (!window.ApplePaySession || typeof window.ApplePaySession !== 'function') {
+        throw new Error('Apple Pay is not available')
+      }
+      
+      const session = new window.ApplePaySession(3, paymentRequest)
 
       session.onvalidatemerchant = async (event: any) => {
         try {
@@ -194,48 +201,15 @@ const ApplePayButtonFallback: React.FC<ApplePayButtonProps> = ({
   }
 
   if (!isApplePayAvailable) {
-    // For testing, show a fallback button
-    return (
-      <button
-        onClick={handleApplePayClick}
-        disabled={disabled || isLoading}
-        className="apple-pay-fallback-button"
-        style={{
-          height: '40px',
-          width: '100%',
-          borderRadius: '8px',
-          border: 'none',
-          backgroundColor: '#007AFF',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: '600',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-        }}
-      >
-        {isLoading ? (
-          <div className="loading-spinner"></div>
-        ) : (
-          <>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-            </svg>
-            Test Apple Pay (Fallback)
-          </>
-        )}
-      </button>
-    )
+    // Don't render anything if Apple Pay is not available
+    return null
   }
 
   return (
     <button
       onClick={handleApplePayClick}
       disabled={disabled || isLoading}
-      style={applePayButtonStyle}
-      className="apple-pay-button"
+      className="btn-secondary w-full py-3 text-lg font-medium"
     >
       {isLoading ? (
         <div className="loading-spinner"></div>
@@ -244,7 +218,7 @@ const ApplePayButtonFallback: React.FC<ApplePayButtonProps> = ({
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
           </svg>
-          Pay
+          Pay with Apple Pay
         </>
       )}
     </button>

@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 import { Button } from '@/components/ui'
 import { IOrder, IOrderItem } from '@/types'
-import { formatPrice, formatDate } from '@/utils/helpers'
+import { formatPrice, formatDate, getProductImageUrl } from '@/utils/helpers'
 import toast from 'react-hot-toast'
 
 interface OrdersPageState {
@@ -85,20 +85,20 @@ const OrdersPage: React.FC = () => {
     if (order.isDelivered) {
       return {
         label: 'Delivered',
-        color: 'text-green-800',
-        bgColor: 'bg-green-100',
+        color: 'text-green-800 dark:text-green-200',
+        bgColor: 'bg-green-100 dark:bg-green-900/30',
       }
     } else if (order.isPaid) {
       return {
         label: 'Processing',
-        color: 'text-blue-800',
-        bgColor: 'bg-blue-100',
+        color: 'text-blue-800 dark:text-blue-200',
+        bgColor: 'bg-blue-100 dark:bg-blue-900/30',
       }
     } else {
       return {
         label: 'Pending Payment',
-        color: 'text-yellow-800',
-        bgColor: 'bg-yellow-100',
+        color: 'text-yellow-800 dark:text-yellow-200',
+        bgColor: 'bg-yellow-100 dark:bg-yellow-900/30',
       }
     }
   }
@@ -107,14 +107,14 @@ const OrdersPage: React.FC = () => {
     if (order.isPaid) {
       return {
         label: 'Paid',
-        color: 'text-green-800',
-        bgColor: 'bg-green-100',
+        color: 'text-green-800 dark:text-green-200',
+        bgColor: 'bg-green-100 dark:bg-green-900/30',
       }
     } else {
       return {
         label: 'Unpaid',
-        color: 'text-red-800',
-        bgColor: 'bg-red-100',
+        color: 'text-red-800 dark:text-red-200',
+        bgColor: 'bg-red-100 dark:bg-red-900/30',
       }
     }
   }
@@ -142,9 +142,9 @@ const OrdersPage: React.FC = () => {
 
   if (status === 'loading' || state.loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-ava-accent mb-4"></div>
           <p className="text-theme-secondary">Loading your orders...</p>
         </div>
       </div>
@@ -153,12 +153,12 @@ const OrdersPage: React.FC = () => {
 
   if (state.error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
               <svg
-                className="w-6 h-6 text-red-600"
+                className="w-6 h-6 text-red-600 dark:text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -171,10 +171,10 @@ const OrdersPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-red-900 mb-2">
+            <h3 className="text-lg font-medium text-theme-primary mb-2">
               Unable to Load Orders
             </h3>
-            <p className="text-red-700 mb-4">{state.error}</p>
+            <p className="text-theme-secondary mb-4">{state.error}</p>
             <Button onClick={fetchOrders} variant="danger">
               Try Again
             </Button>
@@ -186,12 +186,12 @@ const OrdersPage: React.FC = () => {
 
   if (state.orders.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-theme-primary flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="bg-gray-50 rounded-lg p-8">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gray-100 rounded-full mb-4">
+          <div className="bg-theme-secondary rounded-lg p-8 border border-theme">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto bg-theme-tertiary rounded-full mb-4">
               <svg
-                className="w-8 h-8 text-gray-400"
+                className="w-8 h-8 text-theme-muted"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -222,7 +222,8 @@ const OrdersPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-theme-primary">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-theme-primary mb-2">
@@ -242,10 +243,10 @@ const OrdersPage: React.FC = () => {
             return (
               <div
                 key={order._id}
-                className="bg-theme-primary border border-theme rounded-lg shadow-sm overflow-hidden"
+                className="bg-theme-secondary border border-theme rounded-lg shadow-sm overflow-hidden"
               >
                 {/* Order Header */}
-                <div className="bg-theme-secondary px-6 py-4 border-b border-theme">
+                <div className="bg-theme-tertiary px-6 py-4 border-b border-theme">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6">
                       <div>
@@ -306,7 +307,7 @@ const OrdersPage: React.FC = () => {
                       <div key={index} className="flex items-center space-x-4">
                         <div className="flex-shrink-0 w-16 h-16">
                           <Image
-                            src={typeof item.product === 'object' ? item.product.image : '/placeholder.jpg'}
+                            src={typeof item.product === 'object' ? getProductImageUrl(item.product.image, item.product._id) : item.product}
                             alt={typeof item.product === 'object' ? item.product.name : 'Product'}
                             width={64}
                             height={64}
@@ -333,7 +334,7 @@ const OrdersPage: React.FC = () => {
                 </div>
 
                 {/* Order Summary */}
-                <div className="bg-theme-secondary px-6 py-4 border-t border-theme">
+                <div className="bg-theme-tertiary px-6 py-4 border-t border-theme">
                   <div className="flex justify-between items-center">
                     <div className="text-sm text-theme-secondary">
                       <p>Items: {formatPrice(order.itemsPrice)}</p>
@@ -366,7 +367,7 @@ const OrdersPage: React.FC = () => {
                   {/* Delivery Status */}
                   {order.isDelivered && order.deliveredAt && (
                     <div className="mt-4 pt-4 border-t border-theme">
-                      <div className="flex items-center text-green-600">
+                      <div className="flex items-center text-green-600 dark:text-green-400">
                         <svg
                           className="w-5 h-5 mr-2"
                           fill="none"
@@ -401,6 +402,7 @@ const OrdersPage: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
   )
 }
 

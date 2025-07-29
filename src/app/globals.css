@@ -39,14 +39,24 @@
   --ava-text-secondary: #faf8f7;
   --ava-text-tertiary: #DCE1E7;
   --ava-text-muted: #a0aec0;
-  --ava-border: #2d3748;
-  --ava-border-dark: #4a5568;
+  --ava-border: rgba(74, 85, 104, 0.2);
+  --ava-border-dark: #718096;
   --ava-gradient: linear-gradient(to bottom, #403a3e, #be5869); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 /* Base Styles */
 * {
   box-sizing: border-box;
+}
+
+/* Force Geist Sans font on all Stripe elements */
+.stripe-elements-theme-wrapper *,
+[data-elements-stable-field-name] *,
+.StripeElement *,
+.StripeElement,
+.stripe-elements *,
+.stripe-elements {
+  font-family: "Geist Sans", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 html {
@@ -423,6 +433,22 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(256px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-scan {
+  animation: scan 2s ease-in-out infinite;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -558,3 +584,4 @@ input:focus, textarea:focus, select:focus {
 .border-ava-light {
   border-color: var(--ava-border);
 }
+

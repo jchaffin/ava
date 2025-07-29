@@ -21,9 +21,9 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
             toastOptions={{
               duration: 3000,
               style: {
-                background: '#ffffff',
-                color: '#374151',
-                border: '1px solid #d1d5db',
+                background: 'var(--ava-bg-secondary)',
+                color: 'var(--ava-text-primary)',
+                border: '1px solid var(--ava-border)',
                 borderRadius: '8px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                 fontSize: '13px',
@@ -36,36 +36,36 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
               success: {
                 duration: 2500,
                 style: {
-                  background: '#f9fafb',
-                  color: '#065f46',
-                  border: '1px solid #d1fae5',
+                  background: 'var(--ava-bg-secondary)',
+                  color: 'var(--ava-text-primary)',
+                  border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
-                  primary: '#059669',
-                  secondary: '#ffffff',
+                  primary: 'var(--ava-text-primary)',
+                  secondary: 'var(--ava-bg-secondary)',
                 },
               },
               error: {
                 duration: 4000,
                 style: {
-                  background: '#f9fafb',
-                  color: '#991b1b',
-                  border: '1px solid #fecaca',
+                  background: 'var(--ava-bg-secondary)',
+                  color: 'var(--ava-text-primary)',
+                  border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
-                  primary: '#dc2626',
-                  secondary: '#ffffff',
+                  primary: 'var(--ava-text-primary)',
+                  secondary: 'var(--ava-bg-secondary)',
                 },
               },
               loading: {
                 style: {
-                  background: '#f9fafb',
-                  color: '#4b5563',
-                  border: '1px solid #d1d5db',
+                  background: 'var(--ava-bg-secondary)',
+                  color: 'var(--ava-text-primary)',
+                  border: '1px solid var(--ava-border)',
                 },
                 iconTheme: {
-                  primary: '#6b7280',
-                  secondary: '#ffffff',
+                  primary: 'var(--ava-text-primary)',
+                  secondary: 'var(--ava-bg-secondary)',
                 },
               },
             }}

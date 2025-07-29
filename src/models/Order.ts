@@ -34,7 +34,7 @@ const OrderSchema = new Schema<IOrder>({
   paymentMethod: {
     type: String,
     required: [true, 'Payment method is required'],
-    enum: ['card', 'paypal', 'bank_transfer'],
+    enum: ['card', 'paypal', 'bank_transfer', 'google_pay', 'apple_pay'],
   },
   paymentResult: {
     id: String,

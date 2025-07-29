@@ -7,9 +7,12 @@ import { useAuth } from '@/context/AuthContext'
 import { loadStripe } from '@stripe/stripe-js'
 import toast from 'react-hot-toast'
 import ApplePayButton from './ApplePayButton'
+import GooglePayButton from './GooglePayButton'
 import PayPalButton from './PayPalButton'
+import StripeExpressCheckout from './StripeExpressCheckout'
 import { Elements } from '@stripe/react-stripe-js'
 import StripeElementsForm from './StripeElementsForm'
+import { useStripeAppearance } from '@/lib/stripe-appearance'
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -23,6 +26,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
   const { items: cart, clearCart, getTotalPrice } = useCart()
   const { user } = useAuth()
   const router = useRouter()
+  const stripeAppearance = useStripeAppearance()
   
   // Debug Stripe configuration
   console.log('Stripe Publishable Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ? 'Set' : 'Not set')
@@ -140,8 +144,8 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="card p-6">
+    <div className="bg-theme-secondary max-w-2xl mx-auto p-6">
+      <div className="bg-theme-tertiary card p-6">
         <div className="space-y-6">
           {/* Contact Information */}
           <div>
@@ -158,7 +162,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                 />
               </div>
               <div>
@@ -171,7 +175,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                 />
               </div>
             </div>
@@ -192,7 +196,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                 />
               </div>
               
@@ -207,7 +211,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                   value={formData.address.line1}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                 />
               </div>
               
@@ -221,7 +225,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                   name="address.line2"
                   value={formData.address.line2}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                 />
               </div>
               
@@ -237,7 +241,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                     value={formData.address.city}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                   />
                 </div>
                 
@@ -252,7 +256,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                     value={formData.address.state}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                   />
                 </div>
                 
@@ -267,7 +271,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
                     value={formData.address.postal_code}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="w-full px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-ava-accent bg-theme-secondary text-theme-primary"
                   />
                 </div>
               </div>
@@ -275,10 +279,10 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
           </div>
 
           {/* Order Summary */}
-          <div className="border-t pt-6">
+          <div className="bg-theme-secondary border-none pt-6 p-4 rounded-lg">
             <h3 className="text-lg font-medium mb-4">Order Summary</h3>
             <div className="space-y-2">
-                          {cart.map((item) => (
+              {cart.map((item) => (
               <div key={item._id} className="flex justify-between">
                 <span>{item.name} × {item.quantity}</span>
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -294,9 +298,35 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
           </div>
 
           {/* Payment Options */}
-          <div className="border-t pt-6">
+          <div className="border-none bg-theme-tertiary pt-6">
             <h3 className="text-xl font-semibold mb-6 text-theme-primary">Payment Method</h3>
-            <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+            <div className="bg-theme-secondary rounded-lg p-6 space-y-4">
+            
+            {/* Stripe Express Checkout - All Payment Methods */}
+            <StripeExpressCheckout
+              amount={total}
+              currency="usd"
+              onSuccess={() => {
+                toast.success('Payment successful!')
+                clearCart()
+                router.push('/orders/success?success=true')
+              }}
+              onError={(error) => {
+                toast.error(error)
+              }}
+              disabled={isLoading}
+              className="mb-4"
+            />
+            
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 text-theme-muted font-medium">or use individual payment methods</span>
+              </div>
+            </div>
             
             {/* Apple Pay Button */}
             <ApplePayButton
@@ -313,19 +343,38 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
               disabled={isLoading}
             />
             
+            {/* Google Pay Button */}
+            <GooglePayButton
+              amount={total}
+              currency="usd"
+              onSuccess={() => {
+                toast.success('Payment successful!')
+                clearCart()
+                router.push('/orders/success?success=true')
+              }}
+              onError={(error) => {
+                toast.error(error)
+              }}
+              disabled={isLoading}
+              className="w-full"
+            />
+            
             {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-theme" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-400 font-medium">or pay with card, Link, or more</span>
+                <span className="px-4 bg-theme-secondary text-theme-muted font-medium">or pay with card</span>
               </div>
             </div>
             
             {/* Stripe Elements Form */}
             {clientSecret && (
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <Elements 
+                stripe={stripePromise} 
+                options={{ clientSecret, appearance: stripeAppearance }}
+              >
                 <StripeElementsForm
                   amount={total}
                   email={formData.email}
@@ -362,7 +411,7 @@ export default function CheckoutForm({ onCancel }: CheckoutFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="w-full bg-gray-100 hover:bg-gray-200 ava-text-tertiary font-medium py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-theme-secondary hover:bg-theme-secondary text-theme-primary font-medium py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               Cancel

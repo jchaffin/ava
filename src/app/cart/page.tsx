@@ -7,6 +7,9 @@ import { useSession } from 'next-auth/react'
 import { useCart } from '@/context'
 import { Button } from '@/components/ui'
 import ApplePayButton from '@/components/ApplePayButton'
+import GooglePayButton from '@/components/GooglePayButton'
+import LinkPayButton from '@/components/LinkPayButton'
+import StripeExpressCheckout from '@/components/StripeExpressCheckout'
 import CartItem from '@/components/CartItem'
 import { 
   ShoppingBagIcon,
@@ -81,7 +84,7 @@ const CartPage: React.FC = () => {
           <div className="mb-8">
             <Link 
               href="/products"
-              className="inline-flex items-center text-ava-accent hover:text-red-700 mb-4"
+              className="inline-flex items-center text-ava-accent hover:text-ava-accent/80 mb-4"
             >
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
               Continue Shopping
@@ -90,8 +93,8 @@ const CartPage: React.FC = () => {
           </div>
 
           {/* Empty Cart */}
-          <div className="bg-theme-primary rounded-lg shadow-lg border border-theme p-12 text-center">
-            <div className="mx-auto w-24 h-24 bg-theme-secondary rounded-full flex items-center justify-center mb-6">
+          <div className="bg-theme-secondary rounded-lg shadow-lg border border-theme p-12 text-center">
+            <div className="mx-auto w-24 h-24 bg-theme-tertiary rounded-full flex items-center justify-center mb-6">
               <ShoppingBagIcon className="w-12 h-12 text-theme-muted" />
             </div>
             <h2 className="text-2xl font-semibold text-theme-primary mb-4">
@@ -125,7 +128,7 @@ const CartPage: React.FC = () => {
         <div className="mb-8">
           <Link 
             href="/products"
-            className="inline-flex items-center text-ava-accent hover:text-red-700 mb-4"
+            className="inline-flex items-center text-ava-accent hover:text-ava-accent/80 mb-4"
           >
             <ArrowLeftIcon className="w-4 h-4 mr-2" />
             Continue Shopping
@@ -134,7 +137,7 @@ const CartPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-theme-primary">Shopping Cart</h1>
             <button
               onClick={handleClearCart}
-              className="text-red-600 hover:text-red-800 text-sm font-medium"
+              className="text-theme-muted hover:text-theme-primary text-sm font-medium"
             >
               Clear Cart
             </button>
@@ -147,7 +150,7 @@ const CartPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
-            <div className="bg-theme-primary rounded-lg shadow-lg border border-theme">
+            <div className="bg-theme-secondary rounded-lg shadow-lg border border-theme">
               <div className="p-6 border-b border-theme">
                 <h2 className="text-lg font-semibold text-theme-primary">Cart Items</h2>
               </div>
@@ -176,7 +179,7 @@ const CartPage: React.FC = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-theme-primary rounded-lg shadow-lg border border-theme sticky top-8">
+            <div className="bg-theme-secondary rounded-lg shadow-lg border border-theme sticky top-8">
               <div className="p-6 border-b border-theme">
                 <h2 className="text-lg font-semibold text-theme-primary">Order Summary</h2>
               </div>
@@ -193,7 +196,7 @@ const CartPage: React.FC = () => {
                     <span className="text-theme-secondary">Shipping</span>
                     <span className="font-medium text-theme-primary">
                       {shipping === 0 ? (
-                        <span className="text-green-600">Free</span>
+                        <span className="text-green-600 dark:text-green-400">Free</span>
                       ) : (
                         formatCurrency(shipping)
                       )}
@@ -215,8 +218,8 @@ const CartPage: React.FC = () => {
 
                 {/* Shipping Info */}
                 {shipping > 0 && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-center text-sm text-blue-800">
+                  <div className="bg-theme-tertiary border border-theme rounded-lg p-4">
+                    <div className="flex items-center text-sm text-theme-primary">
                       <TruckIcon className="w-4 h-4 mr-2" />
                       <span>
                         Add {formatCurrency(100 - subtotal)} more for free shipping
@@ -225,9 +228,9 @@ const CartPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Apple Pay Button */}
+                {/* Stripe Express Checkout - All Payment Methods */}
                 {session && (
-                  <ApplePayButton
+                  <StripeExpressCheckout
                     amount={total}
                     currency="usd"
                     onSuccess={() => {
@@ -239,6 +242,7 @@ const CartPage: React.FC = () => {
                       toast.error(error)
                     }}
                     disabled={items.length === 0}
+                    className="mb-4"
                   />
                 )}
 
@@ -249,15 +253,16 @@ const CartPage: React.FC = () => {
                       <div className="w-full border-t border-theme" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-theme-primary text-theme-muted">or</span>
+                      <span className="px-2 text-theme-muted">or use individual payment methods</span>
                     </div>
                   </div>
                 )}
 
+
                 {/* Checkout Button */}
                 <Button
                   onClick={handleCheckout}
-                  className="w-full py-3 text-lg font-medium"
+                  className="btn-secondary w-full py-3 text-lg font-medium"
                   disabled={items.length === 0}
                 >
                   <LockClosedIcon className="w-5 h-5 mr-2" />
@@ -287,18 +292,27 @@ const CartPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Save for Later */}
-            <div className="mt-6 bg-theme-primary rounded-lg shadow-lg border border-theme p-6">
-              <h3 className="text-lg font-semibold text-theme-primary mb-4">Save for Later</h3>
-              <p className="text-sm text-theme-secondary mb-4">
-                Create an account to save items for future purchases
-              </p>
-              <Link href="/register">
-                <Button variant="ghost" className="w-full">
-                  Create Account
-                </Button>
-              </Link>
-            </div>
+            {/* Save for Later - Only show for guests with items */}
+            {!session && items.length > 0 && (
+              <div className="fixed bottom-6 right-6 w-80 bg-theme-tertiary rounded-lg shadow-lg border border-theme p-6 z-50">
+                <h3 className="text-lg font-semibold text-theme-primary mb-4">Save Your Cart</h3>
+                <p className="text-sm text-theme-secondary mb-4">
+                  Create an account to save these {getTotalItems()} item{getTotalItems() !== 1 ? 's' : ''} for later. Your cart will be preserved when you sign in.
+                </p>
+                <div className="space-y-2">
+                  <Link href="/register">
+                    <Button variant="primary" className="w-full">
+                      Create Account & Save Cart
+                    </Button>
+                  </Link>
+                  <Link href="/signin">
+                    <Button variant="ghost" className="w-full text-sm">
+                      Already have an account? Sign in
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

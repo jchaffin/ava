@@ -1,22 +1,28 @@
 import ProductsClient from './ProductsClient';
 import { IProduct } from '@/types';
+import connectDB from '@/lib/mongoose';
+import { Product } from '@/models';
 
 async function fetchInitialProducts() {
   try {
-    const res = await fetch('/api/products', { 
-      cache: 'no-store'
-    });
+    await connectDB();
     
-    console.log('Fetch status:', res.status);
+    const products = await Product.find({})
+      .sort({ createdAt: -1 })
+      .limit(12)
+      .lean()
+      .exec();
     
-    if (!res.ok) {
-      console.log('Fetch failed:', res.status, res.statusText);
-      return [];
-    }
+    // Convert MongoDB documents to plain objects for Client Components
+    const serializedProducts = products.map((product: any) => ({
+      ...product,
+      _id: product._id.toString(),
+      createdAt: product.createdAt.toISOString(),
+      updatedAt: product.updatedAt.toISOString(),
+    }));
     
-    const data = await res.json();
-    console.log('Fetch success, products:', data.data?.products?.length || 0);
-    return data.data?.products || [];
+    console.log('Fetch success, products:', serializedProducts.length);
+    return serializedProducts as IProduct[];
   } catch (error) {
     console.log('Fetch error:', error);
     return [];

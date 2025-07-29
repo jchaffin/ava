@@ -4,7 +4,7 @@ import React from 'react'
 
 const PrivacyPage: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 bg-theme-primary min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-theme-primary mb-4">Privacy Policy</h1>
@@ -127,7 +127,7 @@ const PrivacyPage: React.FC = () => {
           <p className="text-theme-secondary mb-4">
             If you have any questions about this Privacy Policy or our data practices, please contact us:
           </p>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-theme-secondary border border-theme p-4 rounded-lg">
             <p className="text-theme-secondary">
               <strong>Email:</strong> privacy@ava.com<br />
               <strong>Phone:</strong> +1 (800) AVA-SKIN<br />

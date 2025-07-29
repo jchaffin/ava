@@ -90,21 +90,35 @@ const Layout: React.FC<LayoutProps> = ({
 
   // Fetch site settings
   useEffect(() => {
+    let isMounted = true
+    
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings')
-        if (response.ok) {
+        const response = await fetch('/api/settings', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        if (isMounted && response.ok) {
           const data = await response.json()
           if (data.success && data.data) {
             setSiteSettings(data.data)
           }
         }
       } catch (error) {
-        console.error('Error fetching site settings:', error)
+        if (isMounted) {
+          console.error('Error fetching site settings:', error)
+        }
       }
     }
 
     fetchSettings()
+    
+    return () => {
+      isMounted = false
+    }
   }, [])
 
 
@@ -222,10 +236,7 @@ const Layout: React.FC<LayoutProps> = ({
     setUserMenu({ isOpen: false })
   }, [pathname])
 
-  // Debug mobile menu state changes
-  useEffect(() => {
-    console.log('Mobile menu state changed:', isMobileMenuOpen)
-  }, [isMobileMenuOpen])
+
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -242,9 +253,12 @@ const Layout: React.FC<LayoutProps> = ({
       }
     }
 
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [])
+    // Only add listener if menus are open
+    if (isMobileMenuOpen || userMenu.isOpen) {
+      document.addEventListener('click', handleClickOutside, { passive: true })
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isMobileMenuOpen, userMenu.isOpen])
 
   // Show loading state while authentication is being established
   if (isLoading) {
@@ -439,20 +453,30 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           ) : (
             <div className="px-4 py-6 border-t border-theme">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <Link
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-secondary bg-theme-primary hover:bg-theme-secondary hover:text-theme-primary rounded-xl transition-all duration-200 min-h-[44px]"
+                  className="w-full block mb-4"
                 >
-                  Sign In
+                  <Button
+                    variant="secondary"
+                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
+                  >
+                    Sign In
+                  </Button>
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-theme-secondary bg-theme-primary hover:bg-theme-secondary hover:text-theme-primary rounded-xl transition-all duration-200 min-h-[44px]"
+                  className="w-full block"
                 >
-                  Sign Up
+                  <Button
+                    variant="secondary"
+                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
+                  >
+                    Sign Up
+                  </Button>
                 </Link>
               </div>
             </div>
@@ -673,15 +697,7 @@ const Layout: React.FC<LayoutProps> = ({
                   </svg>
                 </a>
               )}
-              {siteSettings?.general.socialMedia.amazonShop && (
-                <a href={siteSettings.general.socialMedia.amazonShop} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-theme-primary transition-colors duration-200">
-                  <span className="sr-only">Amazon Shop</span>
-                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-label="Amazon" className="w-5 h-5 text-theme-primary">
-                    <title>Amazon</title>
-                    <path d="M6.5 17.5c5.5 3.5 13.5 3.5 19 0l-1.5-2c-4.5 2.5-11.5 2.5-16 0zM21.5 15.5c.5-.5.5-1.5 0-2s-1.5-.5-2 0c-.5.5-.5 1.5 0 2s1.5.5 2 0z"/>
-                  </svg>
-                </a>
-              )}
+
             </div>
           </div>
 

@@ -88,7 +88,9 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3b82f6" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+        
+        {/* Google Pay API */}
+        <script async src="https://pay.google.com/gp/p/js/pay.js"></script>
       </head>
       <body className="antialiased bg-theme-primary text-theme-primary">
         <Providers>

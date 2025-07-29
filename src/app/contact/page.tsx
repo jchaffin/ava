@@ -87,7 +87,7 @@ const ContactPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen bg-theme-primary">
       {/* Header */}
       <div className="text-center mb-8 sm:mb-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-theme-primary mb-3 sm:mb-4">Contact Us</h1>
@@ -129,7 +129,7 @@ const ContactPage: React.FC = () => {
                   <select
                     value={formData.category}
                     onChange={(e) => handleChange('category', e.target.value)}
-                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
+                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                   >
                     {categories.map(category => (
                       <option key={category.value} value={category.value}>
@@ -145,7 +145,7 @@ const ContactPage: React.FC = () => {
                   <select
                     value={formData.priority}
                     onChange={(e) => handleChange('priority', e.target.value)}
-                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
+                    className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary"
                   >
                     {priorities.map(priority => (
                       <option key={priority.value} value={priority.value}>
@@ -173,13 +173,14 @@ const ContactPage: React.FC = () => {
                   onChange={(e) => handleChange('message', e.target.value)}
                   required
                   rows={6}
-                  className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-theme-primary bg-theme-primary text-theme-secondary"
+                  className="w-full border border-theme rounded-lg px-3 py-2 focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary placeholder:text-theme-muted"
                   placeholder="Please provide details about your inquiry..."
                 />
               </div>
 
               <Button
                 type="submit"
+                variant="secondary"
                 loading={loading}
                 disabled={loading}
                 className="w-full"
