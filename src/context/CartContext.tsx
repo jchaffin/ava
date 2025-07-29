@@ -185,7 +185,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       }
 
       dispatch({ type: 'ADD_ITEM', payload: product })
-      toast.success(`${product.name} added to cart`)
+      // Removed toast notification from here to prevent duplicate toasts
     } catch (error) {
       console.error('Error adding item to cart:', error)
       toast.error('Failed to add item to cart')

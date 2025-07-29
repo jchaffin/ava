@@ -172,6 +172,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
 
     addItem(product)
+    toast.success(`${product.name} added to cart!`)
     router.push('/cart')
   }
 

@@ -266,13 +266,15 @@ const SignInPage: React.FC = () => {
 
             {/* Google Sign In */}
             <div className="mt-6">
-              <button
+              <Button
                 type="button"
                 onClick={() => signIn('google')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg border border-theme bg-theme-primary hover:bg-theme-secondary text-theme-primary font-semibold shadow-sm transition-colors duration-150 cursor-pointer"
+                variant="outline"
+                size="lg"
+                className="w-full"
                 disabled={loading}
               >
-                <svg className="w-5 h-5" viewBox="0 0 48 48">
+                <svg className="w-5 h-5 mr-3" viewBox="0 0 48 48">
                   <g>
                     <path fill="#4285F4" d="M24 9.5c3.54 0 6.7 1.22 9.19 3.23l6.85-6.85C35.64 2.36 30.18 0 24 0 14.82 0 6.73 5.48 2.69 13.44l7.98 6.2C12.13 13.13 17.62 9.5 24 9.5z"/>
                     <path fill="#34A853" d="M46.1 24.55c0-1.64-.15-3.22-.43-4.74H24v9.01h12.42c-.54 2.9-2.18 5.36-4.65 7.02l7.19 5.59C43.93 37.13 46.1 31.36 46.1 24.55z"/>
@@ -282,7 +284,7 @@ const SignInPage: React.FC = () => {
                   </g>
                 </svg>
                 Sign in with Google
-              </button>
+              </Button>
             </div>
 
 
