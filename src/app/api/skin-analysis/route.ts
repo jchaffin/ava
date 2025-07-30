@@ -1,7 +1,12 @@
+/**
+ * Skin Analysis API
+ * 
+ * IMPORTANT: This API processes images in memory only.
+ * User uploads are NOT saved to disk for privacy and security.
+ * Images are processed, analyzed, and then discarded from memory.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
 import { skinAnalysisService } from '@/lib/ai-analysis';
 
 export async function POST(request: NextRequest) {
@@ -37,21 +42,7 @@ export async function POST(request: NextRequest) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadsDir)) {
-      mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const filename = `skin-analysis-${timestamp}-${image.name}`;
-    const filepath = join(uploadsDir, filename);
-
-    // Save image to disk
-    await writeFile(filepath, buffer);
-
-    // Validate image
+    // Validate image using the service
     const validation = skinAnalysisService.validateImage(buffer);
     if (!validation.isValid) {
       return NextResponse.json(
@@ -63,17 +54,30 @@ export async function POST(request: NextRequest) {
     // Perform AI analysis
     const analysisResult = await skinAnalysisService.analyzeImage(buffer);
 
-    // Return analysis results
+    // Generate a unique analysis ID
+    const analysisId = `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Return analysis results without saving to disk
     return NextResponse.json({
-      ...analysisResult,
-      imageUrl: `/uploads/${filename}`,
-      timestamp: new Date().toISOString()
+      success: true,
+      analysisId,
+      skinType: analysisResult.skinType,
+      concerns: analysisResult.concerns,
+      recommendations: analysisResult.recommendations,
+      confidence: analysisResult.confidence,
+      timestamp: new Date().toISOString(),
+      message: 'Skin analysis completed successfully',
+      privacy: 'Your image was processed in memory and has not been saved to disk.'
     });
 
   } catch (error) {
     console.error('Skin analysis error:', error);
     return NextResponse.json(
-      { error: 'Failed to analyze image. Please try again.' },
+      { 
+        success: false,
+        error: 'Failed to analyze image. Please try again.',
+        message: 'Internal server error during skin analysis'
+      },
       { status: 500 }
     );
   }
@@ -81,7 +85,24 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json(
-    { message: 'Skin analysis API endpoint. Use POST method with image file.' },
+    { 
+      success: true,
+      message: 'Skin analysis API endpoint. Use POST method with image file.',
+      privacy: 'User uploads are processed in memory and are NOT saved to disk for privacy and security.',
+      instructions: {
+        method: 'POST',
+        contentType: 'multipart/form-data',
+        requiredField: 'image',
+        maxFileSize: '10MB',
+        supportedFormats: ['JPEG', 'PNG', 'GIF', 'WebP']
+      },
+      features: {
+        inMemoryProcessing: true,
+        noFileStorage: true,
+        privacyFocused: true,
+        automaticCleanup: true
+      }
+    },
     { status: 200 }
   );
 } 

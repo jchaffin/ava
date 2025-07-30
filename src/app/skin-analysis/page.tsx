@@ -702,12 +702,7 @@ export default function SkinAnalysisPage() {
                     {faceDetected ? '✓ Face Detected' : 'No Face Detected'}
                   </div>
                   
-                  {/* Model Status Indicator */}
-                  <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-sm font-medium ${
-                    faceModelLoaded && landmarksModelLoaded ? 'bg-blue-500 text-white' : 'bg-yellow-500 text-white'
-                  }`}>
-                    {faceModelLoaded && landmarksModelLoaded ? 'Models Ready' : 'Loading Models...'}
-                  </div>
+
                   
                   {/* Face Detection Overlay */}
                   {faceDetected && (
