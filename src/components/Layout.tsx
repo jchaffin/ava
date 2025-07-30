@@ -461,7 +461,7 @@ const Layout: React.FC<LayoutProps> = ({
                 >
                   <Button
                     variant="secondary"
-                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
+                    className="w-full py-3 px-2 text-sm font-medium min-h-[44px] whitespace-nowrap"
                   >
                     Sign In
                   </Button>
@@ -473,7 +473,7 @@ const Layout: React.FC<LayoutProps> = ({
                 >
                   <Button
                     variant="secondary"
-                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
+                    className="w-full py-3 px-2 text-sm font-medium min-h-[44px] whitespace-nowrap"
                   >
                     Sign Up
                   </Button>
