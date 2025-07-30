@@ -453,11 +453,11 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           ) : (
             <div className="px-4 py-6 border-t border-theme">
-              <div className="space-y-4">
+              <div className="flex space-x-3">
                 <Link
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full block mb-4"
+                  className="flex-1"
                 >
                   <Button
                     variant="secondary"
@@ -469,7 +469,7 @@ const Layout: React.FC<LayoutProps> = ({
                 <Link
                   href="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full block"
+                  className="flex-1"
                 >
                   <Button
                     variant="secondary"
@@ -598,17 +598,6 @@ const Layout: React.FC<LayoutProps> = ({
 
           {/* Right side actions */}
           <div className="flex items-center space-x-6">
-            {/* Theme toggle button */}
-            <div className="h-9 flex items-center justify-center">
-              <ThemeToggle />
-            </div>
-            {/* Wishlist - only show for regular users */}
-            {isAuthenticated && !hasRole('admin') && (
-              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
-                <HeartIcon className="w-5 h-5" />
-              </Link>
-            )}
-
             {/* Home button - mobile only */}
             <div className="lg:hidden h-9 flex items-center justify-center">
               <Link href="/" className="p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
@@ -631,6 +620,17 @@ const Layout: React.FC<LayoutProps> = ({
                 )}
               </Link>
             </div>
+
+            {/* Theme toggle button */}
+            <div className="h-9 flex items-center justify-center">
+              <ThemeToggle />
+            </div>
+            {/* Wishlist - only show for regular users */}
+            {isAuthenticated && !hasRole('admin') && (
+              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
+                <HeartIcon className="w-5 h-5" />
+              </Link>
+            )}
 
             {/* User menu or sign in */}
             {isAuthenticated ? (
