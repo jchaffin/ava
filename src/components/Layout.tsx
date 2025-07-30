@@ -623,24 +623,10 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           </div>
 
-          {/* Desktop Layout - With logo and navigation */}
+                              {/* Desktop Layout - With logo and navigation */}
           <div className="hidden md:flex items-center justify-between w-full">
-            {/* Left side - Mobile menu button (hidden on desktop) */}
-            <div className="lg:hidden" data-mobile-menu-button>
-              <button
-                onClick={() => {
-                  toggleMobileMenu()
-                }}
-                className="p-3 rounded-lg text-theme-primary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
-                aria-label="Open mobile menu"
-                type="button"
-              >
-                <Bars3Icon className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Center - Logo */}
-            <div className="flex-1 flex justify-center">
+            {/* Left side - Logo */}
+            <div className="flex items-center">
               <Link href="/" className="flex items-center">
                   <Image
                   key={isDarkMode ? 'dark' : 'light'}
@@ -655,13 +641,13 @@ const Layout: React.FC<LayoutProps> = ({
               </Link>
             </div>
 
-            {/* Right side - Desktop navigation and actions */}
-            <div className="hidden lg:flex items-center space-x-8">
+            {/* Center - Desktop navigation */}
+            <div className="hidden lg:flex items-center space-x-12">
               {renderDesktopNavigation()}
             </div>
 
-                        {/* Right side actions */}
-            <div className="flex items-center space-x-6">
+            {/* Right side actions */}
+            <div className="flex items-center space-x-16">
               {/* Shopping cart */}
               <div className="h-9 flex items-center justify-center">
                 <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
@@ -686,7 +672,7 @@ const Layout: React.FC<LayoutProps> = ({
               {/* Wishlist - only show for regular users */}
               {isAuthenticated && !hasRole('admin') && (
                 <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
-                  <HeartIcon className="w-5 h-5" />
+                    <HeartIcon className="w-5 h-5" />
                 </Link>
               )}
 
@@ -694,16 +680,16 @@ const Layout: React.FC<LayoutProps> = ({
               {isAuthenticated ? (
                 renderUserMenu()
               ) : (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-8">
                   <Link
                     href="/signin"
-                    className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
+                    className="text-theme-primary hover:text-ava-accent px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/register"
-                    className="bg-ava-accent text-theme-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center lg:block hidden"
+                    className="bg-ava-accent text-theme-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center lg:block hidden"
                   >
                     Sign Up
                   </Link>

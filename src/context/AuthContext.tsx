@@ -92,7 +92,7 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
   // Create user from session directly
   const user = session?.user ? createAuthUserFromSession(session.user) : null
   const isLoading = status === 'loading' || !isClient
-  const isAuthenticated = !!user && isClient
+  const isAuthenticated = !!user && isClient && status !== 'unauthenticated'
 
   const login = async (credentials: LoginCredentials): Promise<AuthResult> => {
     try {
@@ -162,22 +162,53 @@ const AuthProviderInternal: React.FC<AuthContextProviderProps> = ({ children }) 
         localStorage.removeItem('ava-cart')
         localStorage.removeItem('wishlist')
         sessionStorage.clear()
+        
+        // Clear any other auth-related storage
+        localStorage.removeItem('next-auth.csrf-token')
+        localStorage.removeItem('next-auth.callback-url')
+        
+        // Clear all NextAuth related cookies
+        document.cookie.split(";").forEach(function(c) { 
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+        });
       }
       
-      // Sign out from NextAuth
-      await signOut({ redirect: false })
+      // Sign out from NextAuth with proper error handling
+      await signOut({ 
+        redirect: false,
+        callbackUrl: '/'
+      })
       
-      // Force a session update to ensure state is cleared
-      await update()
+      // Force multiple session updates to ensure state is cleared
+      try {
+        await update()
+        // Force another update after a short delay
+        setTimeout(async () => {
+          await update()
+        }, 50)
+        // Force a third update to be sure
+        setTimeout(async () => {
+          await update()
+        }, 100)
+      } catch (updateError) {
+        console.warn('Session update error during logout:', updateError)
+      }
       
       toast.success('You have been logged out')
       
-      // Use window.location for a hard redirect to ensure clean state
-      window.location.href = '/'
+      // Force a hard refresh to ensure clean state
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
       
     } catch (error) {
       console.error('Logout error:', error)
-      toast.error('Error during logout')
+      toast.error('Error during logout. Please try again.')
+      
+      // Force a hard refresh as fallback
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     }
   }
 

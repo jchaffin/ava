@@ -305,7 +305,18 @@ export const authOptions: NextAuthOptions = {
     },
 
     async signOut({ token }) {
-      
+      try {
+        // Clear any server-side session data if needed
+        console.log('User signed out successfully')
+        
+        // Force clear any remaining session data
+        if (token) {
+          // Clear the token
+          token = null
+        }
+      } catch (error) {
+        console.error('Sign out callback error:', error)
+      }
     },
 
     async createUser({ user }) {
