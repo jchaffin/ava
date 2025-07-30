@@ -17,7 +17,7 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
         <CartProvider>
           {children}
           <Toaster
-            position="top-left"
+            position="bottom-left"
             toastOptions={{
               duration: 3000,
               style: {

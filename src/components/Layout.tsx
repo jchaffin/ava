@@ -310,7 +310,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const renderDesktopNavigation = () => (
-    <nav className="hidden lg:flex items-center space-x-8">
+    <nav className="flex items-center space-x-8">
       {navigationItems.map((item) => (
         <Link
           key={item.name}
@@ -332,7 +332,7 @@ const Layout: React.FC<LayoutProps> = ({
     <>
       {/* Backdrop */}
       <div 
-        className={`lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 z-[9998] ${
+        className={`xl:hidden fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-300 z-[9998] ${
           isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
@@ -340,7 +340,7 @@ const Layout: React.FC<LayoutProps> = ({
       />
       
       {/* Sidebar */}
-      <div className={`lg:hidden fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-theme-secondary shadow-2xl transform transition-all duration-300 ease-out z-[9999] ${
+      <div className={`xl:hidden fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-theme-secondary shadow-2xl transform transition-all duration-300 ease-out z-[9999] ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         
@@ -559,12 +559,12 @@ const Layout: React.FC<LayoutProps> = ({
 
   const renderHeader = () => (
     <header className="bg-theme-secondary shadow-sm border-b border-theme sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto lg:px-4 lg:sm:px-6 lg:lg:px-8">
+        <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
           {/* Mobile Layout - Evenly spaced when logo is hidden */}
-          <div className="md:hidden flex items-center justify-between w-full">
+          <div className="xl:hidden flex items-center w-full">
             {/* Left side - Mobile menu button */}
-            <div data-mobile-menu-button>
+            <div data-mobile-menu-button className="flex-shrink-0">
               <button
                 onClick={() => {
                   toggleMobileMenu()
@@ -577,8 +577,8 @@ const Layout: React.FC<LayoutProps> = ({
               </button>
             </div>
 
-            {/* Center - Evenly spaced icons */}
-            <div className="flex items-center space-x-6">
+            {/* Center - Icons evenly dispersed */}
+            <div className="flex items-center justify-end flex-1 max-[633px]:space-x-8 sm:space-x-8">
               {/* Home button */}
               <div className="h-9 flex items-center justify-center">
                 <Link href="/" className="p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
@@ -608,8 +608,8 @@ const Layout: React.FC<LayoutProps> = ({
               </div>
             </div>
 
-            {/* Right side - Sign In button (mobile only) */}
-            <div>
+            {/* Right side - Sign In button */}
+            <div className="flex-shrink-0">
               {isAuthenticated ? (
                 renderUserMenu()
               ) : (
@@ -624,7 +624,7 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
 
                               {/* Desktop Layout - With logo and navigation */}
-          <div className="hidden md:flex items-center justify-between w-full">
+          <div className="hidden xl:flex items-center justify-between w-full">
             {/* Left side - Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
@@ -642,7 +642,7 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
 
             {/* Center - Desktop navigation */}
-            <div className="hidden lg:flex items-center space-x-12">
+            <div className="flex items-center space-x-12">
               {renderDesktopNavigation()}
             </div>
 

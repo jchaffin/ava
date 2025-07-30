@@ -32,86 +32,171 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
   const totalPrice = item.price * item.quantity;
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-theme-tertiary rounded-lg shadow-sm border border-theme hover:shadow-md transition-shadow">
-      {/* First Row: Product Image, Details, Price, and Quantity Controls */}
-      <div className="flex gap-4">
-        {/* Product Image */}
-        <div className="relative w-24 h-24 flex-shrink-0">
-          <Image
-            src={getProductImageUrl(item.image, item.id)}
-            alt={item.name}
-            fill
-            className="object-cover rounded-md"
-          />
+    <div className="p-6">
+      {/* Product Name at Top */}
+      <h3 className="font-semibold text-theme-primary text-lg mb-4">{item.name}</h3>
+      
+      {/* Desktop Layout */}
+      <div className="hidden md:flex flex-col gap-4">
+        {/* Top Row: Image and Description */}
+        <div className="flex gap-4">
+          {/* Product Image */}
+          <div className="flex-shrink-0">
+            <div className="relative w-24 h-24">
+              <Image
+                src={getProductImageUrl(item.image, item.id)}
+                alt={item.name}
+                fill
+                className="object-cover rounded-md"
+              />
+            </div>
+          </div>
+
+          {/* Product Details - Text wraps around image */}
+          <div className="flex-1 min-w-0">
+            {item.description && (
+              <p className="text-sm text-theme-secondary line-clamp-3">
+                {item.description}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Product Details */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-theme-primary line-clamp-2 flex-1">{item.name}</h3>
-            <Link href={`/products/${item.id}`}>
-              <button className="p-1 text-theme-muted hover:text-theme-primary hover:bg-theme-primary rounded transition-colors">
-                <ArrowUpRight size={16} />
-              </button>
-            </Link>
-          </div>
-
-          {item.description && (
-            <p className="text-sm text-theme-secondary mt-1 line-clamp-2">
-              {item.description}
-            </p>
-          )}
-          
-          {/* Price */}
-          <div className="mt-3">
-            <span className="text-lg font-bold text-theme-primary">
+        {/* Bottom Row: Price, Quantity, and Action Buttons */}
+        <div className="flex items-center justify-between">
+          {/* Price and Quantity Controls */}
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-bold text-theme-primary">
               ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
             </span>
-          </div>
-          
-          {/* Quantity Controls and Remove Button - Stacked on mobile */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-3">
+            
             {/* Quantity Controls */}
-            <div className="flex items-center border border-theme rounded-md bg-theme-primary w-fit">
+            <div className="flex items-stretch border border-theme rounded-md bg-theme-primary w-fit text-base">
               <button
                 onClick={() => handleQuantityChange(item.quantity - 1)}
-                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 aria-label="Decrease quantity"
                 disabled={item.quantity <= 1}
               >
-                <Minus size={14} />
+                <Minus size={16} />
               </button>
               
-              <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary">
+              <span className="px-4 py-2 text-center font-medium min-w-[2.5rem] border-x border-theme bg-theme-primary flex items-center justify-center text-base">
                 {item.quantity}
               </span>
               
               <button
                 onClick={() => handleQuantityChange(item.quantity + 1)}
-                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 aria-label="Increase quantity"
                 disabled={item.quantity >= stock}
               >
-                <Plus size={14} />
+                <Plus size={16} />
               </button>
             </div>
+          </div>
 
-            {/* Remove Button */}
+          {/* Action Buttons - Bottom Right */}
+          <div className="flex items-center gap-2">
+            <Link href={`/products/${item.id}`}>
+              <button className="p-1.5 text-theme-muted hover:text-theme-primary hover:bg-theme-primary rounded transition-colors">
+                <ArrowUpRight size={14} />
+              </button>
+            </Link>
+            
             <button
               onClick={() => onRemove(item.id)}
-              className="p-2 text-theme-muted hover:bg-theme-primary rounded-md transition-colors w-fit"
+              className="p-1.5 text-theme-muted hover:bg-theme-primary rounded-md transition-colors"
               aria-label="Remove from cart"
             >
-              <Trash2 size={18} />
+              <Trash2 size={16} />
             </button>
           </div>
-          
-          {/* Stock Warning */}
-          {item.quantity >= stock && (
-            <p className="text-sm text-orange-600 mt-2">
-              ⚠️ Maximum available quantity reached
+        </div>
+        
+        {/* Stock Warning */}
+        {item.quantity >= stock && (
+          <p className="text-sm text-orange-600">
+            ⚠️ Maximum available quantity reached
+          </p>
+        )}
+      </div>
+
+      {/* Mobile Layout */}
+      <div className="md:hidden space-y-4">
+        {/* Product Image and Description Row */}
+        <div className="flex gap-3">
+          <div className="relative w-20 h-20 flex-shrink-0">
+            <Image
+              src={getProductImageUrl(item.image, item.id)}
+              alt={item.name}
+              fill
+              className="object-cover rounded-md"
+            />
+          </div>
+
+          {/* Description */}
+          {item.description && (
+            <p className="text-sm text-theme-secondary line-clamp-3 flex-1">
+              {item.description}
             </p>
           )}
+        </div>
+
+        {/* Price and Quantity Controls */}
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-bold text-theme-primary">
+            ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
+          </span>
+          
+          {/* Quantity Controls */}
+          <div className="flex items-stretch border border-theme rounded-md bg-theme-primary w-fit text-sm">
+            <button
+              onClick={() => handleQuantityChange(item.quantity - 1)}
+              className="px-2 py-1 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              aria-label="Decrease quantity"
+              disabled={item.quantity <= 1}
+            >
+              <Minus size={14} />
+            </button>
+            
+            <span className="px-3 py-1 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary flex items-center justify-center">
+              {item.quantity}
+            </span>
+            
+            <button
+              onClick={() => handleQuantityChange(item.quantity + 1)}
+              className="px-2 py-1 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              aria-label="Increase quantity"
+              disabled={item.quantity >= stock}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+        
+        {/* Stock Warning */}
+        {item.quantity >= stock && (
+          <p className="text-sm text-orange-600">
+            ⚠️ Maximum available quantity reached
+          </p>
+        )}
+
+        {/* Action Buttons - Bottom Right */}
+        <div className="flex items-center justify-end gap-2">
+          <Link href={`/products/${item.id}`}>
+            <button className="p-2 text-theme-muted hover:text-theme-primary hover:bg-theme-primary rounded transition-colors">
+              <ArrowUpRight size={16} />
+            </button>
+          </Link>
+          
+          <button
+            onClick={() => onRemove(item.id)}
+            className="p-2 text-theme-muted hover:bg-theme-primary rounded-md transition-colors"
+            aria-label="Remove from cart"
+          >
+            <Trash2 size={18} />
+          </button>
         </div>
       </div>
     </div>

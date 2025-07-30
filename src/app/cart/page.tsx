@@ -155,9 +155,9 @@ const CartPage: React.FC = () => {
                 <h2 className="text-lg font-semibold text-theme-primary">Cart Items</h2>
               </div>
               
-              <div className="divide-y divide-theme">
+              <div className="space-y-4 p-4">
                 {items.map((item) => (
-                  <div key={item._id} className="p-6">
+                  <div key={item._id} className="bg-theme-tertiary rounded-lg shadow-sm border border-theme hover:shadow-md transition-shadow">
                     <CartItem
                       item={{
                         id: item._id,
