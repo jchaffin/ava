@@ -62,45 +62,44 @@ const CartItem: React.FC<CartItemProps> = ({ item, stock, onUpdateQuantity, onRe
             </p>
           )}
           
-          {/* Price and Quantity Controls */}
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-theme-primary">
-                  ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
-                </span>
-              </div>
+          {/* Price */}
+          <div className="mt-3">
+            <span className="text-lg font-bold text-theme-primary">
+              ${item.quantity === 1 ? item.price.toFixed(2) : totalPrice.toFixed(2)}
+            </span>
+          </div>
+          
+          {/* Quantity Controls and Remove Button - Stacked on mobile */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-3">
+            {/* Quantity Controls */}
+            <div className="flex items-center border border-theme rounded-md bg-theme-primary w-fit">
+              <button
+                onClick={() => handleQuantityChange(item.quantity - 1)}
+                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Decrease quantity"
+                disabled={item.quantity <= 1}
+              >
+                <Minus size={14} />
+              </button>
               
-              {/* Quantity Controls */}
-              <div className="flex items-center border border-theme rounded-md bg-theme-primary">
-                <button
-                  onClick={() => handleQuantityChange(item.quantity - 1)}
-                  className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Decrease quantity"
-                  disabled={item.quantity <= 1}
-                >
-                  <Minus size={14} />
-                </button>
-                
-                <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary">
-                  {item.quantity}
-                </span>
-                
-                <button
-                  onClick={() => handleQuantityChange(item.quantity + 1)}
-                  className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  aria-label="Increase quantity"
-                  disabled={item.quantity >= stock}
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
+              <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary">
+                {item.quantity}
+              </span>
+              
+              <button
+                onClick={() => handleQuantityChange(item.quantity + 1)}
+                className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Increase quantity"
+                disabled={item.quantity >= stock}
+              >
+                <Plus size={14} />
+              </button>
             </div>
 
             {/* Remove Button */}
             <button
               onClick={() => onRemove(item.id)}
-              className="p-2 text-theme-muted hover:bg-theme-primary rounded-md transition-colors"
+              className="p-2 text-theme-muted hover:bg-theme-primary rounded-md transition-colors w-fit"
               aria-label="Remove from cart"
             >
               <Trash2 size={18} />
