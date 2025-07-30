@@ -214,30 +214,6 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
 
 
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {onSave && (
-          <Button
-            onClick={handleSaveAnalysis}
-            disabled={isSaving}
-            variant="primary"
-            className="flex-1 py-3 px-6 rounded-xl transition-all space-x-2"
-          >
-            <Sparkles className="w-5 h-5" />
-            <span>{isSaving ? 'Saving...' : 'Save Analysis'}</span>
-          </Button>
-        )}
-        {onReset && (
-          <Button
-            variant="primary"
-            onClick={onReset}
-            className="flex-1 py-3 px-6 rounded-xl transition-colors"
-          >
-            New Analysis
-          </Button>
-        )}
-      </div>
-
       {/* Disclaimer */}
       <div className="bg-theme-primary rounded-xl p-4">
         <div className="flex items-start space-x-2">
@@ -252,6 +228,30 @@ export default function SkinAnalysisResults({ result, onReset, onSave }: SkinAna
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {onSave && (
+          <Button
+            onClick={handleSaveAnalysis}
+            disabled={isSaving}
+            variant="secondary"
+            className="w-full py-3 px-6 rounded-xl flex items-center justify-center space-x-2"
+          >
+            <Sparkles className="w-5 h-5" />
+            <span>{isSaving ? 'Saving...' : 'Save Analysis'}</span>
+          </Button>
+        )}
+        {onReset && (
+          <Button
+            variant="secondary"
+            onClick={onReset}
+            className="w-full py-3 px-6 rounded-xl flex items-center justify-center space-x-2"
+          >
+            New Analysis
+          </Button>
+        )}
       </div>
     </div>
   );

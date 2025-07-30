@@ -71,7 +71,7 @@ export default function SkinAnalysisPage() {
             _id: 'fallback-1',
             name: 'Vitamin C Brightening Serum',
             price: 45.00,
-            images: ['/images/products/7007/vitcserum_main.jpg'],
+            images: ['vitcserum_main.jpg'],
             category: 'serum',
             description: 'Brightening serum with 20% Vitamin C for even skin tone'
           },
@@ -79,7 +79,7 @@ export default function SkinAnalysisPage() {
             _id: 'fallback-2',
             name: 'Hyaluronic Acid Hydration Serum',
             price: 38.00,
-            images: ['/images/products/7006/hydserum_main.jpg'],
+            images: ['hydserum_main.jpg'],
             category: 'serum',
             description: 'Deeply hydrating serum with hyaluronic acid'
           },
@@ -87,7 +87,7 @@ export default function SkinAnalysisPage() {
             _id: 'fallback-3',
             name: 'Advanced Retinol Night Serum',
             price: 52.00,
-            images: ['/images/products/700a/brserum_main.jpg'],
+            images: ['brserum_main.jpg'],
             category: 'serum',
             description: 'Anti-aging retinol serum for fine lines and wrinkles'
           }
@@ -101,7 +101,7 @@ export default function SkinAnalysisPage() {
           _id: 'fallback-1',
           name: 'Vitamin C Brightening Serum',
           price: 45.00,
-          images: ['/images/products/7007/vitcserum_main.jpg'],
+          images: ['vitcserum_main.jpg'],
           category: 'serum',
           description: 'Brightening serum with 20% Vitamin C for even skin tone'
         },
@@ -109,7 +109,7 @@ export default function SkinAnalysisPage() {
           _id: 'fallback-2',
           name: 'Hyaluronic Acid Hydration Serum',
           price: 38.00,
-          images: ['/images/products/7006/hydserum_main.jpg'],
+          images: ['hydserum_main.jpg'],
           category: 'serum',
           description: 'Deeply hydrating serum with hyaluronic acid'
         },
@@ -117,7 +117,7 @@ export default function SkinAnalysisPage() {
           _id: 'fallback-3',
           name: 'Advanced Retinol Night Serum',
           price: 52.00,
-          images: ['/images/products/700a/brserum_main.jpg'],
+          images: ['brserum_main.jpg'],
           category: 'serum',
           description: 'Anti-aging retinol serum for fine lines and wrinkles'
         }

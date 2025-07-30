@@ -5,7 +5,7 @@
   /* Primary Brand Colors - Based on Logo */
   --ava-primary: #1a202c;      /* Deep charcoal */
   --ava-secondary: #4a5568;    /* Medium gray */
-  --ava-accent: #cdd5e0;       /* Warm red */
+  --ava-accent: #d69e2e;       /* Premium gold */
   --ava-gold: #d69e2e;         /* Premium gold */
   --ava-cream: #ECD9D2;        /* Light cream */
   
@@ -27,7 +27,7 @@
 .dark {
   --ava-primary: #faf8f7;
   --ava-secondary: #cbd5e1;
-  --ava-accent: #1b202b;
+  --ava-accent: #d69e2e;
   --ava-gold: #d69e2e;
   --ava-cream: #1a202c;
 
