@@ -561,96 +561,155 @@ const Layout: React.FC<LayoutProps> = ({
     <header className="bg-theme-secondary shadow-sm border-b border-theme sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Mobile menu button */}
-          <div className="lg:hidden" data-mobile-menu-button>
-            <button
-              onClick={() => {
-                toggleMobileMenu()
-              }}
-              className="p-3 rounded-lg text-theme-primary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
-              aria-label="Open mobile menu"
-              type="button"
-            >
-              <Bars3Icon className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Center - Logo (larger and centered) */}
-          <div className="flex-1 flex justify-center">
-            <Link href="/" className="hidden md:flex items-center">
-                <Image
-                key={isDarkMode ? 'dark' : 'light'}
-                  src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
-                  alt="AVA Logo"
-                  width={240}
-                  height={80}
-                  className="h-16 w-auto"
-                  priority
-                suppressHydrationWarning
-                />
-            </Link>
-          </div>
-
-          {/* Right side - Desktop navigation and actions */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {renderDesktopNavigation()}
-          </div>
-
-          {/* Right side actions */}
-          <div className="flex items-center space-x-6">
-            {/* Home button - mobile only */}
-            <div className="lg:hidden h-9 flex items-center justify-center">
-              <Link href="/" className="p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
-                <HomeIcon className="w-5 h-5" />
-              </Link>
+          {/* Mobile Layout - Evenly spaced when logo is hidden */}
+          <div className="md:hidden flex items-center justify-between w-full">
+            {/* Left side - Mobile menu button */}
+            <div data-mobile-menu-button>
+              <button
+                onClick={() => {
+                  toggleMobileMenu()
+                }}
+                className="p-3 rounded-lg text-theme-primary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
+                aria-label="Open mobile menu"
+                type="button"
+              >
+                <Bars3Icon className="w-6 h-6" />
+              </button>
             </div>
 
-            {/* Shopping cart */}
-            <div className="h-9 flex items-center justify-center">
-              <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
-                {getTotalItems() > 0 ? (
-                  <ShoppingCartSolidIcon className="w-5 h-5" />
-                ) : (
-                  <ShoppingCartIcon className="w-5 h-5" />
-                )}
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    {getTotalItems() > 9 ? '9+' : getTotalItems()}
-                  </span>
-                )}
-              </Link>
+            {/* Center - Evenly spaced icons */}
+            <div className="flex items-center space-x-6">
+              {/* Home button */}
+              <div className="h-9 flex items-center justify-center">
+                <Link href="/" className="p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
+                  <HomeIcon className="w-5 h-5" />
+                </Link>
+              </div>
+
+              {/* Shopping cart */}
+              <div className="h-9 flex items-center justify-center">
+                <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
+                  {getTotalItems() > 0 ? (
+                    <ShoppingCartSolidIcon className="w-5 h-5" />
+                  ) : (
+                    <ShoppingCartIcon className="w-5 h-5" />
+                  )}
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                    </span>
+                  )}
+                </Link>
+              </div>
+
+              {/* Theme toggle button */}
+              <div className="h-9 flex items-center justify-center">
+                <ThemeToggle />
+              </div>
             </div>
 
-            {/* Theme toggle button */}
-            <div className="h-9 flex items-center justify-center">
-              <ThemeToggle />
-            </div>
-            {/* Wishlist - only show for regular users */}
-            {isAuthenticated && !hasRole('admin') && (
-              <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
-                <HeartIcon className="w-5 h-5" />
-              </Link>
-            )}
-
-            {/* User menu or sign in */}
-            {isAuthenticated ? (
-              renderUserMenu()
-            ) : (
-              <div className="flex items-center space-x-2">
+            {/* Right side - Sign In button (mobile only) */}
+            <div>
+              {isAuthenticated ? (
+                renderUserMenu()
+              ) : (
                 <Link
                   href="/signin"
                   className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
                 >
                   Sign In
                 </Link>
-                <Link
-                  href="/register"
-                  className="bg-ava-accent text-theme-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
-                >
-                  Sign Up
+              )}
+            </div>
+          </div>
+
+          {/* Desktop Layout - With logo and navigation */}
+          <div className="hidden md:flex items-center justify-between w-full">
+            {/* Left side - Mobile menu button (hidden on desktop) */}
+            <div className="lg:hidden" data-mobile-menu-button>
+              <button
+                onClick={() => {
+                  toggleMobileMenu()
+                }}
+                className="p-3 rounded-lg text-theme-primary hover:text-ava-accent hover:bg-theme-secondary transition-colors duration-200 touch-manipulation"
+                aria-label="Open mobile menu"
+                type="button"
+              >
+                <Bars3Icon className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Center - Logo */}
+            <div className="flex-1 flex justify-center">
+              <Link href="/" className="flex items-center">
+                  <Image
+                  key={isDarkMode ? 'dark' : 'light'}
+                    src={isDarkMode ? "/images/logos/logo_dark.png" : "/images/logos/logo.png"}
+                    alt="AVA Logo"
+                    width={240}
+                    height={80}
+                    className="h-16 w-auto"
+                    priority
+                  suppressHydrationWarning
+                  />
+              </Link>
+            </div>
+
+            {/* Right side - Desktop navigation and actions */}
+            <div className="hidden lg:flex items-center space-x-8">
+              {renderDesktopNavigation()}
+            </div>
+
+                        {/* Right side actions */}
+            <div className="flex items-center space-x-6">
+              {/* Shopping cart */}
+              <div className="h-9 flex items-center justify-center">
+                <Link href="/cart" className="relative p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
+                  {getTotalItems() > 0 ? (
+                    <ShoppingCartSolidIcon className="w-5 h-5" />
+                  ) : (
+                    <ShoppingCartIcon className="w-5 h-5" />
+                  )}
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-ava-accent text-theme-primary text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                    </span>
+                  )}
                 </Link>
               </div>
-            )}
+
+              {/* Theme toggle button */}
+              <div className="h-9 flex items-center justify-center">
+                <ThemeToggle />
+              </div>
+              
+              {/* Wishlist - only show for regular users */}
+              {isAuthenticated && !hasRole('admin') && (
+                <Link href="/wishlist" className="hidden lg:inline-flex p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0">
+                  <HeartIcon className="w-5 h-5" />
+                </Link>
+              )}
+
+              {/* User menu or sign in */}
+              {isAuthenticated ? (
+                renderUserMenu()
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href="/signin"
+                    className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-ava-accent text-theme-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center lg:block hidden"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
