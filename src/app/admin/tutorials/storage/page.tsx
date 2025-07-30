@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { AdminLayout } from '@/components'
 import { Button } from '@/components/ui'
 import { useAuth } from '@/context'
@@ -18,12 +18,19 @@ import {
   FileText,
   Database,
   Globe,
+  ArrowRight,
+  BookOpen,
+  Shield,
+  Zap,
+  Monitor,
+  Bell,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const StorageSetupTutorial: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
+  const [currentStep, setCurrentStep] = useState(1)
 
   React.useEffect(() => {
     if (isLoading) return
@@ -40,12 +47,166 @@ const StorageSetupTutorial: React.FC = () => {
     }
   }, [user, isAuthenticated, isLoading, router])
 
+  const steps = [
+    {
+      id: 1,
+      title: 'Storage Overview',
+      icon: HardDrive,
+      content: (
+        <div className="space-y-4">
+          <p className="text-theme-secondary">
+            This application uses local file storage for managing images and assets. 
+            Files are stored directly on your server&apos;s file system, making it simple 
+            to set up and manage without external dependencies.
+          </p>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>No external dependencies required</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Simple file system storage</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Full control over your data</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Easy backup and migration</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      title: 'Directory Structure',
+      icon: Folder,
+      content: (
+        <div className="space-y-4">
+          <p className="text-theme-secondary">
+            The application uses a specific directory structure for organizing uploaded files.
+          </p>
+          <div className="bg-theme-tertiary rounded-lg p-4 font-mono text-sm">
+            <div>public/</div>
+            <div>├── images/</div>
+            <div>│   └── products/</div>
+            <div>│       └── [product-id]/</div>
+            <div>│           ├── main.jpg</div>
+            <div>│           ├── 1.jpg</div>
+            <div>│           ├── 2.jpg</div>
+            <div>│           └── 3.jpg</div>
+            <div>└── uploads/</div>
+            <div>    ├── general/</div>
+            <div>    └── products/</div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Product images stored in organized folders</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Each product gets its own directory</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Easy to manage and backup</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      title: 'File Upload Process',
+      icon: Upload,
+      content: (
+        <div className="space-y-4">
+          <p className="text-theme-secondary">
+            Understanding how file uploads work in the application.
+          </p>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Files are uploaded via the admin interface</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Images are automatically resized and optimized</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>File names are sanitized for security</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span>Metadata is stored in the database</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 4,
+      title: 'Best Practices',
+      icon: Settings,
+      content: (
+        <div className="space-y-4">
+          <p className="text-theme-secondary">
+            Follow these best practices to ensure optimal performance and security.
+          </p>
+          <div className="space-y-3">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-theme-primary">Regular Backups</h4>
+                <p className="text-sm text-theme-muted">
+                  Regularly backup your upload directories to prevent data loss
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-theme-primary">Disk Space Monitoring</h4>
+                <p className="text-sm text-theme-muted">
+                  Monitor disk space usage to prevent storage issues
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-theme-primary">File Organization</h4>
+                <p className="text-sm text-theme-muted">
+                  Use consistent naming conventions and folder structures
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-theme-primary">Security</h4>
+                <p className="text-sm text-theme-muted">
+                  Ensure proper file permissions and validate uploaded file types
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  ]
+
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-theme-primary flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-primary mx-auto"></div>
             <p className="mt-4 text-theme-secondary">Loading...</p>
           </div>
         </div>
@@ -76,303 +237,97 @@ const StorageSetupTutorial: React.FC = () => {
                   </p>
                 </div>
               </div>
+              <div className="flex items-center space-x-4">
+                <Button
+                  onClick={() => router.push('/admin/tutorials/paypal')}
+                  variant="ghost"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Previous: PayPal Setup
+                </Button>
+                <Button
+                  onClick={() => router.push('/admin/tutorials')}
+                  variant="ghost"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Back to Tutorials
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Overview */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <HardDrive className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Local Storage Overview</h2>
-            </div>
-            <p className="text-theme-muted mb-4">
-              This application uses local file storage for managing images and assets. 
-              Files are stored directly on your server&apos;s file system, making it simple 
-              to set up and manage without external dependencies.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center p-3 bg-theme-tertiary rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-theme-primary">No External Dependencies</span>
+          <div className="bg-theme-secondary rounded-lg shadow border border-theme">
+            {/* Progress Bar */}
+            <div className="border-b border-theme p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-medium text-theme-primary">Setup Progress</h2>
+                <span className="text-sm text-theme-muted">Step {currentStep} of {steps.length}</span>
               </div>
-              <div className="flex items-center p-3 bg-theme-tertiary rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-theme-primary">Easy Setup</span>
-              </div>
-              <div className="flex items-center p-3 bg-theme-tertiary rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                <span className="text-sm font-medium text-theme-primary">Full Control</span>
+              <div className="w-full bg-theme-tertiary rounded-full h-2">
+                <div 
+                  className="bg-theme-primary h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                ></div>
               </div>
             </div>
-          </div>
 
-          {/* Directory Structure */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <Folder className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Directory Structure</h2>
+            {/* Step Navigation */}
+            <div className="p-6 border-b border-theme">
+              <div className="flex items-center justify-between">
+                <Button
+                  onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+                  disabled={currentStep === 1}
+                  variant="ghost"
+                >
+                  Previous
+                </Button>
+                <Button
+                  onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
+                  disabled={currentStep === steps.length}
+                  variant="ghost"
+                >
+                  Next
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
-            <div className="bg-theme-tertiary rounded-lg p-4 font-mono text-sm">
-              <div className="text-theme-primary">public/</div>
-              <div className="ml-4 text-theme-primary">├── uploads/</div>
-              <div className="ml-8 text-theme-muted">├── general/</div>
-              <div className="ml-8 text-theme-muted">├── products/</div>
-              <div className="ml-8 text-theme-muted">└── temp/</div>
-              <div className="ml-4 text-theme-primary">└── images/</div>
-              <div className="ml-8 text-theme-primary">└── products/</div>
-              <div className="ml-12 text-theme-muted">├── [product-id-1]/</div>
-              <div className="ml-16 text-theme-muted">├── main.jpg</div>
-              <div className="ml-16 text-theme-muted">├── 1.jpg</div>
-              <div className="ml-16 text-theme-muted">└── 2.jpg</div>
-              <div className="ml-12 text-theme-muted">└── [product-id-2]/</div>
-              <div className="ml-16 text-theme-muted">└── ...</div>
-            </div>
-          </div>
 
-          {/* Setup Steps */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <Settings className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Setup Steps</h2>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-theme-primary text-theme-secondary rounded-full flex items-center justify-center font-bold">
-                  1
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-theme-primary">Create Upload Directories</h3>
-                  <p className="text-theme-muted mt-1">
-                    Ensure the following directories exist in your project:
-                  </p>
-                  <div className="bg-theme-tertiary rounded-lg p-3 mt-2 font-mono text-sm">
-                    <div>mkdir -p public/uploads/general</div>
-                    <div>mkdir -p public/uploads/products</div>
-                    <div>mkdir -p public/uploads/temp</div>
-                    <div>mkdir -p public/images/products</div>
+            {/* Current Step Content */}
+            <div className="p-6">
+              {steps.map((step) => (
+                <div key={step.id} className={currentStep === step.id ? 'block' : 'hidden'}>
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="w-10 h-10 bg-theme-tertiary rounded-full flex items-center justify-center">
+                      <step.icon className="w-5 h-5 text-theme-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-theme-primary">{step.title}</h3>
                   </div>
+                  {step.content}
                 </div>
-              </div>
+              ))}
+            </div>
 
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-theme-primary text-theme-secondary rounded-full flex items-center justify-center font-bold">
-                  2
+            {/* Features Overview */}
+            <div className="border-t border-theme p-6">
+              <h3 className="text-lg font-medium text-theme-primary mb-4">Local Storage Features</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <Shield className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Local file storage</span>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-theme-primary">Set Permissions</h3>
-                  <p className="text-theme-muted mt-1">
-                    Make sure the web server has write permissions to these directories:
-                  </p>
-                  <div className="bg-theme-tertiary rounded-lg p-3 mt-2 font-mono text-sm">
-                    <div>chmod 755 public/uploads</div>
-                    <div>chmod 755 public/images</div>
-                  </div>
+                <div className="flex items-center space-x-3">
+                  <Zap className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Easy file uploads</span>
                 </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-theme-primary text-theme-secondary rounded-full flex items-center justify-center font-bold">
-                  3
+                <div className="flex items-center space-x-3">
+                  <Monitor className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Simple setup</span>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-theme-primary">Environment Variables</h3>
-                  <p className="text-theme-muted mt-1">
-                    Add the following to your .env.local file (optional):
-                  </p>
-                  <div className="bg-theme-tertiary rounded-lg p-3 mt-2 font-mono text-sm">
-                    <div>UPLOAD_DIR=public/uploads</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-theme-primary text-theme-secondary rounded-full flex items-center justify-center font-bold">
-                  4
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-theme-primary">Test Upload</h3>
-                  <p className="text-theme-muted mt-1">
-                    Go to the Local Storage Management page and try uploading a test file to verify everything is working.
-                  </p>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="mt-2"
-                    onClick={() => router.push('/admin/s3')}
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Test Upload
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <FileText className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Features</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <Upload className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">File Upload</h4>
-                    <p className="text-sm text-theme-muted">
-                      Upload files with automatic organization into folders
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <Download className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">File Download</h4>
-                    <p className="text-sm text-theme-muted">
-                      Download files directly from the admin interface
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <Database className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">Storage Statistics</h4>
-                    <p className="text-sm text-theme-muted">
-                      View total files, storage usage, and directory information
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <Folder className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">Folder Management</h4>
-                    <p className="text-sm text-theme-muted">
-                      Organize files into folders and subfolders
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <Globe className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">Direct Access</h4>
-                    <p className="text-sm text-theme-muted">
-                      Files are directly accessible via web URLs
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <Settings className="w-5 h-5 text-theme-primary mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-theme-primary">Easy Configuration</h4>
-                    <p className="text-sm text-theme-muted">
-                      Simple setup with no external service dependencies
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Best Practices */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <Info className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Best Practices</h2>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-theme-primary">Regular Backups</h4>
-                  <p className="text-sm text-theme-muted">
-                    Regularly backup your upload directories to prevent data loss
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-theme-primary">Disk Space Monitoring</h4>
-                  <p className="text-sm text-theme-muted">
-                    Monitor disk space usage to prevent storage issues
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-theme-primary">File Organization</h4>
-                  <p className="text-sm text-theme-muted">
-                    Use consistent naming conventions and folder structures
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-theme-primary">Security</h4>
-                  <p className="text-sm text-theme-muted">
-                    Ensure proper file permissions and validate uploaded file types
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Troubleshooting */}
-          <div className="bg-theme-secondary rounded-lg shadow border border-theme p-6">
-            <div className="flex items-center mb-4">
-              <AlertCircle className="w-8 h-8 text-theme-primary mr-3" />
-              <h2 className="text-2xl font-bold text-theme-primary">Troubleshooting</h2>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold text-theme-primary">Upload Fails</h4>
-                <p className="text-sm text-theme-muted mb-2">
-                  Check that the upload directories exist and have proper write permissions.
-                </p>
-                <div className="bg-theme-tertiary rounded-lg p-3 font-mono text-sm">
-                  <div>ls -la public/uploads/</div>
-                  <div>chmod 755 public/uploads/</div>
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-theme-primary">Files Not Accessible</h4>
-                <p className="text-sm text-theme-muted mb-2">
-                  Ensure the web server can read the files and the paths are correct.
-                </p>
-                <div className="bg-theme-tertiary rounded-lg p-3 font-mono text-sm">
-                  <div>chmod 644 public/uploads/*</div>
-                  <div>chown www-data:www-data public/uploads/</div>
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-theme-primary">Storage Full</h4>
-                <p className="text-sm text-theme-muted mb-2">
-                  Check disk space and clean up unnecessary files.
-                </p>
-                <div className="bg-theme-tertiary rounded-lg p-3 font-mono text-sm">
-                  <div>df -h</div>
-                  <div>du -sh public/uploads/*</div>
+                <div className="flex items-center space-x-3">
+                  <Bell className="w-5 h-5 text-theme-primary" />
+                  <span className="text-theme-primary">Full control</span>
                 </div>
               </div>
             </div>

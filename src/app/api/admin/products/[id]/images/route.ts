@@ -79,9 +79,62 @@ export async function POST(
     // Use the imageIndex as the filename to match the display position (1-based)
     const displayPosition = imageIndex === '0' || imageIndex === 'main' ? 'main' : (parseInt(imageIndex) + 1).toString()
     const fileName = `${displayPosition}.jpg`
+    
+    // Use the last 4 characters of the ObjectId to match the existing pattern (7006, 7007, etc.)
+    // Ensure it's a valid folder name by using only alphanumeric characters
+    const shortId = id.substring(id.length - 4).replace(/[^a-zA-Z0-9]/g, '')
+    
+    // Check if the product has existing images with different IDs and migrate them
+    if (product.images && product.images.length > 0) {
+      const updatedImages = product.images.map((img: string) => {
+        if (img && img.startsWith('products/')) {
+          // Extract the old product ID from the local storage key
+          const pathParts = img.split('/')
+          const oldProductId = pathParts[1] // Get the product ID part
+          
+          // If the old product ID is different from the current short ID, update it
+          if (oldProductId !== shortId) {
+            const filename = pathParts[2] // Get the filename
+            console.log(`Migrating image key: ${oldProductId}/${filename} -> ${shortId}/${filename}`)
+            return `products/${shortId}/${filename}`
+          }
+        } else if (img && img.includes('/images/products/')) {
+          // Handle URL format as well
+          const pathParts = img.split('/')
+          const oldProductId = pathParts[pathParts.length - 2] // Get the product ID part
+          
+          // If the old product ID is different from the current short ID, update it
+          if (oldProductId !== shortId) {
+            const filename = pathParts[pathParts.length - 1] // Get the filename
+            console.log(`Migrating image URL: ${oldProductId}/${filename} -> ${shortId}/${filename}`)
+            return `/images/products/${shortId}/${filename}`
+          }
+        }
+        return img
+      })
+      
+      // Update the product with the corrected image paths
+      if (JSON.stringify(updatedImages) !== JSON.stringify(product.images)) {
+        console.log('Migrating images from old product ID to new:', {
+          oldImages: product.images,
+          newImages: updatedImages
+        })
+        await Product.findByIdAndUpdate(id, { images: updatedImages })
+      }
+    }
+    
+    console.log('Upload details:', {
+      productId: id,
+      shortId: shortId,
+      fileName: fileName,
+      folder: `products/${shortId}`,
+      bufferSize: buffer.length
+    })
+    
     const uploadResult = await uploadToLocal(buffer, fileName, {
-      folder: 'products',
-      filename: fileName
+      folder: `products/${shortId}`,
+      filename: fileName,
+      overwrite: true
     })
 
     console.log('Local storage upload result:', uploadResult)
@@ -125,6 +178,12 @@ export async function POST(
 
   } catch (error) {
     console.error('Error uploading product image:', error)
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      productId: id,
+      shortId: id.substring(id.length - 4)
+    })
     return NextResponse.json(
       { success: false, message: 'Failed to upload image' },
       { status: 500 }

@@ -190,7 +190,7 @@ const NewProduct: React.FC = () => {
               </div>
 
               {/* Description */}
-              <div className="md:col-span-2">
+              <div className="bg-theme-secondary rounded-lg md:col-span-2">
                 <Textarea
                   label="Description *"
                   value={form.description}
@@ -265,7 +265,7 @@ const NewProduct: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-32 h-32 border-2 border-dashed border-theme rounded-lg flex items-center justify-center">
+                    <div className="w-32 h-32 border-2 border-dashed border-theme rounded-lg flex items-center justify-center bg-theme-tertiary">
                       <Upload className="w-8 h-8 text-theme-muted" />
                     </div>
                   )}
@@ -274,8 +274,18 @@ const NewProduct: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageChange}
-                      className="block w-full text-sm text-theme-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-tertiary file:text-theme-primary hover:file:bg-theme-secondary"
+                      className="hidden"
+                      id="file-upload"
                     />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => document.getElementById('file-upload')?.click()}
+                      className="flex items-center"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Choose File
+                    </Button>
                     <p className="mt-1 text-sm text-theme-muted">
                       Upload a product image (optional)
                     </p>
@@ -295,6 +305,7 @@ const NewProduct: React.FC = () => {
               </Button>
               <Button
                 type="submit"
+                variant="secondary"
                 loading={loading}
                 disabled={loading}
               >

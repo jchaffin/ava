@@ -4,7 +4,7 @@ import React, { ButtonHTMLAttributes, ReactNode } from 'react'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'solid'
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'danger' | 'ghost' | 'outline' | 'solid'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   loading?: boolean
@@ -24,6 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   const variants = {
     primary: 'btn-primary text-theme-primary focus:ring-theme-primary',
     secondary: 'btn-secondary focus:ring-theme-secondary',
+    tertiary: 'bg-theme-tertiary text-theme-primary hover:bg-theme-secondary hover:text-theme-primary focus:ring-theme-tertiary',
     danger: 'btn-danger text-theme-primary focus:ring-red-500',
     ghost: 'btn-ghost text-gray-800 focus:ring-theme-primary',
     outline: 'btn-outline text-gray-800 focus:ring-theme-primary',

@@ -279,6 +279,18 @@ button,
   opacity: 0.9;
 }
 
+.btn-tertiary {
+  background-color: var(--ava-bg-tertiary);
+  color: var(--ava-text-primary);
+  transition: all 0.2s ease;
+}
+
+.btn-tertiary:hover {
+  background-color: var(--ava-bg-secondary);
+  color: var(--ava-text-primary);
+  opacity: 0.9;
+}
+
 .btn-ghost {
   background-color: var(--ava-bg-tertiary);
   border: none;

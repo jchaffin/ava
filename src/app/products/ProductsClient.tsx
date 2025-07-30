@@ -378,7 +378,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
       {/* Search Bar */}
       <div className="mb-6 sm:mb-8">
         <form onSubmit={handleSearchSubmit} className="max-w-md mx-auto">
-          <div className="flex items-center border border-theme rounded-lg bg-theme-secondary shadow-sm">
+          <div className="flex items-center bg-theme-tertiary text-theme-primary hover:bg-theme-secondary border border-theme rounded-lg shadow-sm transition-colors duration-200">
             <div className="pl-4 pr-3 py-3">
               <MagnifyingGlassIcon className="h-5 w-5 text-theme-primary" />
             </div>
@@ -436,7 +436,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
               <Button
                 variant="secondary"
                 onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden bg-theme-secondary text-theme-primary hover:bg-theme-tertiary border border-theme"
+                className="lg:hidden bg-theme-tertiary text-theme-primary hover:bg-theme-secondary border border-theme"
               >
                 <FunnelIcon className="h-4 w-4 mr-2" />
                 Filters
@@ -455,7 +455,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({ initialProducts }) => {
               <select
                 value={`${filters.sortBy}-${filters.sortOrder}`}
                 onChange={(e) => handleSortChange(e.target.value)}
-                className="border border-theme rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary bg-theme-secondary text-theme-primary"
+                className="border border-theme rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-0 bg-theme-tertiary text-theme-primary hover:bg-theme-secondary transition-colors duration-200"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>

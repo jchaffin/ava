@@ -3,7 +3,7 @@ import { join, dirname, basename, extname } from 'path'
 import { existsSync } from 'fs'
 
 // Local storage configuration
-const UPLOAD_DIR = process.env.UPLOAD_DIR || 'public/uploads'
+const UPLOAD_DIR = process.env.UPLOAD_DIR || 'public/images'
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']
 
@@ -50,6 +50,14 @@ export async function uploadToLocal(
     const folder = options.folder || 'general'
     const folderPath = join(UPLOAD_DIR, folder)
     
+    console.log('Path details:', {
+      uploadDir: UPLOAD_DIR,
+      folder: folder,
+      folderPath: folderPath,
+      filename: filename,
+      fullPath: join(folderPath, filename)
+    })
+    
     // Ensure directory exists
     await mkdir(folderPath, { recursive: true })
     
@@ -65,7 +73,7 @@ export async function uploadToLocal(
     await writeFile(filePath, file)
     
     // Generate URL
-    const url = `/uploads/${folder}/${filename}`
+    const url = `/images/${folder}/${filename}`
     const key = `${folder}/${filename}`
     
     console.log('Local Upload Result:', {
@@ -85,7 +93,15 @@ export async function uploadToLocal(
     
   } catch (error) {
     console.error('Error uploading to local storage:', error)
-    throw new Error('Failed to upload file to local storage')
+    console.error('Upload error details:', {
+      originalName,
+      options,
+      fileSize: file.length,
+      uploadDir: UPLOAD_DIR,
+      folder: options.folder,
+      filename: options.filename
+    })
+    throw new Error(`Failed to upload file to local storage: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 

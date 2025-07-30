@@ -324,7 +324,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || state.isLoading}
-          className={`flex-1 bg-theme-primary text-theme-secondary rounded-lg text-sm font-medium hover:bg-theme-secondary hover:text-theme-primary hover:opacity-80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`flex-1 bg-theme-tertiary text-theme-primary rounded-lg text-sm font-medium hover:bg-theme-secondary hover:text-theme-primary hover:opacity-80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
             variant === 'compact' ? 'px-3 py-1.5' : 'px-4 py-2'
           }`}
         >

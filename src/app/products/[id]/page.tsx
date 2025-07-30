@@ -20,6 +20,7 @@ import {
   ShieldCheckIcon,
   ArrowLeftIcon
 } from '@heroicons/react/24/outline'
+import { Minus, Plus } from 'lucide-react'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 
 interface ProductDetailsPageProps {
@@ -464,34 +465,62 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
             {/* Additional product images would go here */}
             <div className="grid grid-cols-4 gap-2">
-              {/* Use the images array if available, otherwise fallback to pattern generation */}
-              {[1, 2, 3, 4].map((index) => {
-                let imageUrl = product.images && product.images[index - 1] 
-                  ? product.images[index - 1] 
-                  : product.image.replace('main', index.toString())
+              {/* Show main image and additional images */}
+              {[0, 1, 2, 3].map((index) => {
+                let imageUrl = ''
+                let hasImage = false
                 
-                // Convert any format to URL
-                if (isLocalKey(imageUrl)) {
-                  imageUrl = localKeyToUrl(imageUrl)
-                } else if (imageUrl.includes('/images/products/') || imageUrl.includes('/uploads/')) {
-                  const key = extractKeyFromLocalUrl(imageUrl)
-                  imageUrl = key ? localKeyToUrl(key) : imageUrl
+                if (index === 0) {
+                  // First slot is always the main image
+                  imageUrl = product.image
+                  hasImage = true
+                } else {
+                  // Other slots are from the images array
+                  const imageData = product.images && product.images[index - 1]
+                  if (imageData) {
+                    imageUrl = imageData
+                    hasImage = true
+                  }
+                }
+                
+                if (hasImage) {
+                  // Convert any format to URL
+                  if (isLocalKey(imageUrl)) {
+                    imageUrl = localKeyToUrl(imageUrl)
+                  } else if (imageUrl.includes('/images/products/') || imageUrl.includes('/uploads/')) {
+                    const key = extractKeyFromLocalUrl(imageUrl)
+                    imageUrl = key ? localKeyToUrl(key) : imageUrl
+                  }
                 }
                 
                 return (
                   <div
                     key={index}
                     className="aspect-square bg-gray-100 rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500"
-                    onClick={() => setState(prev => ({ ...prev, selectedImageIndex: index }))}
+                    onClick={() => hasImage && setState(prev => ({ ...prev, selectedImageIndex: index }))}
                   >
-                    <Image
-                      src={imageUrl}
-                      alt={`${product.name} view ${index}`}
-                      width={100}
-                      height={100}
-                      sizes="100px"
-                      className="w-full h-full object-cover rounded-lg"
-                    />
+                    {hasImage ? (
+                      <Image
+                        src={imageUrl}
+                        alt={`${product.name} view ${index + 1}`}
+                        width={100}
+                        height={100}
+                        sizes="100px"
+                        className="w-full h-full object-cover rounded-lg"
+                        onError={(e) => {
+                          // Hide failed image and show placeholder
+                          e.currentTarget.style.display = 'none'
+                          const parent = e.currentTarget.parentElement
+                          if (parent) {
+                            parent.innerHTML = '<div class="w-full h-full bg-theme-tertiary rounded-lg flex items-center justify-center"><span class="text-theme-muted text-xs">No Image</span></div>'
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-theme-tertiary rounded-lg flex items-center justify-center">
+                        <span className="text-theme-muted text-xs">No Image</span>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -593,31 +622,27 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                   <label className="block text-sm font-medium ava-text-tertiary mb-2">
                     Quantity
                   </label>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-stretch border border-theme rounded-md bg-theme-primary w-fit">
                     <button
                       onClick={() => handleQuantityChange(state.quantity - 1)}
+                      className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      aria-label="Decrease quantity"
                       disabled={state.quantity <= 1}
-                      className="p-2 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <span className="sr-only">Decrease quantity</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-                      </svg>
+                      <Minus size={14} />
                     </button>
                     
-                    <span className="px-4 py-2 border border-gray-300 rounded-md min-w-[60px] text-center">
+                    <span className="px-4 py-2 text-center font-medium min-w-[2rem] border-x border-theme bg-theme-primary flex items-center justify-center">
                       {state.quantity}
                     </span>
                     
                     <button
                       onClick={() => handleQuantityChange(state.quantity + 1)}
+                      className="px-3 py-2 bg-theme-primary hover:bg-theme-tertiary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      aria-label="Increase quantity"
                       disabled={state.quantity >= product.stock}
-                      className="p-2 rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <span className="sr-only">Increase quantity</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
+                      <Plus size={14} />
                     </button>
                   </div>
                 </div>
@@ -670,7 +695,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
             <h2 className="text-2xl font-bold text-theme-primary">Customer Reviews</h2>
             <Button
               onClick={() => setReviewForm(prev => ({ ...prev, showForm: !prev.showForm }))}
-              variant="secondary"
+              variant="tertiary"
               size="sm"
             >
               {reviewForm.showForm ? 'Cancel' : 'Write a Review'}
@@ -679,7 +704,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
 
           {/* Review Form */}
           {reviewForm.showForm && (
-            <div className="mb-8 bg-white rounded-lg p-6 shadow-sm border">
+            <div className="mb-8 bg-theme-tertiary rounded-lg p-6 shadow-sm border">
               <h3 className="text-lg font-medium text-theme-primary mb-4">Write Your Review</h3>
               <div className="space-y-4">
                 <div>
@@ -713,7 +738,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ params }) => {
                     value={reviewForm.comment}
                     onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
                     placeholder="Share your experience ewqwith this product..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none bg-theme-primary"
                     rows={4}
                   />
                 </div>

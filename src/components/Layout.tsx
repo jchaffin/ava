@@ -310,7 +310,7 @@ const Layout: React.FC<LayoutProps> = ({
   }
 
   const renderDesktopNavigation = () => (
-    <nav className="hidden lg:flex items-center space-x-24">
+    <nav className="hidden lg:flex items-center space-x-8">
       {navigationItems.map((item) => (
         <Link
           key={item.name}
@@ -608,6 +608,13 @@ const Layout: React.FC<LayoutProps> = ({
                 <HeartIcon className="w-5 h-5" />
               </Link>
             )}
+
+            {/* Home button - mobile only */}
+            <div className="lg:hidden h-9 flex items-center justify-center">
+              <Link href="/" className="p-2 text-theme-secondary hover:text-ava-accent hover:bg-theme-secondary rounded-lg transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 flex items-center justify-center">
+                <HomeIcon className="w-5 h-5" />
+              </Link>
+            </div>
 
             {/* Shopping cart */}
             <div className="h-9 flex items-center justify-center">

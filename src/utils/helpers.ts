@@ -417,7 +417,7 @@ export const createErrorHandler = (context: string) => {
 export const isNetworkError = (error: any): boolean => {
   return (
     error instanceof TypeError &&
-    error.message.includes('fetch')
+    (error instanceof Error ? error.message : String(error)).includes('fetch')
   ) || error.code === 'NETWORK_ERROR'
 }
 
@@ -669,13 +669,21 @@ export function getProductImageUrl(image: string, productId?: string): string {
     }
   } else if (image.match(/^\d+\.jpg$/) && productId) {
     // If it's just a filename like "0.jpg" and we have a productId, construct the local path
-    url = `/images/products/${productId}/${image}`
+    // Use the last 4 characters of the ObjectId to match the existing pattern
+    const shortId = productId.substring(productId.length - 4)
+    url = `/images/products/${shortId}/${image}`
   } else if (image.includes('/')) {
     // If it's a path, assume it's already a local path
     url = image.startsWith('/') ? image : `/${image}`
+  } else if (productId) {
+    // If we have a productId, construct the path with it
+    // Use the last 4 characters of the ObjectId to match the existing pattern
+    const shortId = productId.substring(productId.length - 4)
+    url = `/images/products/${shortId}/${image}`
   } else {
-    // Otherwise, assume it's a filename and construct the path
-    url = `/images/products/${image}`
+    // If no productId and it's just a filename, return empty to avoid broken URLs
+    console.warn(`getProductImageUrl: No productId provided for image "${image}", returning empty string`)
+    return ''
   }
   
   return url

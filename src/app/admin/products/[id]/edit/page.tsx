@@ -31,6 +31,7 @@ const EditProduct: React.FC = () => {
   const router = useRouter()
   const params = useParams()
   const productId = params.id as string
+  console.log('EditProduct - productId from params:', productId)
   
   const [product, setProduct] = useState<Product | null>(null)
   const [form, setForm] = useState({
@@ -48,6 +49,7 @@ const EditProduct: React.FC = () => {
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null)
   const [availableImages, setAvailableImages] = useState<string[]>([])
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [imageUpdateTrigger, setImageUpdateTrigger] = useState(0)
 
   const fetchProduct = async () => {
     try {
@@ -162,6 +164,11 @@ const EditProduct: React.FC = () => {
     fetchProduct()
   }, [user, isAuthenticated, isLoading, router, productId])
 
+  // Debug effect to monitor productImages changes
+  useEffect(() => {
+    console.log('productImages state changed:', productImages)
+  }, [productImages])
+
   const handleInputChange = (field: keyof typeof form, value: string | number | boolean) => {
     setForm(prev => ({
       ...prev,
@@ -192,10 +199,23 @@ const EditProduct: React.FC = () => {
           if (data.success) {
             toast.success(`Image ${editingImageIndex + 1} updated successfully`)
             
-            // Update the local state
+            // Update the local state with the returned imageUrl for immediate display
             const updatedImages = [...productImages]
             updatedImages[editingImageIndex] = data.data.imageUrl
+            console.log('Updating productImages state:', { index: editingImageIndex, newUrl: data.data.imageUrl, allImages: updatedImages })
             setProductImages(updatedImages)
+            setImageUpdateTrigger(prev => prev + 1) // Force re-render
+            
+            // Also update the product state to reflect the change
+            if (product) {
+              const updatedProduct = { ...product }
+              if (editingImageIndex === 0) {
+                updatedProduct.image = data.data.key // Use the key for the main image
+              } else {
+                updatedProduct.images = updatedImages
+              }
+              setProduct(updatedProduct)
+            }
             
             // Reset state
             setImageFile(null)
@@ -231,6 +251,7 @@ const EditProduct: React.FC = () => {
         formData.append('image', imageFile)
         formData.append('imageIndex', editingImageIndex.toString())
 
+        console.log('Uploading to endpoint:', `/api/admin/products/${productId}/images`)
         response = await fetch(`/api/admin/products/${productId}/images`, {
           method: 'POST',
           body: formData,
@@ -256,10 +277,21 @@ const EditProduct: React.FC = () => {
       if (data.success) {
         toast.success(`Image ${editingImageIndex + 1} updated successfully`)
         
-        // Update the local state
+        // Update the local state with the returned imageUrl for immediate display
         const updatedImages = [...productImages]
-        updatedImages[editingImageIndex] = imageFile ? data.data.imageUrl : selectedImage!
+        updatedImages[editingImageIndex] = data.data.imageUrl
         setProductImages(updatedImages)
+        
+        // Also update the product state to reflect the change
+        if (product) {
+          const updatedProduct = { ...product }
+          if (editingImageIndex === 0) {
+            updatedProduct.image = data.data.key // Use the key for the main image
+          } else {
+            updatedProduct.images = updatedImages
+          }
+          setProduct(updatedProduct)
+        }
         
         // Reset editing state
         setImageFile(null)
@@ -464,27 +496,30 @@ const EditProduct: React.FC = () => {
                 {/* Product Images Grid */}
                 <div className="mb-6">
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    {productImages.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <div className={`border-2 rounded-xl p-3 transition-all duration-200 ${
-                          editingImageIndex === index ? 'border-theme-primary bg-theme-tertiary shadow-lg' : 'border-theme hover:border-theme-primary hover:shadow-md'
-                        }`}>
-                          {image ? (
-                            <img 
-                              src={image} 
-                              alt={`Product Image ${index + 1}`} 
-                              className="w-full h-40 object-cover rounded-lg"
-                              onError={(e) => {
-                                console.error(`Failed to load image ${index + 1}:`, image)
-                                e.currentTarget.style.display = 'none'
-                                e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : (
-                            <div className="w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
-                              <span className="text-theme-muted text-sm">No Image</span>
-                            </div>
-                          )}
+                    {productImages.map((image, index) => {
+                      // For display, use the image directly (it's already a URL from upload or converted from key)
+                      const imageUrl = image;
+                      
+                      return (
+                        <div key={`${index}-${image}-${imageUpdateTrigger}`} className="relative group">
+                          <div className={`border-2 rounded-xl p-3 transition-all duration-200 ${
+                            editingImageIndex === index ? 'border-theme-primary bg-theme-tertiary shadow-lg' : 'border-theme hover:border-theme-primary hover:shadow-md'
+                          }`}>
+                            {imageUrl ? (
+                              <img 
+                                src={imageUrl} 
+                                alt={`Product Image ${index + 1}`} 
+                                className="w-full h-40 object-cover rounded-lg"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                  e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
+                                <span className="text-theme-muted text-sm">No Image</span>
+                              </div>
+                            )}
                           {/* Fallback for failed images */}
                           <div className="hidden w-full h-40 bg-theme-tertiary rounded-lg flex items-center justify-center">
                             <span className="text-theme-muted text-sm">Failed to load</span>
@@ -507,7 +542,8 @@ const EditProduct: React.FC = () => {
                           {image ? image.split('/').pop() : 'No image'}
                         </p>
                       </div>
-                    ))}
+                    )
+                    })}
                   </div>
                 </div>
 

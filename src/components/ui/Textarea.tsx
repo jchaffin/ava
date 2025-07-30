@@ -13,7 +13,7 @@ const Textarea: React.FC<TextareaProps> = ({
   className = '',
   ...props
 }) => {
-  const baseClasses = 'w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary resize-vertical'
+  const baseClasses = 'w-full px-3 py-2 border border-theme rounded-lg focus:outline-none focus:ring-0 focus:border-theme bg-theme-tertiary text-theme-primary placeholder:text-theme-muted placeholder:opacity-70 resize-vertical'
   const errorClasses = error ? 'border-red-500' : ''
   const classes = `${baseClasses} ${errorClasses} ${className}`.trim()
 
