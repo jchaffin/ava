@@ -453,15 +453,15 @@ const Layout: React.FC<LayoutProps> = ({
             </div>
           ) : (
             <div className="px-4 py-6 border-t border-theme">
-              <div className="flex space-x-3">
+              <div className="space-y-4">
                 <Link
                   href="/signin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex-1"
+                  className="w-full block"
                 >
                   <Button
                     variant="secondary"
-                    className="w-full py-3 px-2 text-sm font-medium min-h-[44px] whitespace-nowrap"
+                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
                   >
                     Sign In
                   </Button>
@@ -469,11 +469,11 @@ const Layout: React.FC<LayoutProps> = ({
                 <Link
                   href="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex-1"
+                  className="w-full block"
                 >
                   <Button
                     variant="secondary"
-                    className="w-full py-3 px-2 text-sm font-medium min-h-[44px] whitespace-nowrap"
+                    className="w-full py-3 px-4 text-base font-medium min-h-[44px]"
                   >
                     Sign Up
                   </Button>
@@ -636,16 +636,16 @@ const Layout: React.FC<LayoutProps> = ({
             {isAuthenticated ? (
               renderUserMenu()
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <Link
                   href="/signin"
-                  className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0"
+                  className="text-theme-primary hover:text-ava-accent px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-ava-accent text-theme-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0"
+                  className="bg-ava-accent text-theme-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-0 focus:border-0 whitespace-nowrap h-9 flex items-center justify-center"
                 >
                   Sign Up
                 </Link>
